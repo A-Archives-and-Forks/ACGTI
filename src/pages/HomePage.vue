@@ -4,7 +4,7 @@
       <div class="container hero-inner">
         <h1 class="hero-title">"终于有人把你看懂了。"</h1>
         <p class="hero-subtitle">
-          仅需 10 分钟，获得一份高贴合度人格报告：核心四字母类型、维度倾向比例，以及对应二次元角色原型。
+          仅需 10 分钟，获得一份高贴合度角色人格报告：命中角色代码、维度倾向比例，以及对应二次元角色原型。
         </p>
         <RouterLink to="/quiz" class="hero-button">开始测试 →</RouterLink>
       </div>
@@ -40,7 +40,7 @@
           <p class="feature-tag tag-green">Personality Types</p>
           <h2 class="feature-title">理解他人，也更理解自己</h2>
           <p class="feature-copy">
-            我们以标准 MBTI 四字母编码为结果核心，并提供二次元角色原型解析，让你快速理解各类型的驱动力、压力点与关系风格。
+            我们以 MBTI 四维度作为底层判定框架，对外展示命中角色代码与原型解析，让你快速理解这份结果背后的驱动力、压力点与关系风格。
           </p>
           <div class="feature-actions">
             <RouterLink to="/intro" class="btn btn-green">查看 16 型人格</RouterLink>
@@ -68,9 +68,9 @@
         </aside>
         <article>
           <p class="feature-tag tag-blue">Results</p>
-          <h2 class="feature-title">把四字母结果翻译成看得懂的角色语言</h2>
+          <h2 class="feature-title">把维度判定翻译成看得懂的角色语言</h2>
           <p class="feature-copy">
-            结果页会展示四个维度的倾向比例、对应原型的亮点与短板，以及最多 5 位相近角色，帮助你快速理解这份结果到底在说什么。
+            结果页会展示唯一命中角色、角色代码、四个维度的倾向比例，以及对应原型的亮点与短板，帮助你快速理解这份结果到底在说什么。
           </p>
           <RouterLink to="/intro" class="btn btn-blue">先看结果结构</RouterLink>
         </article>
@@ -104,7 +104,7 @@
     <section class="cta">
       <div class="cta-top-wave"></div>
       <div class="container cta-inner">
-        <h2>想知道你的四字母类型会是哪一个？</h2>
+        <h2>想知道你会命中哪一个角色代码？</h2>
         <RouterLink to="/quiz" class="hero-button">立即开始测试 →</RouterLink>
       </div>
       <div class="cta-bottom-wave"></div>

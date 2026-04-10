@@ -4,7 +4,7 @@
       <p class="eyebrow">测试说明</p>
       <h1 class="display-title">这是角色原型测试，不是心理诊断。</h1>
       <p class="lead">
-        你会回答 48 道五级量表题。系统会先计算 MBTI 四个维度，输出标准四字母类型，再映射对应的二次元原型与最多 5 位相近角色。
+        你会回答 48 道五级量表题。系统会先计算 MBTI 四个维度，再映射唯一命中的角色代码、对应的二次元原型，以及各维度倾向比例。
       </p>
       <div class="cta-row" style="justify-content: center;">
         <RouterLink class="button button-primary" to="/quiz">直接开始</RouterLink>
@@ -20,12 +20,12 @@
             <p class="value">你在二次元叙事里更接近哪一种角色气质。</p>
           </div>
           <div class="meta-item">
-            <span class="label">四字母类型</span>
-            <p class="value">结果会优先展示 MBTI 四字母代码，并展示每个维度的倾向比例。</p>
+            <span class="label">角色代码</span>
+            <p class="value">结果会优先展示命中的角色自定义代码，并展示每个维度的倾向比例。</p>
           </div>
           <div class="meta-item">
-            <span class="label">角色匹配</span>
-            <p class="value">系统会优先展示同类型角色，再补足同原型或高相似度角色，最多展示 5 位。</p>
+            <span class="label">角色命中</span>
+            <p class="value">当前版本会输出唯一命中角色，并用该角色承载结果页的主视觉与解析。</p>
           </div>
         </div>
       </article>

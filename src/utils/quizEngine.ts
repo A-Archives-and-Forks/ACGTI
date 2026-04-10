@@ -182,13 +182,13 @@ export function calculateQuizResult({
 
   const charMatches = featuredCharacter ? [featuredCharacter] : []
 
-  // 用题目结果强度和角色匹配层级计算稳定的命中感，避免同一份答案重复提交时数值跳变。
+  // 用题目结果强度和角色命中层级计算稳定的命中感，避免同一份答案重复提交时数值跳变。
   const matchScore = calculateCharacterMatchScore(scores, featuredCharacter)
   const roleCode = featuredCharacter?.code ?? 'UNKN'
 
   return {
     code: roleCode,
-    mbtiCode: roleCode,
+    mbtiCode: finalCode,
     scores,
     archetype: matchedArchetype,
     tags: [matchedArchetype.narrativeRole, ...matchedArchetype.tags].slice(0, 6),
@@ -321,7 +321,7 @@ export function createDebugQuizResult({
 
   return {
     code: character.code,
-    mbtiCode: character.code,
+    mbtiCode: character.matchCode,
     scores,
     archetype: matchedArchetype,
     tags: [matchedArchetype.narrativeRole, ...matchedArchetype.tags].slice(0, 6),

@@ -50,7 +50,7 @@
       </section>
 
       <section class="quiz-notice" aria-label="测试说明">
-        <p>本测试共 {{ questions.length }} 题，基于 MBTI 四个维度计算四字母类型，再映射对应的二次元原型与相近角色。</p>
+        <p>本测试共 {{ questions.length }} 题，基于 MBTI 四个维度计算人格倾向，再映射到唯一命中的角色代码、对应原型与维度比例。</p>
         <p>结果仅保存在当前浏览器，不收集邮箱、性别等个人信息。</p>
       </section>
 
@@ -578,8 +578,27 @@ function submitQuiz() {
 }
 
 @media (max-width: 760px) {
+  .quiz-main {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
   .top-links {
     display: none;
+  }
+
+  .question-block {
+    padding: 28px 14px;
+  }
+
+  .question-block h2 {
+    margin-bottom: 18px;
+  }
+
+  .question-scale {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 
   .agree-label,
@@ -588,31 +607,127 @@ function submitQuiz() {
   }
 
   .mobile-labels {
-    margin-top: 10px;
     display: flex;
     justify-content: space-between;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: none;
+    margin: 0 2px;
+  }
+
+  .mobile-labels .agree-label,
+  .mobile-labels .disagree-label {
+    display: block;
+    width: auto;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .mobile-labels .agree-label {
+    color: #33a474;
+    text-align: left;
+  }
+
+  .mobile-labels .disagree-label {
+    color: #88619a;
+    text-align: right;
   }
 
   .scale-buttons {
-    gap: 10px;
-    flex-wrap: wrap;
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 2px 2px 6px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
-  .size-sm { width: 26px; height: 26px; }
-  .size-md { width: 32px; height: 32px; }
-  .size-lg { width: 40px; height: 40px; }
-  .size-xl { width: 48px; height: 48px; }
+  .scale-buttons::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scale-btn {
+    flex: none;
+  }
+
+  .size-sm { width: 24px; height: 24px; }
+  .size-md { width: 30px; height: 30px; }
+  .size-lg { width: 38px; height: 38px; }
+  .size-xl { width: 46px; height: 46px; }
+
+  .checkmark {
+    font-size: 12px;
+  }
+
+  .result-form-card,
+  .quiz-notice,
+  .question-list {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
 
   .submit-row {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
 
   .submit-btn {
     width: 100%;
+  }
+
+  .share-count {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .quiz-main {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 24px;
+    padding-bottom: 44px;
+  }
+
+  .hero {
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 8vw, 38px);
+  }
+
+  .hero p {
+    font-size: 12px;
+  }
+
+  .step-card {
+    padding: 16px;
+  }
+
+  .step-card h3 {
+    font-size: 19px;
+  }
+
+  .question-block {
+    padding: 24px 12px;
+  }
+
+  .question-block h2 {
+    font-size: clamp(18px, 5vw, 22px);
+  }
+
+  .scale-buttons {
+    gap: 6px;
+  }
+
+  .result-form-card,
+  .quiz-notice {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .footer-links {
+    gap: 10px;
   }
 }
 </style>

@@ -29,8 +29,8 @@ const slides = computed(() => [
   {
     id: 'matches',
     title: '角色映射',
-    subtitle: `最多展示 ${props.result.characterMatches.length} 位相近角色`,
-    description: '结果会优先展示同 MBTI 类型角色，再补足同原型或高相似度角色，保证页面信息完整可读。',
+    subtitle: `当前命中 ${props.result.characterMatches.length} 位角色`,
+    description: '当前版本会输出唯一命中角色，并围绕该角色展开结果页展示与分享内容。',
     learnMoreText: '查看项目说明',
     to: '/about'
   }

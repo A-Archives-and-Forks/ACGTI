@@ -96,6 +96,24 @@ const primaryCharacterImage = computed(() => {
 const primaryCharacter = computed(() => result.value?.characterMatches?.[0] ?? null)
 const displayCode = computed(() => result.value?.code ?? result.value?.mbtiCode ?? '')
 const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? result.value?.archetype.accent ?? '#e2ad3b')
+const strongestTrait = computed(() => {
+  if (!result.value) {
+    return null
+  }
+
+  return traits.reduce((strongest, trait) => {
+    const currentScore = result.value!.scores[trait.id]
+
+    if (!strongest || currentScore.percentage > strongest.score.percentage) {
+      return {
+        trait,
+        score: currentScore,
+      }
+    }
+
+    return strongest
+  }, null as { trait: (typeof traits)[number]; score: (typeof result.value.scores)[TraitDimension] } | null)
+})
 
 watch(primaryCharacterImage, () => {
   isCharacterImageBroken.value = false
@@ -230,13 +248,15 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
 
             <aside class="traits-highlight">
               <p class="highlight-name">当前最显著维度</p>
-              <h3 :style="{ color: result.scores.S_N.dominant === 'S' ? '#E4AE3A' : '#4298B4' }">
-                {{ result.scores.S_N.percentage }}% {{ result.scores.S_N.dominant === 'S' ? '实感' : '直觉' }}
+              <h3 :style="{ color: strongestTrait?.trait.color ?? '#4298B4' }">
+                {{ strongestTrait?.score.percentage ?? 0 }}% {{ strongestTrait ? getDominantTraitLabel(strongestTrait.trait.id, strongestTrait.trait.leftCode, strongestTrait.trait.leftLabel, strongestTrait.trait.rightLabel) : '' }}
               </h3>
               <div class="highlight-icon-wrap">
                 <AppIcon name="chart" />
               </div>
-              <p>你更偏向于依据可见事实和现实细节做判断，在执行层面更稳定。</p>
+              <p v-if="strongestTrait">
+                这一维度在你的答题里最稳定，当前更明显地指向{{ getDominantTraitLabel(strongestTrait.trait.id, strongestTrait.trait.leftCode, strongestTrait.trait.leftLabel, strongestTrait.trait.rightLabel) }}取向。
+              </p>
             </aside>
           </div>
         </section>
@@ -292,6 +312,17 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
             <AppIcon name="download" />
             导出图片
           </button>
+        </div>
+
+        <div class="sidebar-card project-card">
+          <p class="small-title">开源项目</p>
+          <p style="margin: 8px 0 4px; font-size: 14px; line-height: 1.6; color: #5f6b75;">
+            ACGTI 是一个开源项目，当前仍处于早期阶段，题目和角色都还不够丰富。
+          </p>
+          <a href="https://github.com/tianxingleo/ACGTI" target="_blank" rel="noopener" class="project-link">
+            GitHub 仓库 →
+          </a>
+          <p class="project-cta">欢迎 Star / Fork / PR</p>
         </div>
       </aside>
     </div>
@@ -737,6 +768,30 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
 
 .sidebar-actions button:hover {
   border-color: #c8d0d7;
+}
+
+.project-card {
+  text-align: center;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: #33a474;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+
+.project-cta {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #7b8690;
+  font-weight: 600;
 }
 
 .poster-hidden {
