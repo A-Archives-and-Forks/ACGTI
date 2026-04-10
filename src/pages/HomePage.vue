@@ -67,12 +67,12 @@
           <div class="desk"></div>
         </aside>
         <article>
-          <p class="feature-tag tag-blue">Teams</p>
-          <h2 class="feature-title">帮助团队建立高质量协作</h2>
+          <p class="feature-tag tag-blue">Results</p>
+          <h2 class="feature-title">把四字母结果翻译成看得懂的角色语言</h2>
           <p class="feature-copy">
-            团队版评估将成员的 MBTI 类型与偏好差异可视化，帮助团队在沟通、决策与分工中减少摩擦，突出每个人的优势。
+            结果页会展示四个维度的倾向比例、对应原型的亮点与短板，以及最多 5 位相近角色，帮助你快速理解这份结果到底在说什么。
           </p>
-          <RouterLink to="/quiz" class="btn btn-blue">开始团队测评</RouterLink>
+          <RouterLink to="/intro" class="btn btn-blue">先看结果结构</RouterLink>
         </article>
       </div>
     </section>
@@ -114,17 +114,17 @@
 
 <script setup lang="ts">
 const stats = [
-  { value: "286K+", label: "今日完成测试", color: "#4899a3" },
-  { value: "6M+", label: "中文用户累计", color: "#e5b540" },
-  { value: "1.52B+", label: "全球累计测评", color: "#5ca173" },
-  { value: "91.2%", label: "结果认可度", color: "#9474a4" },
+  { value: "48", label: "测试题数", color: "#4899a3" },
+  { value: "16", label: "MBTI 类型", color: "#e5b540" },
+  { value: "8", label: "原型映射", color: "#5ca173" },
+  { value: "22", label: "当前角色库", color: "#9474a4" },
 ]
 
 const testimonials = [
   {
     name: "Benny",
     role: "ARCHITECT",
-    type: "INTJ-A",
+    type: "INTJ",
     color: "#8a609d",
     avatar: "linear-gradient(135deg, #f7b2b2 0%, #f3d3d3 100%)",
     quote: "结果非常细，像拿着镜子把我的习惯和思考方式都照了出来。",
@@ -132,7 +132,7 @@ const testimonials = [
   {
     name: "Nicole",
     role: "ADVOCATE",
-    type: "INFJ-T",
+    type: "INFJ",
     color: "#3ba17c",
     avatar: "linear-gradient(135deg, #b8d7ff 0%, #d6e6ff 100%)",
     quote: "终于有一个结果把我解释清楚了，不再觉得自己和别人不一样。",
@@ -140,7 +140,7 @@ const testimonials = [
   {
     name: "Caroline",
     role: "DEFENDER",
-    type: "ISFJ-A",
+    type: "ISFJ",
     color: "#4298b4",
     avatar: "linear-gradient(135deg, #bdebc9 0%, #dff5e6 100%)",
     quote: "优势和盲点写得很准确，尤其是关系与工作场景建议，实用度很高。",
@@ -148,7 +148,7 @@ const testimonials = [
   {
     name: "Marta",
     role: "COMMANDER",
-    type: "ENTJ-A",
+    type: "ENTJ",
     color: "#8a609d",
     avatar: "linear-gradient(135deg, #ffe6a8 0%, #fff1cb 100%)",
     quote: "我原本只想随便测测，没想到结论和我现实状态高度一致。",

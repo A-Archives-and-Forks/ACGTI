@@ -561,6 +561,13 @@ select {
   color: #2d7f9c;
 }
 
+.footer-note {
+  margin: 0;
+  color: #6f7d88;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
 .footer-bottom {
   max-width: 1200px;
   margin: 0 auto;

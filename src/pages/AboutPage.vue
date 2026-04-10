@@ -32,11 +32,11 @@
         <div class="timeline-list">
           <div class="timeline-item">
             <span class="label">内容层</span>
-            <p class="value">16 道题、8 个原型、30+ 个知名角色匹配。</p>
+            <p class="value">48 道题、8 个原型、22 位已录入角色。</p>
           </div>
           <div class="timeline-item">
             <span class="label">规则层</span>
-            <p class="value">先算六维叙事向量，再做原型和角色相似度匹配。</p>
+            <p class="value">先计算 MBTI 四维得分，再做原型映射和角色相似度排序。</p>
           </div>
           <div class="timeline-item">
             <span class="label">表现层</span>

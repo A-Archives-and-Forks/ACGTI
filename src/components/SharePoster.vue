@@ -18,7 +18,7 @@ defineExpose({
   <section ref="rootEl" class="share-poster" :style="{ '--poster-accent': result.archetype.accent }">
     <div class="share-poster__header">
       <div>
-        <p class="share-poster__kicker">ACGTI 角色匹配结果 · {{ result.code }}-T · {{ result.archetype.name }}</p>
+        <p class="share-poster__kicker">ACGTI 人格结果 · {{ result.mbtiCode }} · {{ result.archetype.name }}</p>
         <h2 class="share-poster__title">{{ result.characterMatches[0]?.name || result.archetype.name }}</h2>
         <p class="share-poster__subtitle">{{ result.characterMatches[0]?.title || result.archetype.subtitle }}</p>
       </div>

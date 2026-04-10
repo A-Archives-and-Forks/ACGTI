@@ -7,10 +7,11 @@ function createShareText(result: QuizResult) {
   const matches = result.characterMatches.slice(0, 3).map((item) => `${item.name}（${item.series}）`)
 
   return [
-    `我在 ACGTI 的结果是「${result.archetype.name}」`,
+    `我在 ACGTI 的人格类型是 ${result.mbtiCode}`,
+    `对应原型：${result.archetype.name}`,
     result.archetype.subtitle,
     `剧情位置：${result.archetype.narrativeRole}`,
-    `像我的角色：${matches.join('、')}`,
+    `像我的角色：${matches.join('、') || '暂无更多展示角色'}`,
   ].join('\n')
 }
 

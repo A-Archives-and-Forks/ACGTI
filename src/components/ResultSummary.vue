@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { QuizResult } from '../types/quiz'
-import { getRoleForType, getStrategyForVariant, TRAIT_CONFIG } from '../utils/quizEngine'
+import { getRoleForType, TRAIT_CONFIG } from '../utils/quizEngine'
 
 const props = defineProps<{
   result: QuizResult
@@ -12,24 +12,27 @@ const currentSlide = ref(0)
 const slides = computed(() => [
   {
     id: 'personality',
-    title: 'Their Personality',
-    subtitle: `${props.result.archetype.name} (${props.result.code})`,
+    title: '人格原型',
+    subtitle: `${props.result.archetype.name} (${props.result.mbtiCode})`,
     description: props.result.archetype.description,
-    learnMoreText: 'Learn more'
+    learnMoreText: '查看类型说明',
+    to: '/intro'
   },
   {
     id: 'role',
-    title: 'Their Role',
-    subtitle: getRoleForType(props.result.code).name,
-    description: getRoleForType(props.result.code).description,
-    learnMoreText: 'Learn more'
+    title: '人格分组',
+    subtitle: getRoleForType(props.result.mbtiCode).name,
+    description: getRoleForType(props.result.mbtiCode).description,
+    learnMoreText: '查看结果页',
+    to: '/result'
   },
   {
-    id: 'strategy',
-    title: 'Their Strategy',
-    subtitle: getStrategyForVariant(props.result.code.slice(5)).name,
-    description: getStrategyForVariant(props.result.code.slice(5)).description,
-    learnMoreText: 'Learn more'
+    id: 'matches',
+    title: '角色映射',
+    subtitle: `最多展示 ${props.result.characterMatches.length} 位相近角色`,
+    description: '结果会优先展示同 MBTI 类型角色，再补足同原型或高相似度角色，保证页面信息完整可读。',
+    learnMoreText: '查看项目说明',
+    to: '/about'
   }
 ])
 
@@ -101,34 +104,34 @@ const traits = computed(() => {
             <h3>{{ slides[0].title }}</h3>
             <h4>{{ slides[0].subtitle }}</h4>
             <p>{{ slides[0].description }}</p>
-            <a href="#" class="learn-more">
+            <RouterLink :to="slides[0].to" class="learn-more">
               {{ slides[0].learnMoreText }}
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
-            </a>
+            </RouterLink>
           </div>
           <div v-else-if="currentSlide === 1" class="slide-card" key="role">
             <h3>{{ slides[1].title }}</h3>
             <h4>{{ slides[1].subtitle }}</h4>
             <p>{{ slides[1].description }}</p>
-            <a href="#" class="learn-more">
+            <RouterLink :to="slides[1].to" class="learn-more">
               {{ slides[1].learnMoreText }}
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
-            </a>
+            </RouterLink>
           </div>
-          <div v-else class="slide-card" key="strategy">
+          <div v-else class="slide-card" key="matches">
             <h3>{{ slides[2].title }}</h3>
             <h4>{{ slides[2].subtitle }}</h4>
             <p>{{ slides[2].description }}</p>
-            <a href="#" class="learn-more">
+            <RouterLink :to="slides[2].to" class="learn-more">
               {{ slides[2].learnMoreText }}
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
-            </a>
+            </RouterLink>
           </div>
         </transition>
       </div>

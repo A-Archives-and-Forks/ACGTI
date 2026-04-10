@@ -96,7 +96,7 @@ function getHandlePosition(traitId: TraitDimension, leftCode: string) {
         class="md:w-1/3 p-8 md:p-10 text-white flex flex-col items-center text-center relative"
         :style="{ backgroundColor: result.archetype.accent || '#8CA260' }"
       >
-        <h2 class="text-sm tracking-widest uppercase mb-2 font-bold opacity-90">{{ result.code }}-T · {{ result.archetype.name }}</h2>
+        <h2 class="text-sm tracking-widest uppercase mb-2 font-bold opacity-90">{{ result.mbtiCode }} · {{ result.archetype.name }}</h2>
         <h1 class="text-4xl font-black mb-3">{{ result.characterMatches[0]?.name || result.archetype.name }}</h1>
         <p class="text-lg font-bold opacity-90 mb-6 bg-black/10 px-4 py-1.5 rounded-full backdrop-blur-sm">{{ result.characterMatches[0]?.title || result.archetype.subtitle }}</p>
         
@@ -212,6 +212,9 @@ function getHandlePosition(traitId: TraitDimension, leftCode: string) {
           <h3 class="text-2xl font-black text-gray-800 mb-6 flex items-center border-b-2 border-gray-100 pb-4">
             <i class="fa-solid fa-user-ninja mr-3 text-gray-400"></i>二次元映射
           </h3>
+          <p class="mb-4 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+            MBTI 类型：{{ result.mbtiCode }} · 最多展示 5 位相近角色
+          </p>
           <div class="flex flex-wrap gap-2 mb-6">
             <span v-for="tag in result.characterMatches[0].tags" :key="tag" class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm font-bold border border-gray-200">
               # {{ tag }}
@@ -260,4 +263,3 @@ function getHandlePosition(traitId: TraitDimension, leftCode: string) {
 
 <style scoped>
 </style>
-

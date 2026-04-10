@@ -1,4 +1,13 @@
-import type { Archetype, ArchetypeId, CharacterMatch, Question, QuizResult, DimensionPair, DimensionScore, MBTILetter } from '../types/quiz'
+import type {
+  Archetype,
+  ArchetypeId,
+  CharacterMatch,
+  Question,
+  QuizResult,
+  DimensionPair,
+  DimensionScore,
+  MBTILetter,
+} from '../types/quiz'
 
 const DIMENSION_LETTERS: Record<DimensionPair, [MBTILetter, MBTILetter]> = {
   'E_I': ['E', 'I'],
@@ -89,12 +98,6 @@ export const ROLE_MAPPING: Record<string, { name: string; description: string }>
   'ESFP': { name: 'Explorers', description: 'Explorers are utilitarian, practical, and spontaneous, shining in situations that require quick reaction.' }
 }
 
-// 策略映射（基于 -T/-A）
-export const STRATEGY_MAPPING: Record<string, { name: string; description: string }> = {
-  'T': { name: 'Turbulent', description: 'People with the Turbulent identity are self-conscious and sensitive to stress, but also driven to improve themselves.' },
-  'A': { name: 'Assertive', description: 'People with the Assertive identity are self-assured, even-tempered, and resistant to stress.' }
-}
-
 export function calculateQuizResult({
   answers,
   questions,
@@ -163,11 +166,20 @@ export function calculateQuizResult({
     vector: { expression: 0, temperature: 0, judgement: 0, order: 0, agency: 0, aura: 0 }
   }
 
-  const charMatches = characters.filter((c: CharacterMatch) => c.matchCode.toUpperCase() === finalCode).slice(0, 5)
+  const charMatches = rankCharacters({
+    characters,
+    finalCode,
+    matchedArchetypeId,
+  }).slice(0, 5)
   const featuredCharacter = charMatches[0] ?? null
 
-  // 计算匹配度（基于与原型向量的相似度）
-  const matchScore = Math.round(50 + Math.random() * 40)
+  // 用题目结果强度和角色匹配层级计算稳定的命中感，避免同一份答案重复提交时数值跳变。
+  const matchScore = calculateMatchScore({
+    scores,
+    finalCode,
+    featuredCharacter,
+    matchedArchetypeId,
+  })
 
   return {
     code: featuredCharacter?.code ?? finalCode,
@@ -187,7 +199,80 @@ export function getRoleForType(mbtiType: string): { name: string; description: s
   return ROLE_MAPPING[baseType] || { name: 'Explorers', description: 'Unique individuals with diverse perspectives.' }
 }
 
-// 获取策略（用于结果页面）
-export function getStrategyForVariant(variant: string): { name: string; description: string } {
-  return STRATEGY_MAPPING[variant] || STRATEGY_MAPPING['T']
+function rankCharacters({
+  characters,
+  finalCode,
+  matchedArchetypeId,
+}: {
+  characters: CharacterMatch[]
+  finalCode: string
+  matchedArchetypeId: ArchetypeId | undefined
+}) {
+  return [...characters].sort((left, right) => {
+    const rightScore = getCharacterRankScore(right, finalCode, matchedArchetypeId)
+    const leftScore = getCharacterRankScore(left, finalCode, matchedArchetypeId)
+
+    if (rightScore !== leftScore) {
+      return rightScore - leftScore
+    }
+
+    return right.name.localeCompare(left.name, 'zh-Hans-CN')
+  })
+}
+
+function getCharacterRankScore(
+  character: CharacterMatch,
+  finalCode: string,
+  matchedArchetypeId: ArchetypeId | undefined,
+) {
+  const code = character.matchCode.toUpperCase()
+  let score = sharedLetterCount(code, finalCode) * 10
+
+  if (character.archetypeId === matchedArchetypeId) {
+    score += 8
+  }
+
+  if (code === finalCode) {
+    score += 60
+  }
+
+  return score
+}
+
+function sharedLetterCount(left: string, right: string) {
+  let count = 0
+
+  for (let index = 0; index < Math.min(left.length, right.length); index += 1) {
+    if (left[index] === right[index]) {
+      count += 1
+    }
+  }
+
+  return count
+}
+
+function calculateMatchScore({
+  scores,
+  finalCode,
+  featuredCharacter,
+  matchedArchetypeId,
+}: {
+  scores: Record<DimensionPair, DimensionScore>
+  finalCode: string
+  featuredCharacter: CharacterMatch | null
+  matchedArchetypeId: ArchetypeId | undefined
+}) {
+  const averageCertainty =
+    Object.values(scores).reduce((sum, item) => sum + item.percentage, 0) / Object.values(scores).length
+
+  if (!featuredCharacter) {
+    return Math.round(Math.min(89, averageCertainty + 12))
+  }
+
+  const featuredCode = featuredCharacter.matchCode.toUpperCase()
+  const exactBonus = featuredCode === finalCode ? 10 : 0
+  const archetypeBonus = featuredCharacter.archetypeId === matchedArchetypeId ? 4 : 0
+  const overlapBonus = sharedLetterCount(featuredCode, finalCode) * 2
+
+  return Math.max(60, Math.min(99, Math.round(averageCertainty + exactBonus + archetypeBonus + overlapBonus)))
 }

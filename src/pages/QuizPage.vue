@@ -10,23 +10,23 @@
             <span class="logo-dot d4"></span>
             <span class="logo-core"></span>
           </span>
-          <span class="brand-text">16Personalities</span>
+          <span class="brand-text">ACGTI</span>
         </RouterLink>
 
         <nav class="top-links" aria-label="主导航">
-          <a href="#">性格测试</a>
-          <a href="#">性格类型</a>
-          <a href="#">资源</a>
+          <RouterLink to="/quiz">性格测试</RouterLink>
+          <RouterLink to="/intro">性格类型</RouterLink>
+          <RouterLink to="/about">项目说明</RouterLink>
         </nav>
 
-        <button class="login-btn" type="button">登录</button>
+        <RouterLink class="login-btn" to="/">返回首页</RouterLink>
       </div>
     </header>
 
     <main class="quiz-main">
       <section class="hero">
         <h1>免费性格测试</h1>
-        <p>NERIS 类型探索器</p>
+        <p>ACG Type Indicator</p>
       </section>
 
       <section class="step-cards" aria-label="测试步骤">
@@ -47,6 +47,11 @@
           <h3>解锁你的潜能</h3>
           <p>结合你的偏好维度，获取更匹配的发展建议。</p>
         </article>
+      </section>
+
+      <section class="quiz-notice" aria-label="测试说明">
+        <p>本测试共 {{ questions.length }} 题，基于 MBTI 四个维度计算四字母类型，再映射对应的二次元原型与相近角色。</p>
+        <p>结果仅保存在当前浏览器，不收集邮箱、性别等个人信息。</p>
       </section>
 
       <section class="question-list" aria-label="测试题目">
@@ -90,27 +95,6 @@
       </section>
 
       <section class="result-form-card">
-        <div class="field-block">
-          <h3>你的邮箱</h3>
-          <p>选填。通过邮件接收结果并保存，便于后续对比。</p>
-          <input v-model="email" type="email" placeholder="email@email.com" />
-          <label class="checkbox-row">
-            <input v-model="acceptInsight" type="checkbox" />
-            <span>发送给我职业和个人见解</span>
-          </label>
-        </div>
-
-        <div class="field-block">
-          <h3>你的性别</h3>
-          <p>选填。这将用于结果页头像展示样式。</p>
-          <div class="gender-list">
-            <label v-for="item in genders" :key="item" class="radio-row">
-              <input v-model="gender" type="radio" name="gender" :value="item" />
-              <span>{{ item }}</span>
-            </label>
-          </div>
-        </div>
-
         <div class="submit-row">
           <p class="progress-hint">已完成 {{ answeredCount }} / {{ questions.length }} 题</p>
           <button
@@ -127,22 +111,21 @@
 
     <footer class="quiz-footer">
       <div class="quiz-footer-inner">
-        <div class="share-count">5M 分享</div>
+        <div class="share-count">48 题 MBTI 测试</div>
         <div class="footer-links">
-          <a href="#">产品</a>
-          <a href="#">资源</a>
-          <a href="#">帮助</a>
-          <a href="#">条款与条件</a>
-          <a href="#">隐私政策</a>
+          <RouterLink to="/">首页</RouterLink>
+          <RouterLink to="/intro">人格类型</RouterLink>
+          <RouterLink to="/about">项目说明</RouterLink>
+          <RouterLink to="/result">最近结果</RouterLink>
+          <span>本地保存</span>
         </div>
-        <p>©2011-2026 NERIS Analytics Limited</p>
+        <p>© 2026 ACGTI Project</p>
       </div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useQuiz } from '../composables/useQuiz'
@@ -158,11 +141,6 @@ interface ScaleOption {
 
 const router = useRouter()
 const { questions, state, answeredCount, isComplete, selectOptionAt, finalizeQuiz } = useQuiz()
-
-const email = ref('')
-const acceptInsight = ref(false)
-const gender = ref('')
-const genders = ['男', '女', '其他']
 
 const scaleOptions: ScaleOption[] = [
   { value: -3, label: '强烈不同意', side: 'agree', sizeClass: 'size-xl' },
@@ -507,47 +485,22 @@ function submitQuiz() {
   box-shadow: 0 10px 30px rgba(17, 24, 39, 0.05);
 }
 
-.field-block + .field-block {
-  margin-top: 24px;
+.quiz-notice {
+  max-width: 880px;
+  margin: 0 auto 28px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #edf1f5;
+  background: #f7fafc;
+  color: #5d6b78;
+  display: grid;
+  gap: 6px;
+  line-height: 1.7;
 }
 
-.field-block h3 {
+.quiz-notice p {
   margin: 0;
-  color: #2f3841;
-  font-size: 18px;
-}
-
-.field-block p {
-  margin: 8px 0 12px;
-  color: #718191;
   font-size: 14px;
-}
-
-.field-block input[type='email'] {
-  width: 100%;
-  border: 1px solid #cbd5df;
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 15px;
-}
-
-.checkbox-row,
-.radio-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #4d5964;
-  font-size: 14px;
-}
-
-.checkbox-row {
-  margin-top: 12px;
-}
-
-.gender-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
 }
 
 .submit-row {
@@ -606,7 +559,7 @@ function submitQuiz() {
   justify-content: center;
 }
 
-.footer-links a {
+.footer-links > * {
   color: #33a474;
   font-size: 14px;
   font-weight: 600;
