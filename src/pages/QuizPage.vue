@@ -143,13 +143,13 @@ const router = useRouter()
 const { questions, state, answeredCount, isComplete, selectOptionAt, finalizeQuiz } = useQuiz()
 
 const scaleOptions: ScaleOption[] = [
-  { value: -3, label: '强烈不同意', side: 'disagree', sizeClass: 'size-xl' },
-  { value: -2, label: '不同意', side: 'disagree', sizeClass: 'size-lg' },
-  { value: -1, label: '略微不同意', side: 'disagree', sizeClass: 'size-md' },
-  { value: 0, label: '中立', side: 'neutral', sizeClass: 'size-sm' },
-  { value: 1, label: '略微同意', side: 'agree', sizeClass: 'size-md' },
-  { value: 2, label: '同意', side: 'agree', sizeClass: 'size-lg' },
   { value: 3, label: '强烈同意', side: 'agree', sizeClass: 'size-xl' },
+  { value: 2, label: '同意', side: 'agree', sizeClass: 'size-lg' },
+  { value: 1, label: '略微同意', side: 'agree', sizeClass: 'size-md' },
+  { value: 0, label: '中立', side: 'neutral', sizeClass: 'size-sm' },
+  { value: -1, label: '略微不同意', side: 'disagree', sizeClass: 'size-md' },
+  { value: -2, label: '不同意', side: 'disagree', sizeClass: 'size-lg' },
+  { value: -3, label: '强烈不同意', side: 'disagree', sizeClass: 'size-xl' },
 ]
 
 function onSelect(questionIndex: number, value: number) {
