@@ -28,6 +28,12 @@ defineExpose({
       </div>
     </div>
 
+    <div class="share-poster__probability">
+      <span>匹配概率</span>
+      <strong>{{ result.matchProbability }}%</strong>
+      <p>基于多轮问卷扰动模拟估计</p>
+    </div>
+
     <div class="share-poster__tags">
       <span v-for="tag in (result.characterMatches[0]?.tags || (result.tags.length ? result.tags : result.archetype.tags)).slice(0, 4)" :key="tag">{{ tag }}</span>
     </div>
@@ -117,6 +123,30 @@ defineExpose({
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.share-poster__probability {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.share-poster__probability span,
+.share-poster__probability p {
+  color: rgba(246, 240, 255, 0.72);
+}
+
+.share-poster__probability strong {
+  display: block;
+  margin: 6px 0 4px;
+  font-family: var(--display-font);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.share-poster__probability p {
+  margin: 0;
+  font-size: 0.85rem;
 }
 
 .share-poster__tags span {

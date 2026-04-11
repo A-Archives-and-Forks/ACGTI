@@ -10,6 +10,7 @@ function createShareText(result: QuizResult) {
   return [
     `我在 ACGTI 命中的角色代码是 ${result.code}`,
     `命中角色：${featured ? `${featured.name}（${featured.series}）` : '未知角色'}`,
+    `匹配概率：${result.matchProbability}%`,
     `对应原型：${result.archetype.name}`,
     result.archetype.subtitle,
     `剧情位置：${result.archetype.narrativeRole}`,

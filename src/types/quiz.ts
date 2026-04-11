@@ -107,6 +107,7 @@ export interface QuizResult {
   scores: Record<DimensionPair, DimensionScore>
   tags: string[]
   matchScore: number
+  matchProbability: number
   characterMatches: CharacterMatch[]
   featuredCharacter: CharacterMatch | null
 }

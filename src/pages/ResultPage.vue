@@ -155,7 +155,18 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
           <div class="hero-badge-wrap">
             <span class="hero-code">{{ displayCode }}</span>
           </div>
+          <div class="hero-metrics">
+            <div class="hero-metric">
+              <span>角色匹配概率</span>
+              <strong>{{ result.matchProbability }}%</strong>
+            </div>
+            <div class="hero-metric">
+              <span>整体命中感</span>
+              <strong>{{ result.matchScore }}%</strong>
+            </div>
+          </div>
           <p class="hero-quote">“{{ result.archetype.oneLiner }}”</p>
+          <p class="hero-probability-note">概率由多轮问卷扰动模拟估计，表示该角色在轻微答题波动下仍保持第一名的稳定度。</p>
 
           <div class="hero-actions">
             <button class="action-btn light" @click="copyText">
@@ -285,6 +296,7 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
           <p class="small-title">命中角色</p>
           <h3>{{ primaryCharacter?.name || result.archetype.name }}</h3>
           <p class="profile-code">{{ displayCode }}</p>
+          <p class="profile-probability">匹配概率 {{ result.matchProbability }}%</p>
         </div>
 
         <div class="sidebar-card nav-card">
@@ -394,6 +406,43 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
   font-weight: 500;
   font-style: italic;
   opacity: 0.95;
+}
+
+.hero-metrics {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-metric {
+  min-width: 148px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.hero-metric span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.88;
+}
+
+.hero-metric strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.hero-probability-note {
+  margin: 14px 0 0;
+  max-width: 620px;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.88;
 }
 
 .hero-actions {
@@ -759,6 +808,13 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
   font-weight: 800;
 }
 
+.profile-probability {
+  margin: 10px 0 0;
+  color: #5f6b75;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .nav-card {
   display: grid;
   gap: 2px;
@@ -893,6 +949,24 @@ function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLa
     font-size: 16px;
     line-height: 1.6;
     margin-top: 14px;
+  }
+
+  .hero-metrics {
+    gap: 8px;
+  }
+
+  .hero-metric {
+    flex: 1 1 140px;
+    min-width: 0;
+    padding: 10px 12px;
+  }
+
+  .hero-metric strong {
+    font-size: 21px;
+  }
+
+  .hero-probability-note {
+    font-size: 13px;
   }
 
   .hero-image {

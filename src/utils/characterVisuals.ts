@@ -43,6 +43,7 @@ export function hydrateQuizResult(result: QuizResult | null): QuizResult | null 
 
   return {
     ...result,
+    matchProbability: result.matchProbability ?? result.matchScore ?? 0,
     characterMatches,
     featuredCharacter,
   }

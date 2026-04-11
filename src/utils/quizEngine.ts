@@ -63,6 +63,7 @@ const ARCHETYPE_WEIGHT = 0.35
 const VECTOR_WEIGHT = 0.3
 const CHARACTER_SPECIFIC_WEIGHT = 0.1
 const CLOSE_MATCH_THRESHOLD = 0.025
+const MATCH_PROBABILITY_SIMULATION_RUNS = 240
 
 // 16personalities 风格的维度标签配置
 export const TRAIT_CONFIG = {
@@ -131,17 +132,77 @@ type DirectionalMax = Record<DimensionPair, { positive: number; negative: number
 type ArchetypeAccumulator = Record<ArchetypeId, number>
 type UserVector = Record<DimensionId, number>
 
+type AnswerProfile = {
+  scores: Record<DimensionPair, DimensionScore>
+  mbtiCode: string
+  archetypeRaw: ArchetypeAccumulator
+  userVector: UserVector
+  matchedArchetype: Archetype
+}
+
 export function calculateQuizResult({
   answers,
   questions,
   archetypes,
   characters,
+  includeProbabilityEstimate = true,
 }: {
   answers: number[]
   questions: Question[]
   archetypes: Archetype[]
   characters: CharacterMatch[]
+  includeProbabilityEstimate?: boolean
 }): QuizResult {
+  const answerProfile = buildAnswerProfile({
+    answers,
+    questions,
+    archetypes,
+  })
+  const { scores, mbtiCode, archetypeRaw, userVector, matchedArchetype } = answerProfile
+  const characterRankings = rankCharactersByProfile({
+    scores,
+    characters,
+    archetypeRaw,
+    userVector,
+    answers,
+  })
+  const leadingMatches = collectLeadingMatches(characterRankings)
+  const featuredCharacter = leadingMatches[0]?.character ?? null
+  const charMatches = leadingMatches.slice(0, 3).map((item) => item.character)
+  const roleCode = featuredCharacter?.code ?? 'UNKN'
+  const matchScore = calculateCharacterMatchScore(leadingMatches[0])
+  const matchProbability = includeProbabilityEstimate
+    ? estimateCharacterMatchProbability({
+      answers,
+      questions,
+      archetypes,
+      characters,
+      featuredCharacterId: featuredCharacter?.id ?? null,
+    })
+    : 0
+
+  return {
+    code: roleCode,
+    mbtiCode,
+    scores,
+    archetype: matchedArchetype,
+    tags: [matchedArchetype.narrativeRole, ...matchedArchetype.tags].slice(0, 6),
+    matchScore,
+    matchProbability,
+    characterMatches: charMatches,
+    featuredCharacter,
+  }
+}
+
+function buildAnswerProfile({
+  answers,
+  questions,
+  archetypes,
+}: {
+  answers: number[]
+  questions: Question[]
+  archetypes: Archetype[]
+}): AnswerProfile {
   const rawScores: Record<DimensionPair, number> = {
     'E_I': 0, 'S_N': 0, 'T_F': 0, 'J_P': 0
   }
@@ -190,7 +251,7 @@ export function calculateQuizResult({
   })
 
   const scores = {} as Record<DimensionPair, DimensionScore>
-  let finalCode = ''
+  let mbtiCode = ''
 
   for (const pair in DIMENSION_LETTERS) {
     const dimension = pair as DimensionPair
@@ -206,33 +267,103 @@ export function calculateQuizResult({
       dominant,
       percentage
     }
-    finalCode += dominant
+    mbtiCode += dominant
   }
-
-  const matchedArchetype = pickMatchedArchetype(archetypes, archetypeRaw, finalCode)
-  const characterRankings = rankCharactersByProfile({
-    scores,
-    characters,
-    archetypeRaw,
-    userVector,
-    answers,
-  })
-  const leadingMatches = collectLeadingMatches(characterRankings)
-  const featuredCharacter = leadingMatches[0]?.character ?? null
-  const charMatches = leadingMatches.slice(0, 3).map((item) => item.character)
-  const roleCode = featuredCharacter?.code ?? 'UNKN'
-  const matchScore = calculateCharacterMatchScore(leadingMatches[0])
 
   return {
-    code: roleCode,
-    mbtiCode: finalCode,
     scores,
-    archetype: matchedArchetype,
-    tags: [matchedArchetype.narrativeRole, ...matchedArchetype.tags].slice(0, 6),
-    matchScore,
-    characterMatches: charMatches,
-    featuredCharacter,
+    mbtiCode,
+    archetypeRaw,
+    userVector,
+    matchedArchetype: pickMatchedArchetype(archetypes, archetypeRaw, mbtiCode),
   }
+}
+
+function estimateCharacterMatchProbability({
+  answers,
+  questions,
+  archetypes,
+  characters,
+  featuredCharacterId,
+}: {
+  answers: number[]
+  questions: Question[]
+  archetypes: Archetype[]
+  characters: CharacterMatch[]
+  featuredCharacterId: string | null
+}) {
+  if (!featuredCharacterId) {
+    return 0
+  }
+
+  // 用固定种子的局部扰动模拟估计“当前第一名角色”的稳定度。
+  const rng = createSeededRngFromAnswers(answers)
+  let hits = 0
+
+  for (let index = 0; index < MATCH_PROBABILITY_SIMULATION_RUNS; index += 1) {
+    const simulatedAnswers = perturbAnswers(answers, rng)
+    const profile = buildAnswerProfile({
+      answers: simulatedAnswers,
+      questions,
+      archetypes,
+    })
+    const rankings = rankCharactersByProfile({
+      scores: profile.scores,
+      characters,
+      archetypeRaw: profile.archetypeRaw,
+      userVector: profile.userVector,
+      answers: simulatedAnswers,
+    })
+    const simulatedWinnerId = collectLeadingMatches(rankings)[0]?.character.id ?? null
+
+    if (simulatedWinnerId === featuredCharacterId) {
+      hits += 1
+    }
+  }
+
+  return Math.max(1, Math.round((hits / MATCH_PROBABILITY_SIMULATION_RUNS) * 100))
+}
+
+function createSeededRngFromAnswers(answers: number[]) {
+  let seed = 2166136261
+
+  for (let index = 0; index < answers.length; index += 1) {
+    seed ^= answers[index] + index + 17
+    seed = Math.imul(seed, 16777619)
+  }
+
+  return () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+    return seed / 0x100000000
+  }
+}
+
+function perturbAnswers(answers: number[], rng: () => number) {
+  return answers.map((answer) => {
+    const roll = rng()
+
+    if (roll < 0.08) {
+      return clampAnswer(answer - 1)
+    }
+
+    if (roll < 0.16) {
+      return clampAnswer(answer + 1)
+    }
+
+    if (roll < 0.18) {
+      return clampAnswer(answer - 2)
+    }
+
+    if (roll < 0.2) {
+      return clampAnswer(answer + 2)
+    }
+
+    return answer
+  })
+}
+
+function clampAnswer(value: number) {
+  return Math.max(-3, Math.min(3, value))
 }
 
 function createEmptyArchetypeAccumulator(): ArchetypeAccumulator {
@@ -694,6 +825,7 @@ export function createDebugQuizResult({
     archetype: matchedArchetype,
     tags: [matchedArchetype.narrativeRole, ...matchedArchetype.tags].slice(0, 6),
     matchScore: 92,
+    matchProbability: 88,
     characterMatches: [character],
     featuredCharacter: character,
   }
