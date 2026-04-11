@@ -58,9 +58,11 @@ const QUESTION_WEIGHT_FALLBACKS: Record<DimensionPair, Partial<Record<QuestionAr
 const VECTOR_AXES: DimensionId[] = ['expression', 'temperature', 'judgement', 'order', 'agency', 'aura']
 const ARCHETYPE_IDS = Object.values(ROLE_TO_ARCHETYPE)
 
-const MBTI_WEIGHT = 0.35
-const ARCHETYPE_WEIGHT = 0.4
-const VECTOR_WEIGHT = 0.25
+const MBTI_WEIGHT = 0.25
+const ARCHETYPE_WEIGHT = 0.35
+const VECTOR_WEIGHT = 0.3
+const CHARACTER_SPECIFIC_WEIGHT = 0.1
+const CLOSE_MATCH_THRESHOLD = 0.025
 
 // 16personalities 风格的维度标签配置
 export const TRAIT_CONFIG = {
@@ -214,10 +216,11 @@ export function calculateQuizResult({
     archetypeRaw,
     userVector,
   })
-  const featuredCharacter = characterRankings[0]?.character ?? null
-  const charMatches = characterRankings.slice(0, 3).map((item) => item.character)
+  const leadingMatches = collectLeadingMatches(characterRankings)
+  const featuredCharacter = leadingMatches[0]?.character ?? null
+  const charMatches = leadingMatches.slice(0, 3).map((item) => item.character)
   const roleCode = featuredCharacter?.code ?? 'UNKN'
-  const matchScore = calculateCharacterMatchScore(characterRankings[0])
+  const matchScore = calculateCharacterMatchScore(leadingMatches[0])
 
   return {
     code: roleCode,
@@ -319,6 +322,7 @@ type RankedCharacter = {
   mbti: number
   archetype: number
   vector: number
+  specific: number
 }
 
 function rankCharactersByProfile({
@@ -334,10 +338,15 @@ function rankCharactersByProfile({
 }) {
   return [...characters]
     .map((character) => {
-      const mbti = scoreMbti(character.matchCode, scores)
+      const mbti = scoreFlexibleMbti(character, scores)
       const archetype = scoreArchetype(character.archetypeId, archetypeRaw)
       const vector = scoreVector(userVector, character.vector)
-      const total = MBTI_WEIGHT * mbti + ARCHETYPE_WEIGHT * archetype + VECTOR_WEIGHT * vector
+      const specific = scoreCharacterSpecific(userVector, character)
+      const total =
+        MBTI_WEIGHT * mbti +
+        ARCHETYPE_WEIGHT * archetype +
+        VECTOR_WEIGHT * vector +
+        CHARACTER_SPECIFIC_WEIGHT * specific
 
       return {
         character,
@@ -345,6 +354,7 @@ function rankCharactersByProfile({
         mbti,
         archetype,
         vector,
+        specific,
       }
     })
     .sort((left, right) => {
@@ -361,6 +371,11 @@ function rankCharactersByProfile({
       const vectorDelta = right.vector - left.vector
       if (Math.abs(vectorDelta) > 0.005) {
         return vectorDelta
+      }
+
+      const specificDelta = right.specific - left.specific
+      if (Math.abs(specificDelta) > 0.005) {
+        return specificDelta
       }
 
       return left.character.name.localeCompare(right.character.name, 'zh-Hans-CN')
@@ -388,6 +403,14 @@ function scoreMbti(
   return total / 400
 }
 
+function scoreFlexibleMbti(
+  character: CharacterMatch,
+  scores: Record<DimensionPair, DimensionScore>,
+) {
+  const codes = [character.matchCode, ...(character.matchCodeFlex ?? [])]
+  return codes.reduce((best, code) => Math.max(best, scoreMbti(code, scores)), 0)
+}
+
 function scoreArchetype(archetypeId: ArchetypeId, archetypeRaw: ArchetypeAccumulator) {
   const values = Object.values(archetypeRaw)
   const min = Math.min(...values)
@@ -407,6 +430,53 @@ function scoreVector(
 ) {
   const cosine = cosineSimilarity(userVector, characterVector)
   return (cosine + 1) / 2
+}
+
+function scoreCharacterSpecific(
+  userVector: UserVector,
+  character: CharacterMatch,
+) {
+  const uniqueAxes = character.signature?.uniqueAxes
+  if (!uniqueAxes || !Object.keys(uniqueAxes).length) {
+    return scoreVector(userVector, character.vector)
+  }
+
+  let weightedScore = 0
+  let weightTotal = 0
+
+  for (const axis of Object.keys(uniqueAxes) as DimensionId[]) {
+    const expected = uniqueAxes[axis] ?? 0
+    const actual = userVector[axis]
+    const axisWeight = Math.max(0.5, Math.abs(expected))
+    const distance = Math.abs(actual - expected)
+    const similarity = Math.max(0, 1 - distance / 18)
+    weightedScore += similarity * axisWeight
+    weightTotal += axisWeight
+  }
+
+  if (!weightTotal) {
+    return 0.5
+  }
+
+  return weightedScore / weightTotal
+}
+
+function collectLeadingMatches(rankings: RankedCharacter[]) {
+  if (!rankings.length) {
+    return []
+  }
+
+  const leader = rankings[0]
+  const closeMatches = rankings.filter((item) => leader.total - item.total <= CLOSE_MATCH_THRESHOLD)
+
+  if (closeMatches.length === 1) {
+    return rankings
+  }
+
+  return [
+    ...closeMatches,
+    ...rankings.filter((item) => leader.total - item.total > CLOSE_MATCH_THRESHOLD)
+  ]
 }
 
 function cosineSimilarity(

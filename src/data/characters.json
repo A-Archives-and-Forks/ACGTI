@@ -5,12 +5,16 @@
     "series": "VOCALOID",
     "image": "/images/characters/hatsune-miku.png",
     "matchCode": "ENFP",
+    "matchCodeFlex": ["ENFJ", "ESFJ"],
     "code": "HSMK",
     "title": "世界第一的公主殿下（劳务派遣版）",
     "archetypeId": "luminous-lead",
     "tags": ["电子韭菜收割机", "葱田永动机", "演唱会空气吉他冠军", "二次元公务员"],
     "note": "你以为她是歌姬，其实她是二次元公务员——演唱会排期比社畜加班还密，葱色双马尾一晃，弹幕自动刷「世最可」，哪怕你根本没听清歌词。属于那种「我不认识她，但我刷过她的表情包」的典中典。",
-    "vector": { "expression": 3, "temperature": 2, "judgement": 0, "order": 0, "agency": 3, "aura": 2 }
+    "vector": { "expression": 3, "temperature": 2, "judgement": 0, "order": 0, "agency": 3, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "temperature": 2, "agency": 3, "aura": 2 }
+    }
   },
   {
     "id": "ayanami-rei",
@@ -23,7 +27,10 @@
     "archetypeId": "icebound-observer",
     "tags": ["微笑税", "绷带美学创始人", "AT力场级社交距离", "台词比贴吧水帖少"],
     "note": "全剧台词加起来不如你一天刷的贴吧多，但人气能杀进历史前三。她站在那里就是「高冷」的词典释义——你甚至不敢问路，怕她回你一句「どうでもいい」（关我屁事）。",
-    "vector": { "expression": -3, "temperature": -2, "judgement": 2, "order": 1, "agency": 1, "aura": 3 }
+    "vector": { "expression": -3, "temperature": -2, "judgement": 2, "order": 1, "agency": 1, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "expression": -3, "temperature": -2, "aura": 3 }
+    }
   },
   {
     "id": "asuka-langley",
@@ -36,7 +43,10 @@
     "archetypeId": "chaos-spark",
     "tags": ["嘴硬率300%", "破防名场面年度MVP", "你算哪块小饼干", "吵架自带BGM"],
     "note": "嘴上「你算什么」翻译过来是「快来懂我」。她骂人时你血压飙升，她破防时你截图发群——属于那种「出场自带吵架BGM」的典中典。建议搭配弹幕「明日香又又又破防了」食用。",
-    "vector": { "expression": 3, "temperature": 1, "judgement": -1, "order": -1, "agency": 3, "aura": 3 }
+    "vector": { "expression": 3, "temperature": 1, "judgement": -1, "order": -1, "agency": 3, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "agency": 3, "aura": 3 }
+    }
   },
   {
     "id": "edogawa-conan",
@@ -57,12 +67,16 @@
     "series": "东方Project",
     "image": "/images/characters/hakurei-reimu.png",
     "matchCode": "ISTP",
+    "matchCodeFlex": ["ESTP"],
     "code": "BLLM",
     "title": "贫穷但能打·摸鱼巫女",
     "archetypeId": "icebound-observer",
     "tags": ["香火钱=0", "战力∞", "异变就是拿来揍的", "东方圈唯一指定门面"],
     "note": "神社穷得养蚊子，但她人气养活了整个东方圈。你以为她在摆烂，其实她只是把「赢」字写在了懒狗皮下面。名言：「没钱？那就把惹事的揍一顿」。属于「穷得理直气壮」的典范。",
-    "vector": { "expression": 1, "temperature": 1, "judgement": 2, "order": 2, "agency": 3, "aura": 3 }
+    "vector": { "expression": 1, "temperature": 1, "judgement": 1, "order": 0, "agency": 3, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "agency": 3, "order": 0, "temperature": 1 }
+    }
   },
   {
     "id": "gotoh-hitori",
@@ -75,7 +89,10 @@
     "archetypeId": "moonlit-guardian",
     "tags": ["线上重拳出击", "线下电子海胆", "社交恐惧行为艺术", "垃圾桶后面的霉菌"],
     "note": "在网路上她是吉他上帝，在现实中她是垃圾桶后面的霉菌。她不是内向，她是把「我先死一下」发展成了完整的表演体系——建议申遗。弹幕常用语：「波奇，你还是找个地缝钻进去吧」。",
-    "vector": { "expression": -2, "temperature": 1, "judgement": 0, "order": 0, "agency": 1, "aura": 1 }
+    "vector": { "expression": -2, "temperature": 1, "judgement": 0, "order": 0, "agency": 1, "aura": 1 },
+    "signature": {
+      "uniqueAxes": { "expression": -2, "temperature": 1, "aura": 1 }
+    }
   },
   {
     "id": "fujiwara-chika",
@@ -88,7 +105,10 @@
     "archetypeId": "trickster-orbit",
     "tags": ["书记舞病毒源头", "气氛组组长", "脑回路不走寻常路", "无害的脸有害的整活力"],
     "note": "你以为她是吉祥物，结果她是搅屎棍。她一开口，整部番的走向就会往离谱的方向狂飙。她一跳舞，整个B站都要跟着扭——属于「粉毛切开都是黑的」反面教材（她是粉毛切开是混沌）。",
-    "vector": { "expression": 3, "temperature": 2, "judgement": 0, "order": -2, "agency": 2, "aura": 2 }
+    "vector": { "expression": 3, "temperature": 2, "judgement": 0, "order": -2, "agency": 2, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "order": -2, "temperature": 2 }
+    }
   },
   {
     "id": "cirno",
@@ -112,7 +132,10 @@
     "archetypeId": "oathbound-captain",
     "tags": ["超电磁炮实为硬币发射器", "安全裤战士", "傲娇但不完全傲", "嘴上说不管身体很诚实"],
     "note": "别人吵架靠嘴，她吵架靠三倍音速硬币。嘴上「我才不管」，行动上已经冲到最前面扛伤害——属于「嘴上傲，身体诚」的经典款女主。建议搭配BGM《Only My Railgun》食用，效果更佳。",
-    "vector": { "expression": 2, "temperature": 1, "judgement": 1, "order": 1, "agency": 3, "aura": 2 }
+    "vector": { "expression": 2, "temperature": 1, "judgement": 1, "order": 1, "agency": 3, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "agency": 3, "expression": 2, "order": 1 }
+    }
   },
   {
     "id": "kaname-madoka",
@@ -136,7 +159,10 @@
     "archetypeId": "luminous-lead",
     "tags": ["法庭影后", "一人扛五百年", "吃蛋糕不胖体质", "原神奥斯卡得主"],
     "note": "你以为她是高调Diva，后来发现她是独自演了五百年独角戏的苦逼打工人。她最狠的不是演技，是明明快碎了还要端着红酒杯说「一切都在我计划之中」。建议颁发「原神最佳表演奖」和「最惨打工人奖」。",
-    "vector": { "expression": 3, "temperature": 2, "judgement": 1, "order": 1, "agency": 2, "aura": 3 }
+    "vector": { "expression": 3, "temperature": 2, "judgement": 1, "order": 1, "agency": 2, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "aura": 3, "temperature": 2 }
+    }
   },
   {
     "id": "takamatsu-tomori",
@@ -148,7 +174,10 @@
     "archetypeId": "moonlit-guardian",
     "tags": ["创可贴收集家", "内心独白播放器", "一碰就碎但很韧", "散文诗发射器"],
     "note": "你不是在说话，你是在往空气里投掷散文诗。你最大的特点不是脆弱，是脆弱得特别有文学性——别人哭是伤心，你哭是艺术行为。MyGO团内指定「情感ATM」，取款请轻按。",
-    "vector": { "expression": -1, "temperature": 2, "judgement": 1, "order": 0, "agency": 0, "aura": 2 }
+    "vector": { "expression": -1, "temperature": 2, "judgement": 1, "order": 0, "agency": 0, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "temperature": 2, "expression": -1, "aura": 2 }
+    }
   },
   {
     "id": "chihaya-anon",
@@ -160,7 +189,10 @@
     "archetypeId": "luminous-lead",
     "tags": ["先上车再补票", "社交启动器", "自己挖坑自己跳", "人际关系永动机"],
     "note": "你的人生策略是「先混进去再说」。表面上圆滑，实际上经常因为冲太快把自己冲进修罗场——但没关系，你会用新的社牛把旧坑填上。属于「社牛但容易翻车」的典型。",
-    "vector": { "expression": 3, "temperature": 2, "judgement": 0, "order": -1, "agency": 3, "aura": 1 }
+    "vector": { "expression": 3, "temperature": 2, "judgement": 0, "order": -1, "agency": 3, "aura": 1 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "agency": 3, "temperature": 2 }
+    }
   },
   {
     "id": "yo-rana",
@@ -172,7 +204,10 @@
     "archetypeId": "icebound-observer",
     "tags": ["逻辑不联网", "手感通天", "流浪吉他手", "猫系天花板"],
     "note": "别人组乐队靠沟通，你组乐队靠「出现」。你不是难懂，你只是懒得向这个世界解释——弹就完了，哪那么多废话。建议饲养时投喂荞麦面，不要强行撸猫。",
-    "vector": { "expression": -2, "temperature": -1, "judgement": 2, "order": -1, "agency": 2, "aura": 2 }
+    "vector": { "expression": -2, "temperature": -1, "judgement": 2, "order": -1, "agency": 2, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "expression": -2, "order": -1, "agency": 2 }
+    }
   },
   {
     "id": "nagasaki-soyo",
@@ -184,7 +219,10 @@
     "archetypeId": "gentle-healer",
     "tags": ["表面体面内心风暴", "话里有话十级学者", "道歉让你自我反省三天", "笑面虎战术大师"],
     "note": "你看起来最会照顾人，其实最会把话说得让人后劲很大。她没骂你，但你已经跪在键盘前反思人生——属于「笑面虎中的战术大师」。建议交往前先买好保险。",
-    "vector": { "expression": 0, "temperature": 1, "judgement": 3, "order": 2, "agency": 1, "aura": 2 }
+    "vector": { "expression": 0, "temperature": 1, "judgement": 3, "order": 2, "agency": 1, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "judgement": 3, "order": 2, "temperature": 1 }
+    }
   },
   {
     "id": "shiina-taki",
@@ -208,7 +246,10 @@
     "archetypeId": "shadow-strategist",
     "tags": ["CEO级气场", "边开会边走钢丝", "我说把人生交给我", "人形自走KPI"],
     "note": "你不是控制欲强，你只是觉得大家离了你都要出事。精神像在开董事会+在悬崖边跑马拉松——名言：「别问为什么，因为我就是规则」。建议远离，除非你想体验每天被Deadline追着跑的感觉。",
-    "vector": { "expression": -1, "temperature": -1, "judgement": 3, "order": 3, "agency": 3, "aura": 3 }
+    "vector": { "expression": -1, "temperature": -1, "judgement": 3, "order": 3, "agency": 3, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "judgement": 3, "agency": 3, "aura": 3 }
+    }
   },
   {
     "id": "wakaba-mutsumi",
@@ -220,7 +261,10 @@
     "archetypeId": "moonlit-guardian",
     "tags": ["黄瓜田里的沉默核武", "一开口就是名场面", "你永远猜不透", "不说话则已一说话刀死你"],
     "note": "你不是情绪少，你是情绪都藏在别人看不懂的地方。平时像背景板，却总在关键节点露出让人不安的执拗和迟钝感——属于「安静得过头，反而让人不敢移开视线」的类型。",
-    "vector": { "expression": -3, "temperature": -2, "judgement": 3, "order": 2, "agency": 2, "aura": 3 }
+    "vector": { "expression": -3, "temperature": -2, "judgement": 3, "order": 2, "agency": 2, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "expression": -3, "judgement": 3, "aura": 3 }
+    }
   },
   {
     "id": "mortis",
@@ -232,7 +276,10 @@
     "archetypeId": "shadow-strategist",
     "tags": ["人格切换感", "压迫性登场", "不说人话式表达", "危险的舞台变量"],
     "note": "这不是单纯的安静，而是像把真实情绪锁进另一个舞台壳里。你给人的感觉更像一个随时会改写氛围的变量，克制、陌生，而且带着明确的攻击性轮廓。",
-    "vector": { "expression": -2, "temperature": -2, "judgement": 3, "order": 1, "agency": 3, "aura": 3 }
+    "vector": { "expression": -2, "temperature": -2, "judgement": 3, "order": 1, "agency": 3, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "agency": 3, "aura": 3, "temperature": -2 }
+    }
   },
   {
     "id": "misumi-uika",
@@ -244,7 +291,10 @@
     "archetypeId": "gentle-healer",
     "tags": ["白月光假象", "越看越不对劲", "自己也不知道下一步", "温柔型不定时炸弹"],
     "note": "你给人的第一印象是「应该很好相处」，但真正危险的地方在于：你自己也未必完全知道自己下一步会做什么——属于「温柔型不定时炸弹」。建议远离，除非你享受被炸的刺激。",
-    "vector": { "expression": 0, "temperature": 1, "judgement": 1, "order": 0, "agency": 2, "aura": 3 }
+    "vector": { "expression": 0, "temperature": 1, "judgement": 1, "order": 0, "agency": 2, "aura": 3 },
+    "signature": {
+      "uniqueAxes": { "aura": 3, "agency": 2, "temperature": 1 }
+    }
   },
   {
     "id": "yahata-umiri",
@@ -268,7 +318,10 @@
     "archetypeId": "trickster-orbit",
     "tags": ["营业感拉满", "社交媒体原住民", "整活就是生产力", "人形自走热点"],
     "note": "你有一种「明明在发疯，但发得很会经营」的现代感。人设切换像开滤镜，情绪表达像在给自己的人生做运营——建议出书《如何把发疯变成流量密码》。",
-    "vector": { "expression": 3, "temperature": 1, "judgement": 0, "order": -1, "agency": 2, "aura": 2 }
+    "vector": { "expression": 3, "temperature": 1, "judgement": 0, "order": -1, "agency": 2, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "order": -1, "agency": 2 }
+    }
   },
   {
     "id": "jia-ran",
@@ -280,6 +333,9 @@
     "archetypeId": "luminous-lead",
     "tags": ["小小只核弹", "吃饭直播都封神", "互联网女儿实锤", "可爱生产力"],
     "note": "你最大的能力不是可爱，是把可爱做成高频武器。别人卖萌是一种状态，你卖萌是一种生产力——她一开口，弹幕自动变成「然然我的然然」，哪怕她只是在念广告词。建议备好胰岛素，甜度超标。",
-    "vector": { "expression": 3, "temperature": 3, "judgement": -1, "order": -1, "agency": 2, "aura": 2 }
+    "vector": { "expression": 3, "temperature": 3, "judgement": -1, "order": -1, "agency": 2, "aura": 2 },
+    "signature": {
+      "uniqueAxes": { "expression": 3, "temperature": 3, "order": -1 }
+    }
   }
 ]
