@@ -1,0 +1,29 @@
+{
+  "seed": 20260411,
+  "runs": 200000,
+  "probabilities": {
+    "fujiwara-chika": 22.56,
+    "mortis": 10.13,
+    "togawa-sakiko": 8.88,
+    "yahata-umiri": 7.97,
+    "shiina-taki": 7.08,
+    "ayanami-rei": 6.92,
+    "cirno": 5.38,
+    "edogawa-conan": 5.27,
+    "chihaya-anon": 4.74,
+    "jia-ran": 3.56,
+    "nagasaki-soyo": 3.43,
+    "kaname-madoka": 2.42,
+    "uika-nyubara": 2.21,
+    "asuka-langley": 2.18,
+    "gotoh-hitori": 1.89,
+    "yo-rana": 1.84,
+    "takamatsu-tomori": 1.51,
+    "hatsune-miku": 1.12,
+    "misaka-mikoto": 0.76,
+    "misumi-uika": 0.06,
+    "wakaba-mutsumi": 0.05,
+    "furina": 0.03,
+    "hakurei-reimu": 0
+  }
+}

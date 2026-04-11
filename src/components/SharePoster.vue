@@ -31,7 +31,7 @@ defineExpose({
     <div class="share-poster__probability">
       <span>匹配概率</span>
       <strong>{{ result.matchProbability }}%</strong>
-      <p>基于多轮问卷扰动模拟估计</p>
+      <p>基于总体随机答卷命中率</p>
     </div>
 
     <div class="share-poster__tags">

@@ -1,5 +1,6 @@
 import characterVisualsData from '../data/characterVisuals.json'
 import type { CharacterMatch, QuizRecord, QuizResult } from '../types/quiz'
+import { getCharacterPopulationProbability } from './characterProbability.ts'
 
 type CharacterVisualMeta = {
   image: string
@@ -43,7 +44,7 @@ export function hydrateQuizResult(result: QuizResult | null): QuizResult | null 
 
   return {
     ...result,
-    matchProbability: result.matchProbability ?? result.matchScore ?? 0,
+    matchProbability: result.matchProbability ?? getCharacterPopulationProbability(featuredCharacter?.id),
     characterMatches,
     featuredCharacter,
   }
