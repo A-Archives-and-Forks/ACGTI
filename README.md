@@ -138,7 +138,14 @@ npm run build
 
 - GitHub Actions：负责在 `main` push / PR 时校验构建是否通过
 - Cloudflare Pages：负责连接 GitHub 后的自动构建与部署
-- 当前未配置 GitHub Release 流水线，待版本里程碑稳定后再引入
+- GitHub Release：在推送 `v*` tag 时自动构建 `dist/`、打包为 zip，并创建 Release
+
+发版方式示例：
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
 
 ## 内容数据
 
