@@ -73,7 +73,7 @@
 
       <section class="result-form-card">
         <div class="submit-row">
-          <p class="progress-hint">已完成 {{ answeredCount }} / {{ questions.length }} 题</p>
+          <p class="progress-hint">已完成 {{ answeredCount }} / {{ questions.length }} 题（题目数量也是有“小巧思”哦）</p>
           <button
             class="submit-btn"
             type="button"
