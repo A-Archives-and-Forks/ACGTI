@@ -14,6 +14,10 @@
         <div class="hero-relay">
           <p class="hero-relay-title">{{ t('home.relayTitle') }}</p>
           <p class="hero-relay-copy">{{ t('home.relayCopy') }}</p>
+          <div class="hero-relay-visitor">
+            <svg class="visitor-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            <span v-html="t('home.visitorCount')"></span>
+          </div>
           <button class="hero-relay-button" type="button" @click="copyQuizLink">{{ t('home.relayButton') }}</button>
           <p v-if="relayFeedback" class="hero-relay-feedback">{{ relayFeedback }}</p>
         </div>
@@ -323,8 +327,37 @@ async function copyQuizLink() {
   opacity: 0.92;
 }
 
+.hero-relay-visitor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.visitor-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+.hero-relay-visitor :deep(strong) {
+  color: #ffd700;
+  font-size: 1.1rem;
+  margin: 0 2px;
+}
+
 .hero-relay-button {
-  margin-top: 0.9rem;
+  margin-top: 1.2rem;
   min-height: 42px;
   padding: 0 1.2rem;
   border: 0;
