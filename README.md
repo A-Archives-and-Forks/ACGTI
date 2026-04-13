@@ -1,6 +1,8 @@
 <div align="center">
 
-# ACGTI (ACG Type Indicator)
+# ACGTI
+
+ACG Type Indicator
 
 **一个以 MBTI 为基础的二次元角色原型测试站点**
 
@@ -10,7 +12,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Hits](https://img.shields.io/badge/Hits-3.5M+-green.svg?style=flat-square)]()
 
-[**✨ 立即体验**](https://acgti.tianxingleo.top/) | [**📖 阅读文档**](#工作原理) | [**🤝 参与贡献**](#贡献)
+[**✨ 立即体验**](https://acgti.tianxingleo.top/) | [**📖 阅读文档**](#️-架构与原理) | [**🤝 参与贡献**](#-贡献)
 
 > ⚠️ 本工具仅作娱乐用途，不作为心理诊断、医学评估或现实人格结论。
 
@@ -30,12 +32,12 @@
 
 ## ✨ 核心特性
 
-- 🧭 **MBTI 四维判定**：基于 E/I、S/N、T/F、J/P 四大维度构建严谨的底层框架。
-- 🔮 **8 种专属原型**：发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者。
-- 🎭 **40+ 经典角色库**：涵盖 VOCALOID、EVA、名侦探柯南、东方、孤独摇滚、MyGO、原神等热门作品，持续扩充中。
-- 📊 **可视化交互**：16personalities 风格的交互式倾向滑块，直观展现你的思维倾向。
-- 📸 **一键分享**：精美的结果图报表，支持一键导出 PNG 海报分享给同好。
-- ⚡ **纯前端架构**：无后端、无注册、无数据收集，测算过程全部在本地浏览器完成，极致极速且保护隐私。
+- **MBTI 四维判定**：基于 E/I、S/N、T/F、J/P 四大维度构建严谨的底层框架。
+- **8 种专属原型**：发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者。
+- **40+ 经典角色库**：涵盖 VOCALOID、EVA、名侦探柯南、东方、孤独摇滚、MyGO、原神等热门作品，持续扩充中。
+- **可视化交互**：16personalities 风格的交互式倾向滑块，直观展现你的思维倾向。
+- **一键分享**：精美的结果图报表，支持一键导出 PNG 海报分享给同好。
+- **纯前端架构**：无后端、无注册、无数据收集，测算过程全部在本地浏览器完成，极致极速且保护隐私。
 
 ## 🛠️ 技术栈
 
@@ -141,6 +143,15 @@ npm run build
 
 构建产物输出到 `dist/`，配置为相对路径（`base: './'`），可直接部署到 Cloudflare Pages 等静态托管平台。
 
+## 📰 时间线
+
+- **2026.4.14 7:00:** 网站访问人数超过 100 万，网站访问量达到 350 万
+- **2026.4.13 17:00:** Star 数达到 250
+- **2026.4.12 8:00:** 访问人数达到 50 万
+- **2026.4.11 23:00:** 进入 **永雏塔菲** 直播间
+- **2026.4.11 12:00:** 在校内 100 人 BanG Dream 群测试
+- **2026.4.10:** 创建仓库
+
 ## 🤝 贡献
 
 欢迎 **Star** · 欢迎 **Fork** · 欢迎 **PR**！
@@ -177,27 +188,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-## 📰 时间线
-
-- **2026.4.14 7:00:** 网站访问人数超过 100 万，网站访问量达到 350 万
-- **2026.4.13 17:00:** Star 数达到 250
-- **2026.4.12 8:00:** 访问人数达到 50 万
-- **2026.4.11 23:00:** 进入 **永雏塔菲** 直播间
-- **2026.4.11 12:00:** 在校内 100 人 BanG Dream 群测试
-- **2026.4.10:** 创建仓库
-
-## 致谢
-
-- **界面风格** — 参考自 [16personalities](https://www.16personalities.com/) 的扁平化设计与专业测评体验
-- **项目启发** — 受到开源项目 [UnluckyNinja/SBTI-test](https://github.com/UnluckyNinja/SBTI-test) 的启发
-- **视觉素材** — 项目中的角色立绘与背景图片由 **ChatGPT (DALL·E)** 生成
-- **特别鸣谢** — [saurlax](https://saurlax.com/) 提供 GPT-5.4 Token 支持
-
-## 作者
-
-**[tianxingleo](https://github.com/tianxingleo)**
-
-## 📄 开源协议与免责声明 (License & Disclaimers)
+## 📄 开源协议与免责声明
 
 ### 代码授权
 
@@ -235,6 +226,17 @@ git push origin v0.1.0
     />
   </picture>
 </a>
+
+## 致谢
+
+- **界面风格** — 参考自 [16personalities](https://www.16personalities.com/) 的扁平化设计与专业测评体验
+- **项目启发** — 受到开源项目 [UnluckyNinja/SBTI-test](https://github.com/UnluckyNinja/SBTI-test) 的启发
+- **视觉素材** — 项目中的角色立绘与背景图片由 **ChatGPT (DALL·E)** 生成
+- **特别鸣谢** — [saurlax](https://saurlax.com/) 提供 GPT-5.4 Token 支持
+
+## 作者
+
+**[tianxingleo](https://github.com/tianxingleo/)** · [tianxingleo.top](https://tianxingleo.top)
 
 <div align="center">
 
