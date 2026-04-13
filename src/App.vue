@@ -37,7 +37,6 @@ onUnmounted(() => {
   document.removeEventListener('click', closeLangDropdown)
 })
 
-const showRecentResult = computed(() => route.path !== '/result')
 const showFooter = computed(() => route.path !== '/quiz')
 </script>
 
@@ -81,7 +80,7 @@ const showFooter = computed(() => route.path !== '/quiz')
         </div>
         <RouterLink to="/characters">{{ t('app.nav.characters') }}</RouterLink>
         <RouterLink to="/about">{{ t('app.nav.about') }}</RouterLink>
-        <RouterLink to="/result" v-if="showRecentResult">{{ t('app.nav.result') }}</RouterLink>
+        <RouterLink to="/result">{{ t('app.nav.result') }}</RouterLink>
         <RouterLink to="/quiz" class="button button-primary nav-cta">{{ t('app.nav.cta') }}</RouterLink>
       </nav>
     </header>

@@ -1,14 +1,16 @@
 <div align="center">
 
-# ACGTI
+# ACGTI (ACG Type Indicator)
 
-**A · C · G · T · I — ACG Type Indicator**
+**一个以 MBTI 为基础的二次元角色原型测试站点**
 
-一个以 MBTI 为基础的二次元角色原型测试站点
+回答情境式问题 · 获得唯一命中的角色代码 · 解锁你的二次元人格原型
 
-回答情境式问题 → 获得唯一命中的角色代码 → 解锁你的二次元人格原型
+[![Deploy to Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare_Pages-F38020?style=flat-square&logo=cloudflare)](https://acgti.tianxingleo.top/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Hits](https://img.shields.io/badge/Hits-3.5M+-green.svg?style=flat-square)]()
 
-[在线体验](https://acgti.tianxingleo.top/) · [开始贡献](#贡献) · [阅读文档](#工作原理)
+[**✨ 立即体验**](https://acgti.tianxingleo.top/) | [**📖 阅读文档**](#工作原理) | [**🤝 参与贡献**](#贡献)
 
 > ⚠️ 本工具仅作娱乐用途，不作为心理诊断、医学评估或现实人格结论。
 
@@ -16,58 +18,60 @@
 
 ---
 
-## 截图预览
+## 🎮 界面预览
 
-<p align="center">
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_f10e65b456aae5fdb30a2c42e767cf28.webp" alt="截图 1" width="30%" />
+<div align="center">
+  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_f10e65b456aae5fdb30a2c42e767cf28.webp" alt="首页截图" width="30%" />
   &nbsp;
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_4c23a24cd1e854f3852e2f2ed46cabd6.webp" alt="截图 2" width="30%" />
+  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_4c23a24cd1e854f3852e2f2ed46cabd6.webp" alt="答题截图" width="30%" />
   &nbsp;
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_cd45c233a68504cfbfa9319594c223c2.webp" alt="截图 3" width="30%" />
-</p>
+  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_cd45c233a68504cfbfa9319594c223c2.webp" alt="结果截图" width="30%" />
+</div>
 
-## 特性
+## ✨ 核心特性
 
-- **MBTI 四维判定** — E/I、S/N、T/F、J/P 四维度作为底层框架
-- **8 种二次元原型** — 发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者
-- **40 位角色库** — 涵盖 VOCALOID、EVA、名侦探柯南、东方 Project、孤独摇滚、辉夜大小姐、某科学的超电磁炮、魔法少女小圆、MyGO、Ave Mujica、原神等作品
-- **维度可视化** — 16personalities 风格的交互式倾向滑块
-- **分享海报** — 一键导出结果为 PNG
-- **纯前端运行** — 无后端、无注册、无数据收集，结果存于本地
+- 🧭 **MBTI 四维判定**：基于 E/I、S/N、T/F、J/P 四大维度构建严谨的底层框架。
+- 🔮 **8 种专属原型**：发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者。
+- 🎭 **40+ 经典角色库**：涵盖 VOCALOID、EVA、名侦探柯南、东方、孤独摇滚、MyGO、原神等热门作品，持续扩充中。
+- 📊 **可视化交互**：16personalities 风格的交互式倾向滑块，直观展现你的思维倾向。
+- 📸 **一键分享**：精美的结果图报表，支持一键导出 PNG 海报分享给同好。
+- ⚡ **纯前端架构**：无后端、无注册、无数据收集，测算过程全部在本地浏览器完成，极致极速且保护隐私。
 
-## 在线体验
+## 🛠️ 技术栈
 
-**[https://acgti.tianxingleo.top/](https://acgti.tianxingleo.top/)**
+<div align="center">
+  <img src="https://img.shields.io/badge/Vue.js_3-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" alt="Vue.js" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+</div>
 
-部署于 Cloudflare Pages，全球 CDN 加速。
+## ⚙️ 架构与原理
 
-## 贡献
+<details>
+<summary><b>点击展开查看工作原理</b></summary>
 
-欢迎 **Star** · 欢迎 **Fork** · 欢迎 **PR**！
-
-当前项目仍处于早期阶段，题目数量和角色库都还不够丰富。如果你有好的情境题目想法或想补充更多作品的角色，非常期待你的参与：
-
-- 补充新角色 → 编辑 `src/data/characters.json`
-- 添加新题目 → 编辑 `src/data/questions.json`
-- 修复 Bug / 改进 UI → 直接提 PR
-
-仓库已配置 GitHub Actions CI，会在 `push` 到 `main` 和所有 PR 上自动执行 `npm ci` 与 `npm run build`，用于确认静态站点能够正常构建。线上部署仍由 Cloudflare Pages 负责。
-
-## 技术栈
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Vue.js-35495E?style=flat-square&logo=vuedotjs&logoColor=4FC08D" alt="Vue.js" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Vue_Router-35495E?style=flat-square&logo=vuedotjs&logoColor=4FC08D" alt="Vue Router" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Font_Awesome-528DD7?style=flat-square&logo=fontawesome&logoColor=white" alt="Font Awesome" />
-  <img src="https://img.shields.io/badge/Cloudflare_Pages-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare Pages" />
-</p>
-
-## 项目结构
+核心计算流程如下：
 
 ```
+答题 (39道七级量表题) → 算分 (维度权重+原型权重) → 原型匹配 (8种原型) → 角色命中 (输出唯一代码) → 结果展示
+```
+
+1. **答题** — 39 道七级量表题（-3 到 +3），每题关联一个 MBTI 维度与原型权重
+2. **算分** — 按维度累加带符号权重，计算每个维度的倾向百分比（50%–100%）
+3. **原型匹配** — 将四维结果映射到 8 种二次元原型之一
+4. **角色命中** — 根据维度结果在角色库中命中 1 位主角色，输出其自定义角色代码
+5. **结果展示** — 角色代码、维度倾向滑块、角色解析、原型描述，支持导出海报
+
+</details>
+
+<details>
+<summary><b>点击展开查看项目目录结构</b></summary>
+
+```text
 src/
 ├── components/           # 可复用 UI 组件
 │   ├── AppIcon.vue
@@ -107,19 +111,22 @@ src/
 └── style.css            # 全局样式
 ```
 
-## 工作原理
+</details>
 
-```
-答题（39 道七级量表题）→ 算分（四维带符号权重 + 原型权重）→ 原型匹配（映射到 8 种原型）→ 角色命中（输出唯一角色代码）→ 结果展示
-```
+<details>
+<summary><b>点击展开查看内容数据一览</b></summary>
 
-1. **答题** — 39 道七级量表题（-3 到 +3），每题关联一个 MBTI 维度与原型权重
-2. **算分** — 按维度累加带符号权重，计算每个维度的倾向百分比（50%–100%）
-3. **原型匹配** — 将四维结果映射到 8 种二次元原型之一
-4. **角色命中** — 根据维度结果在角色库中命中 1 位主角色，输出其自定义角色代码
-5. **结果展示** — 角色代码、维度倾向滑块、角色解析、原型描述，支持导出海报
+| 文件 | 说明 |
+|:-----|:-----|
+| `src/data/questions.json` | 39 道情境式题目 — 维度、原型权重、场景标签 |
+| `src/data/archetypes.json` | 8 个角色原型 — 名称、描述、亮点、短板 |
+| `src/data/characters.json` | 40+ 个角色条目 — 角色代码、MBTI 映射、标签、六维向量 |
+| `src/data/characterVisuals.json` | 角色视觉配置 — 立绘、色彩、主题 |
+| `src/data/characterProbabilities.json` | 角色命中概率 — 基于人群统计的先验分布 |
 
-## 本地开发
+</details>
+
+## 🚀 本地开发
 
 ```bash
 # 安装依赖
@@ -134,11 +141,34 @@ npm run build
 
 构建产物输出到 `dist/`，配置为相对路径（`base: './'`），可直接部署到 Cloudflare Pages 等静态托管平台。
 
-## 持续集成与部署
+## 🤝 贡献
 
-- GitHub Actions：负责在 `main` push / PR 时校验构建是否通过
-- Cloudflare Pages：负责连接 GitHub 后的自动构建与部署
-- GitHub Release：在推送 `v*` tag 时自动构建 `dist/`、打包为 zip，并创建 Release
+欢迎 **Star** · 欢迎 **Fork** · 欢迎 **PR**！
+
+当前项目仍处于早期阶段，题目数量和角色库都还不够丰富。如果你有好的情境题目想法或想补充更多作品的角色，非常期待你的参与：
+
+- 补充新角色 → 编辑 `src/data/characters.json`
+- 添加新题目 → 编辑 `src/data/questions.json`
+- 修复 Bug / 改进 UI → 直接提 PR
+
+### 分支管理
+
+| 分支 | 用途 |
+| :--- | :--- |
+| `main` | 稳定版本，仅接受来自 `dev` 的合并 |
+| `dev` | 开发分支，日常开发在此进行 |
+
+- **内部开发**：在 `dev` 分支上进行开发，稳定后向 `main` 发起 PR 合并
+- **外部贡献**：Fork 本仓库后，向 `dev` 分支提交 Pull Request
+- **CI 校验**：仓库已配置 GitHub Actions，会在 `push` 到 `main`/`dev` 和所有 PR 上自动执行 `npm ci` 与 `npm run build`
+
+线上部署由 Cloudflare Pages 负责。
+
+## 📦 持续集成与部署
+
+- **GitHub Actions**：负责在 `main` push / PR 时校验构建是否通过
+- **Cloudflare Pages**：负责连接 GitHub 后的自动构建与部署
+- **GitHub Release**：在推送 `v*` tag 时自动构建 `dist/`、打包为 zip，并创建 Release
 
 发版方式示例：
 
@@ -146,16 +176,6 @@ npm run build
 git tag v0.1.0
 git push origin v0.1.0
 ```
-
-## 内容数据
-
-| 文件 | 说明 |
-|:-----|:-----|
-| `src/data/questions.json` | 39 道情境式题目 — 维度、原型权重、场景标签 |
-| `src/data/archetypes.json` | 8 个角色原型 — 名称、描述、亮点、短板 |
-| `src/data/characters.json` | 40 个角色条目 — 角色代码、MBTI 映射、标签、六维向量 |
-| `src/data/characterVisuals.json` | 角色视觉配置 — 立绘、色彩、主题 |
-| `src/data/characterProbabilities.json` | 角色命中概率 — 基于人群统计的先验分布 |
 
 ## 📰 时间线
 
