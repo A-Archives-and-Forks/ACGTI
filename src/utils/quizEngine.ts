@@ -167,6 +167,11 @@ export function calculateQuizResult({
   const leadingMatches = collectLeadingMatches(characterRankings)
   const featuredCharacter = leadingMatches[0]?.character ?? null
   const charMatches = leadingMatches.slice(0, 3).map((item) => item.character)
+  const topCharacterMatches = leadingMatches.slice(0, 4).map((item) => ({
+    character: item.character,
+    score: calculateCharacterMatchScore(item),
+    probability: getCharacterPopulationProbability(item.character.id),
+  }))
   const roleCode = featuredCharacter?.code ?? 'UNKN'
   const matchScore = calculateCharacterMatchScore(leadingMatches[0])
   const matchProbability = getCharacterPopulationProbability(featuredCharacter?.id)
@@ -180,6 +185,7 @@ export function calculateQuizResult({
     matchScore,
     matchProbability,
     characterMatches: charMatches,
+    topCharacterMatches,
     featuredCharacter,
   }
 }
@@ -731,11 +737,16 @@ export function createDebugQuizResult({
     matchScore: 92,
     matchProbability: getCharacterPopulationProbability(character.id),
     characterMatches: [character],
+    topCharacterMatches: [{
+      character,
+      score: 92,
+      probability: getCharacterPopulationProbability(character.id),
+    }],
     featuredCharacter: character,
   }
 }
 
-function calculateCharacterMatchScore(topMatch?: RankedCharacter) {
+function calculateCharacterMatchScore(topMatch?: Pick<RankedCharacter, 'total'> | null) {
   if (!topMatch) {
     return 60
   }

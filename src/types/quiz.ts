@@ -114,6 +114,12 @@ export interface QuizRecord {
   result: QuizResult
 }
 
+export interface CharacterMatchResult {
+  character: CharacterMatch
+  score: number
+  probability: number
+}
+
 export interface QuizResult {
   code: string
   mbtiCode: string
@@ -123,6 +129,7 @@ export interface QuizResult {
   matchScore: number
   matchProbability: number
   characterMatches: CharacterMatch[]
+  topCharacterMatches: CharacterMatchResult[]
   featuredCharacter: CharacterMatch | null
 }
 

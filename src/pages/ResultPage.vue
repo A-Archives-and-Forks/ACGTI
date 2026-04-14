@@ -7,7 +7,8 @@ import AppIcon from '../components/AppIcon.vue'
 import { useShare } from '../composables/useShare'
 import { useQuiz } from '../composables/useQuiz'
 import { useI18n } from '../i18n'
-import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, isHiddenCharacter } from '../i18n/characters'
+import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
+import { formatCharacterProbability } from '../utils/characterProbability'
 import { normalizeMbtiCode } from '../utils/quizEngine'
 
 // SharePoster 只在用户点击"导出图片"时才加载和挂载
@@ -133,6 +134,7 @@ const primaryCharacterImageCandidates = computed(() => getCharacterImageCandidat
 const activePrimaryCharacterImage = computed(() => primaryCharacterImageCandidates.value[characterImageAttemptIndex.value] ?? '')
 
 const primaryCharacter = computed(() => result.value?.characterMatches?.[0] ?? null)
+const secondaryCharacterMatches = computed(() => result.value?.topCharacterMatches?.slice(1, 4) ?? [])
 const displayTags = computed(() => {
   if (!primaryCharacter.value) {
     return []
@@ -145,6 +147,7 @@ const displayTags = computed(() => {
       )
 })
 const displayCode = computed(() => result.value?.code ?? result.value?.mbtiCode ?? '')
+const displayProbability = computed(() => formatCharacterProbability(result.value?.matchProbability ?? 0))
 const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? result.value?.archetype.accent ?? '#e2ad3b')
 const strongestTrait = computed(() => {
   if (!result.value) {
@@ -227,7 +230,7 @@ function scrollToSection(sectionId: string) {
           <div class="hero-metrics">
             <div class="hero-metric">
               <span>{{ t('result.rarity') }}</span>
-              <strong>{{ result.matchProbability }}%</strong>
+              <strong>{{ displayProbability }}%</strong>
             </div>
             <div class="hero-metric">
               <span>{{ t('result.match') }}</span>
@@ -286,6 +289,34 @@ function scrollToSection(sectionId: string) {
           <div v-if="primaryCharacter?.personaBasis?.type === 'fandom-impression'" class="persona-basis-notice">
             <span class="persona-basis-badge">{{ t('result.personaBasisBadge') }}</span>
             <p class="persona-basis-summary">{{ t('result.personaBasisTip') }}</p>
+          </div>
+        </section>
+
+        <section v-if="secondaryCharacterMatches.length" class="similar-characters-section" v-reveal>
+          <div class="section-title-wrap">
+            <div class="section-index">+</div>
+            <h2 class="section-title">{{ t('result.otherMatchesTitle', undefined, '其他高匹配角色') }}</h2>
+          </div>
+
+          <div class="similar-characters-grid">
+            <article v-for="match in secondaryCharacterMatches" :key="match.character.id" class="similar-character-card">
+              <div class="similar-character-head">
+                <div>
+                  <p class="similar-character-rank">{{ t('result.otherMatchesLabel', undefined, '高匹配候选') }}</p>
+                  <h3>{{ getLocalizedCharacterName(match.character, locale) }}</h3>
+                  <p class="similar-character-series">{{ getLocalizedCharacterSeries(match.character, locale) }}</p>
+                </div>
+                <div class="similar-character-score">
+                  <strong>{{ match.score }}%</strong>
+                  <span>{{ t('result.match', undefined, '整体命中感') }}</span>
+                </div>
+              </div>
+
+              <p class="similar-character-code">{{ match.character.code }}</p>
+              <p class="similar-character-note">
+                {{ isHiddenCharacter(match.character) ? getHiddenCharacterNote(locale, match.character) : t('characters.' + match.character.id + '.note', undefined, match.character.note) }}
+              </p>
+            </article>
           </div>
         </section>
 
@@ -393,7 +424,7 @@ function scrollToSection(sectionId: string) {
           <h3>{{ primaryCharacter ? getLocalizedCharacterName(primaryCharacter, locale, { revealHidden: true }) : t('archetypes.' + result.archetype.id + '.name', undefined, result.archetype.name) }}</h3>
           <p v-if="primaryCharacter && isHiddenCharacter(primaryCharacter)" class="profile-hidden-flag">{{ getHiddenCharacterTitle(locale, primaryCharacter) }}</p>
           <p class="profile-code">{{ displayCode }}</p>
-          <p class="profile-probability">{{ t('result.matchProbability', { value: result.matchProbability }) }}</p>
+          <p class="profile-probability">{{ t('result.matchProbability', { value: displayProbability }) }}</p>
         </div>
 
         <div class="sidebar-card nav-card">
@@ -738,6 +769,87 @@ function scrollToSection(sectionId: string) {
   line-height: 1.6;
   color: #7a6a3a;
   font-weight: 500;
+}
+
+.similar-characters-section {
+  margin-bottom: 32px;
+}
+
+.similar-characters-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.similar-character-card {
+  background: linear-gradient(180deg, #ffffff, #fbfdfb);
+  border: 1px solid #e8ecef;
+  border-radius: 18px;
+  padding: 20px 22px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.similar-character-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.similar-character-rank {
+  margin: 0 0 6px;
+  color: #7b8690;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.similar-character-head h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #2f3a45;
+}
+
+.similar-character-series {
+  margin: 8px 0 0;
+  color: #6f7a83;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.similar-character-score {
+  min-width: 92px;
+  text-align: right;
+}
+
+.similar-character-score strong {
+  display: block;
+  color: #33a474;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.similar-character-score span {
+  display: block;
+  margin-top: 6px;
+  color: #7b8690;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.similar-character-code {
+  margin: 14px 0 10px;
+  color: #e4ae3a;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.similar-character-note {
+  margin: 0;
+  color: #596671;
+  line-height: 1.75;
 }
 
 .section-title-wrap {
@@ -1144,6 +1256,10 @@ function scrollToSection(sectionId: string) {
   .analysis-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .similar-characters-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -1250,6 +1366,7 @@ function scrollToSection(sectionId: string) {
   .traits-list,
   .traits-highlight,
   .analysis-card,
+  .similar-character-card,
   .tags-block,
   .sidebar-card {
     padding: 14px;
@@ -1271,6 +1388,14 @@ function scrollToSection(sectionId: string) {
   .analysis-card h3,
   .tags-block h3 {
     font-size: 18px;
+  }
+
+  .similar-character-head {
+    flex-direction: column;
+  }
+
+  .similar-character-score {
+    text-align: left;
   }
 
   .hero-actions {
@@ -1335,6 +1460,7 @@ function scrollToSection(sectionId: string) {
 
   .sidebar-card,
   .analysis-card,
+  .similar-character-card,
   .traits-list,
   .traits-highlight,
   .tags-block {
