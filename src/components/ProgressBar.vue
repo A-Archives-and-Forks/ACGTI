@@ -58,14 +58,15 @@ const percentage = computed(() => {
   overflow: hidden;
   height: 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-soft, #f4f4f4);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* 16Personalities style */
 }
 
 .progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent-2) 0%, var(--accent) 55%, var(--accent-3) 100%);
-  transition: width 220ms ease;
+  background: var(--primary, #33a474);
+  transition: width 300ms ease-out;
 }
 
 @media (max-width: 700px) {

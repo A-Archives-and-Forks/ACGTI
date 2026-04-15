@@ -128,7 +128,6 @@ const {
   answeredCount,
   isComplete,
   firstUnansweredIndex,
-  jumpToQuestion,
   selectOptionAt,
   finalizeQuiz,
   ensureData,
@@ -174,7 +173,6 @@ function setQuestionRef(element: Element | ComponentPublicInstance | null, index
 }
 
 async function jumpToUnansweredQuestion(index: number) {
-  jumpToQuestion(index)
   pendingUnansweredIndex.value = index
 
   if (unansweredHighlightTimer) {
@@ -188,27 +186,11 @@ async function jumpToUnansweredQuestion(index: number) {
   await nextTick()
   const target = questionRefs.value[index]
   if (target) {
-    const targetPosition = target.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2) + (target.offsetHeight / 2)
-    const startPosition = window.scrollY
-    const distance = targetPosition - startPosition
-    const duration = Math.min(1200, Math.max(400, Math.abs(distance) * 0.5)) // Dynamic duration between 400ms and 1200ms
-    let startTime: number | null = null
-
-    // easeInOutCubic: smooth start and end
-    const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-
-    const animation = (currentTime: number) => {
-      if (startTime === null) startTime = currentTime
-      const timeElapsed = currentTime - startTime
-      const progress = Math.min(timeElapsed / duration, 1)
-
-      window.scrollTo(0, startPosition + distance * easeInOutCubic(progress))
-
-      if (progress < 1) {
-        requestAnimationFrame(animation)
-      }
-    }
-    requestAnimationFrame(animation)
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest',
+    })
   }
 }
 
@@ -236,21 +218,28 @@ async function submitQuiz() {
   top: 72px;
   left: 0;
   right: 0;
-  height: 7px;
+  height: 6px;
   z-index: 49;
   display: flex;
-  gap: 2px;
+  gap: 1px;
+  background: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .quiz-progress-rail {
+    top: 68px;
+  }
 }
 
 .quiz-progress-segment {
   flex: 1;
   height: 100%;
-  background: #dde6ee;
-  transition: background-color 0.25s ease;
+  background: var(--border-light, #e0e0e0);
+  transition: background-color 0.3s ease;
 }
 
 .quiz-progress-segment.answered {
-  background: #5ac8fa;
+  background: var(--primary, #33a474);
 }
 
 .quiz-main {
