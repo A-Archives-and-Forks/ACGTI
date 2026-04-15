@@ -199,6 +199,8 @@ export const messages = {
       },
       toc: '本页内容',
       tocItems: ['1. 人格特质倾向', '2. 亮点与短板', '3. 角色映射标签'],
+      otherMatchesTitle: '其他高匹配角色',
+      otherMatchesLabel: '高匹配候选',
       share: '分享结果',
       personaBasisBadge: '圈层印象映射',
       personaBasisTip: '该角色暂无足够统一的官方人格依据，人格映射主要来自社区常见形象、二创传播与企划衍生印象，非官方唯一人格结论。',
@@ -323,6 +325,10 @@ export const messages = {
       exportFailed: '导出失败，请稍后重试。',
       copied: '分享文案已复制。',
       copyFailed: '复制失败，请手动截图。',
+    },
+    common: {
+      generating: '生成中...',
+      saveImage: '生成并分享次元身份卡',
     },
   },
   'zh-TW': {
@@ -497,6 +503,8 @@ export const messages = {
       },
       toc: '本頁內容',
       tocItems: ['1. 人格特質傾向', '2. 亮點與短板', '3. 角色映射標籤'],
+      otherMatchesTitle: '其他高匹配角色',
+      otherMatchesLabel: '高匹配候選',
       share: '分享結果',
       personaBasisBadge: '圈層印象映射',
       personaBasisTip: '該角色暫無足夠統一的官方人格依據，人格映射主要來自社區常見形象、二創傳播與企劃衍生印象，非官方唯一人格結論。',
@@ -797,6 +805,10 @@ export const messages = {
       copied: '分享文案已複製。',
       copyFailed: '複製失敗，請手動截圖。',
     },
+    common: {
+      generating: '生成中...',
+      saveImage: '生成並分享次元身份卡',
+    },
   },
   en: {
     app: {
@@ -970,6 +982,8 @@ export const messages = {
       },
       toc: 'On this page',
       tocItems: ['1. Trait tendencies', '2. Strengths and blind spots', '3. Character tags'],
+      otherMatchesTitle: 'Other Close Matches',
+      otherMatchesLabel: 'Close Match',
       share: 'Share result',
       personaBasisBadge: 'Fandom Impression',
       personaBasisTip: 'This character has no single official personality basis. The mapping is mainly derived from community depictions, fan works, and franchise-derived impressions.',
@@ -1270,6 +1284,10 @@ export const messages = {
       copied: 'Share text copied.',
       copyFailed: 'Copy failed. Please take a screenshot manually.',
     },
+    common: {
+      generating: 'Generating...',
+      saveImage: 'Generate & Share Identity Card',
+    },
   },
   ja: {
     app: {
@@ -1443,6 +1461,8 @@ export const messages = {
       },
       toc: 'このページ',
       tocItems: ['1. 特性の傾向', '2. 強みと弱み', '3. キャラタグ'],
+      otherMatchesTitle: '他の高マッチキャラ',
+      otherMatchesLabel: '高マッチ候補',
       share: '結果を共有',
       personaBasisBadge: 'ファンダム印象マッピング',
       personaBasisTip: 'このキャラクターには統一された公式の性格設定がありません。人格マッピングは主にコミュニティの一般的なイメージ、二次創作、企画派生の印象に基づいています。',
@@ -1742,6 +1762,10 @@ export const messages = {
       exportFailed: '書き出しに失敗しました。あとで再試行してください。',
       copied: '共有文面をコピーしました。',
       copyFailed: 'コピーに失敗しました。手動でスクリーンショットを取ってください。',
+    },
+    common: {
+      generating: '生成中...',
+      saveImage: 'アイデンティティカードを生成・シェア',
     },
   },
 } as const
