@@ -1,5 +1,13 @@
 <template>
   <div class="quiz-page-16p">
+    <div class="quiz-progress-rail" role="progressbar" :aria-valuenow="answeredCount" :aria-valuemax="questions.length" aria-label="Quiz progress">
+      <div
+        v-for="(answer, i) in state.answers"
+        :key="i"
+        class="quiz-progress-segment"
+        :class="{ answered: answer >= -3 && answer <= 3 }"
+      ></div>
+    </div>
     <main class="quiz-main">
       <section class="hero">
         <h1>{{ t('quiz.heroTitle') }}</h1>
@@ -132,6 +140,7 @@ onMounted(() => {
   void ensureData()
 })
 
+
 const questionRefs = ref<HTMLElement[]>([])
 const pendingUnansweredIndex = ref<number | null>(null)
 let unansweredHighlightTimer: ReturnType<typeof setTimeout> | null = null
@@ -220,6 +229,28 @@ async function submitQuiz() {
   min-height: 100vh;
   background: #ffffff;
   color: #2d3436;
+}
+
+.quiz-progress-rail {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  height: 7px;
+  z-index: 49;
+  display: flex;
+  gap: 2px;
+}
+
+.quiz-progress-segment {
+  flex: 1;
+  height: 100%;
+  background: #dde6ee;
+  transition: background-color 0.25s ease;
+}
+
+.quiz-progress-segment.answered {
+  background: #5ac8fa;
 }
 
 .quiz-main {
@@ -580,6 +611,13 @@ async function submitQuiz() {
 @media (max-width: 980px) {
   .step-cards {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-progress-rail {
+    top: 68px;
+    gap: 1px;
   }
 }
 
