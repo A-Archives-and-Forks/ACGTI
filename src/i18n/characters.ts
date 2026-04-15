@@ -526,6 +526,30 @@ const characterNameI18n: Record<string, LocalizedText> = {
     en: 'Kuroko Shirai',
     ja: '白井黒子',
   },
+  'oyama-mahiro': {
+    'zh-CN': '绪山真寻',
+    'zh-TW': '緒山真尋',
+    en: 'Mahiro Oyama',
+    ja: '緒山まひろ',
+  },
+  'tokai-teio': {
+    'zh-CN': '东海帝皇',
+    'zh-TW': '東海帝皇',
+    en: 'Tokai Teio',
+    ja: 'トウカイテイオー',
+  },
+  eyjafjalla: {
+    'zh-CN': '艾雅法拉',
+    'zh-TW': '艾雅法拉',
+    en: 'Eyjafjalla',
+    ja: 'エイヤフィヤトラ',
+  },
+  shorekeeper: {
+    'zh-CN': '守岸人',
+    'zh-TW': '守岸人',
+    en: 'Shorekeeper',
+    ja: 'ショアキーパー',
+  },
 }
 
 const seriesI18n: Record<string, LocalizedText> = {
@@ -618,6 +642,18 @@ const seriesI18n: Record<string, LocalizedText> = {
     'zh-TW': '鳴潮',
     en: 'Wuthering Waves',
     ja: '鳴潮',
+  },
+  '别当哥哥了！': {
+    'zh-CN': '别当哥哥了！',
+    'zh-TW': '別當哥哥了！',
+    en: 'Onimai: I\'m Now Your Sister!',
+    ja: 'お兄ちゃんはおしまい！',
+  },
+  '赛马娘 Pretty Derby': {
+    'zh-CN': '赛马娘 Pretty Derby',
+    'zh-TW': '賽馬娘 Pretty Derby',
+    en: 'Uma Musume Pretty Derby',
+    ja: 'ウマ娘 プリティーダービー',
   },
   '玉子市场': {
     'zh-CN': '玉子市场',
