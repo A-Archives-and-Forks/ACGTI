@@ -55,6 +55,7 @@ __pycache__/
 venv/
 
 # Misc assets / archives
+*.png
 *.zip
 *.tar
 *.gz

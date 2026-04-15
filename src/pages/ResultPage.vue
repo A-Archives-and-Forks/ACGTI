@@ -21,7 +21,6 @@ const quiz = useQuiz()
 const activeDebugResult = ref<ReturnType<typeof quiz.createDebugResult>>(null)
 const result = computed(() => activeDebugResult.value ?? quiz.latestResult.value)
 const isCharacterImageBroken = ref(false)
-const characterImageAttemptIndex = ref(0)
 const share = useShare()
 const posterRef = ref<{ rootEl: HTMLElement | null } | null>(null)
 const shouldMountPoster = ref(false)
@@ -73,32 +72,17 @@ function copyText() {
   void share.copyShareText(result.value)
 }
 
-function getCharacterImageCandidates(image: string | undefined) {
+function normalizeCharacterImagePath(image: string | undefined) {
   if (!image) {
-    return []
+    return ''
   }
 
-  const variants = [image]
-
-  if (image.endsWith('.webp')) {
-    variants.push(image.replace(/\.webp$/i, '.png'))
-  }
-
-  if (image.endsWith('.png')) {
-    variants.push(image.replace(/\.png$/i, '.webp'))
-  }
-
-  return Array.from(new Set(variants))
+  return image.endsWith('.png')
+    ? image.replace(/\.png$/i, '.webp')
+    : image
 }
 
 function handleCharacterImageError() {
-  const nextAttempt = characterImageAttemptIndex.value + 1
-
-  if (nextAttempt < primaryCharacterImageCandidates.value.length) {
-    characterImageAttemptIndex.value = nextAttempt
-    return
-  }
-
   isCharacterImageBroken.value = true
 }
 
@@ -129,10 +113,8 @@ function applyDebugResultFromRoute() {
 const primaryCharacterImage = computed(() => {
   const primary = result.value?.characterMatches?.[0]
   if (!primary) return ''
-  return primary.image || `/images/characters/${primary.id}.webp`
+  return normalizeCharacterImagePath(primary.image || `/images/characters/${primary.id}.webp`)
 })
-const primaryCharacterImageCandidates = computed(() => getCharacterImageCandidates(primaryCharacterImage.value))
-const activePrimaryCharacterImage = computed(() => primaryCharacterImageCandidates.value[characterImageAttemptIndex.value] ?? '')
 
 const primaryCharacter = computed(() => result.value?.characterMatches?.[0] ?? null)
 const secondaryCharacterMatches = computed(() => result.value?.topCharacterMatches?.slice(1, 3) ?? [])
@@ -294,8 +276,7 @@ const strongestTrait = computed(() => {
   }, null as { trait: (typeof traits.value)[number]; score: (typeof result.value.scores)[TraitDimension] } | null)
 })
 
-watch(primaryCharacterImageCandidates, () => {
-  characterImageAttemptIndex.value = 0
+watch(primaryCharacterImage, () => {
   isCharacterImageBroken.value = false
 })
 
@@ -398,8 +379,8 @@ function viewMatchedCharacter(characterId: string) {
         <div class="hero-visual poster-box">
           <div class="poster-frame">
             <img
-              v-if="primaryCharacter?.id && activePrimaryCharacterImage && !isCharacterImageBroken"
-              :src="activePrimaryCharacterImage"
+              v-if="primaryCharacter?.id && primaryCharacterImage && !isCharacterImageBroken"
+              :src="primaryCharacterImage"
               :alt="primaryCharacter ? getLocalizedCharacterName(primaryCharacter, locale) : 'Character'"
               class="hero-image"
               decoding="async"
