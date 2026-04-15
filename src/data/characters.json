@@ -2560,5 +2560,1013 @@
         "confidence": "low",
         "summary": "基于游戏内角色设定、剧情表现及玩家社群常见讨论，非官方唯一人格结论。"
     }
-}
+  },
+  {
+    "id": "shirai-kuroko",
+    "name": "白井黑子",
+    "series": "某科学的超电磁炮",
+    "addedAt": "2026-04-16",
+    "matchCode": "ESTJ",
+    "matchCodeFlex": ["ESFJ", "ENTJ"],
+    "code": "KRKO",
+    "title": "风纪执行位·公务模式与姐姐大人过热的叠加态",
+    "archetypeId": "oathbound-captain",
+    "tags": [
+      "姐姐大人单推人",
+      "空间移动 Level 4",
+      "大小姐敬语～ですの",
+      "风纪委员铁面执法"
+    ],
+    "note": "你以为她只是个每天高呼「姐姐大人」的痴汉，但其实她是常盘台唯一的 Level 4 空间移动能力者兼学园都市治安维护铁血风纪委员。她把「对姐姐大人过热」和「绝对的正义感」这两种截然相反的属性完美融合——工作时雷厉风行、办案果断，一旦切到姐姐大人频道就立刻系统超频。属于「公务模式和感情模式切换速度比空间移动还快」的典范。",
+    "vector": {
+      "expression": 3,
+      "temperature": 2,
+      "judgement": 3,
+      "order": 3,
+      "agency": 3,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "order": 3,
+        "expression": 3,
+        "agency": 3,
+        "judgement": 3
+      }
+    }
+  },
+  {
+    "id": "shinomiya-kaguya",
+    "name": "四宫辉夜",
+    "series": "辉夜大小姐想让我告白",
+    "addedAt": "2026-04-16",
+    "matchCode": "INTJ",
+    "matchCodeFlex": [
+      "INFJ",
+      "ENTJ"
+    ],
+    "code": "KGYA",
+    "title": "纯情财阀·恋爱脑补帝",
+    "archetypeId": "shadow-strategist",
+    "tags": [
+      "天才脑补狂",
+      "傲娇教科书",
+      "死要面子活受罪",
+      "如何让对方先告白"
+    ],
+    "note": "表面上是完美无瑕的财阀大小姐、冷酷无情的计谋家，实际上是个连智能手机都不会用的纯情恋爱脑。她的人生格言是「先告白的人在恋爱中是输家」，然后为了让对方先开口，可以调动整个财阀的资源演一出大戏。属于「智商换情商」的典型。",
+    "vector": {
+      "expression": -1,
+      "temperature": 0,
+      "judgement": 3,
+      "order": 3,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "judgement": 3,
+        "order": 3,
+        "expression": -1
+      }
+    }
+  },
+  {
+    "id": "kato-megumi",
+    "name": "加藤惠",
+    "series": "路人女主的养成方法",
+    "addedAt": "2026-04-16",
+    "matchCode": "ISTP",
+    "matchCodeFlex": [
+      "ISFP",
+      "INTP"
+    ],
+    "code": "MEGU",
+    "title": "圣人惠·隐形控场真神",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "毫无存在感",
+      "官方吐槽役",
+      "润物细无声",
+      "正宫气场"
+    ],
+    "note": "初见时你甚至记不住她的脸，仿佛自带光学隐形迷彩。没有明显的喜怒哀乐，没有夸张的二次元属性，但就是能在所有人打得不可开交时，用最平淡的语气抛出最致命的吐槽。你以为她是路人，其实她是捏着剧本的唯一真神。",
+    "vector": {
+      "expression": -2,
+      "temperature": 0,
+      "judgement": 1,
+      "order": 1,
+      "agency": 1,
+      "aura": -3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "aura": -3,
+        "expression": -2
+      }
+    }
+  },
+  {
+    "id": "rem",
+    "name": "蕾姆",
+    "series": "Re:从零开始的异世界生活",
+    "addedAt": "2026-04-16",
+    "matchCode": "ISFJ",
+    "matchCodeFlex": [
+      "INFJ"
+    ],
+    "code": "REMM",
+    "title": "鬼族女仆·究极奉献者",
+    "archetypeId": "gentle-healer",
+    "tags": [
+      "丢你蕾姆",
+      "全能家务",
+      "一旦认准死不回头",
+      "流星锤警告"
+    ],
+    "note": "平时是家务万能、温柔体贴的完美女仆，一旦你触发了她的信任开关，她连命都可以不要。不过友情提示：在取得信任之前，请小心她手里那把带着倒刺的流星锤。属于那种「只要你别作死，她就是人间天使」的奉献型人格。",
+    "vector": {
+      "expression": 0,
+      "temperature": 3,
+      "judgement": 2,
+      "order": 2,
+      "agency": 1,
+      "aura": 1
+    },
+    "signature": {
+      "uniqueAxes": {
+        "temperature": 3,
+        "order": 2,
+        "judgement": 2
+      }
+    }
+  },
+  {
+    "id": "kita-ikuyo",
+    "name": "喜多郁代",
+    "series": "孤独摇滚！",
+    "addedAt": "2026-04-16",
+    "matchCode": "ESFJ",
+    "matchCodeFlex": [
+      "ENFJ",
+      "ESFP"
+    ],
+    "code": "KITA",
+    "title": "行走的闪光弹·社交刺客",
+    "archetypeId": "luminous-lead",
+    "tags": [
+      "喜多光线",
+      "逃跑吉他手",
+      "社交恐怖分子",
+      "阳角滤镜"
+    ],
+    "note": "只要她站在那里，周围就会自动生成闪瞎眼的「阳角滤镜」。交际能力点满，能在三秒内和任何人称兄道弟，堪称社恐患者的天然天敌与救赎。虽然有过买错贝斯就提桶跑路的黑历史，但只要她一笑，你就只能原谅她了。",
+    "vector": {
+      "expression": 3,
+      "temperature": 3,
+      "judgement": -1,
+      "order": -1,
+      "agency": 3,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "temperature": 3,
+        "aura": 3
+      }
+    }
+  },
+  {
+    "id": "yamada-ryo",
+    "name": "山田凉",
+    "series": "孤独摇滚！",
+    "addedAt": "2026-04-16",
+    "matchCode": "INTP",
+    "matchCodeFlex": [
+      "ISTP"
+    ],
+    "code": "RYOO",
+    "title": "吃草贝斯手·超脱的屑",
+    "archetypeId": "trickster-orbit",
+    "tags": [
+      "钱包空空",
+      "绝赞吃草中",
+      "一本正经地胡说八道",
+      "孤高（自称）"
+    ],
+    "note": "被叫作「怪人」会暗自窃喜的孤高贝斯手。人生哲学极度自我，有钱全砸在乐器上，没钱就拔路边的野草吃，甚至还能面不改色地骗队友的钱买零食。你以为她高冷深沉，其实她只是懒得遵守人类社会的常识。纯粹的、脱离了低级趣味的「屑」。",
+    "vector": {
+      "expression": -2,
+      "temperature": -1,
+      "judgement": 1,
+      "order": -3,
+      "agency": 0,
+      "aura": 1
+    },
+    "signature": {
+      "uniqueAxes": {
+        "order": -3,
+        "expression": -2,
+        "temperature": -1
+      }
+    }
+  },
+  {
+    "id": "hirasawa-yui",
+    "name": "平泽唯",
+    "series": "轻音少女",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ESFP"
+    ],
+    "code": "YUIH",
+    "title": "绝对音感·点心终结者",
+    "archetypeId": "luminous-lead",
+    "tags": [
+      "除了吉他什么都不懂",
+      "滑音天才",
+      "喝茶部团宠",
+      "天然呆天花板"
+    ],
+    "note": "你以为她是来组乐队的，其实她是来喝下午茶的。拥有满级音乐天赋却全点在了吃零食和给吉他穿衣服上。如果人生是一场考试，她连准考证都能忘带，但最后总能用莫名其妙的运气和感染力奇迹般地及格。",
+    "vector": {
+      "expression": 3,
+      "temperature": 3,
+      "judgement": -2,
+      "order": -3,
+      "agency": 1,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "order": -3,
+        "temperature": 3
+      }
+    }
+  },
+  {
+    "id": "emilia",
+    "name": "爱蜜莉雅",
+    "series": "Re:从零开始的异世界生活",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "ISFJ"
+    ],
+    "code": "EMLA",
+    "title": "银发半精灵·E.M.T",
+    "archetypeId": "gentle-healer",
+    "tags": [
+      "老好人",
+      "缺乏常识",
+      "EMT",
+      "总是把抱歉挂在嘴边"
+    ],
+    "note": "明明自己常常处于弱势，却还要笨拙地去照顾所有人。她的温柔里带着一种让人心疼的倔强，是个把「对不起」当成口头禅，把所有责任都往自己身上揽的老好人。让人忍不住想大喊一声：E.M.T！",
+    "vector": {
+      "expression": 0,
+      "temperature": 2,
+      "judgement": 1,
+      "order": 1,
+      "agency": 1,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "temperature": 2,
+        "agency": 1,
+        "aura": 2
+      }
+    }
+  },
+  {
+    "id": "yukinoshita-yukino",
+    "name": "雪之下雪乃",
+    "series": "我的青春恋爱物语果然有问题",
+    "matchCode": "INTJ",
+    "matchCodeFlex": [
+      "ISTJ"
+    ],
+    "code": "YKNO",
+    "title": "冰冷侍奉部·高岭之花",
+    "archetypeId": "icebound-observer",
+    "tags": [
+      "毒舌千金",
+      "正确论怪物",
+      "潘先生狂热粉",
+      "傲没有娇"
+    ],
+    "note": "像一把冷冰冰的手术刀，一开口就能精准切除你的自尊心。她不是讨厌你，她只是讨厌这个不完美的世界（以及不完美的你）。但在那层坚不可摧的冰甲和完美主义下，其实藏着一个连依赖别人都不会的笨蛋。",
+    "vector": {
+      "expression": -2,
+      "temperature": -2,
+      "judgement": 3,
+      "order": 3,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": -2,
+        "judgement": 3,
+        "order": 3
+      }
+    }
+  },
+  {
+    "id": "sakurajima-mai",
+    "name": "樱岛麻衣",
+    "series": "青春猪头少年不会梦到兔女郎学姐",
+    "matchCode": "ENTJ",
+    "matchCodeFlex": [
+      "INTJ"
+    ],
+    "code": "MAIS",
+    "title": "野生兔女郎·国民级学姐",
+    "archetypeId": "shadow-strategist",
+    "tags": [
+      "踩脚奖励",
+      "顶级拉扯",
+      "教科书式傲娇",
+      "不可观测的爱"
+    ],
+    "note": "你以为能撩到她，其实一直被她在智商和情商上疯狂拉扯。表面上是个高不可攀、行事果断的国民级女演员，背地里却能为了喜欢的人付出一切。她的爱就像她的毒舌一样，刀刀致命，又甜得让人上头。",
+    "vector": {
+      "expression": 1,
+      "temperature": 1,
+      "judgement": 2,
+      "order": 2,
+      "agency": 3,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "agency": 3,
+        "aura": 3,
+        "judgement": 2
+      }
+    }
+  },
+  {
+    "id": "akiyama-mio",
+    "name": "秋山澪",
+    "series": "轻音少女",
+    "matchCode": "ISFJ",
+    "matchCodeFlex": [
+      "ISTJ"
+    ],
+    "code": "MIOA",
+    "title": "蓝白碗·胆小鬼贝斯手",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "反差萌",
+      "猛男必听萌系歌词",
+      "左撇子",
+      "极度怕鬼"
+    ],
+    "note": "明明长着一张高冷御姐的脸，却能被一个鬼故事吓得魂飞魄散。作为团队里唯一的常识人，每天都在崩溃的边缘努力维持秩序。别看她平时那么严肃，她写的歌词可是能让猛男落泪的究极甜妹风。",
+    "vector": {
+      "expression": -1,
+      "temperature": 1,
+      "judgement": 2,
+      "order": 3,
+      "agency": 1,
+      "aura": 1
+    },
+    "signature": {
+      "uniqueAxes": {
+        "order": 3,
+        "expression": -1,
+        "aura": 1
+      }
+    }
+  },
+  {
+    "id": "takanashi-rikka",
+    "name": "小鸟游六花",
+    "series": "中二病也要谈恋爱！",
+    "matchCode": "INFP",
+    "matchCodeFlex": [
+      "ENFP"
+    ],
+    "code": "RIKA",
+    "title": "邪王真眼使·中二病重患",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "邪王真眼",
+      "爆裂吧现实",
+      "战五渣",
+      "呆毛雷达"
+    ],
+    "note": "平时眼罩绷带齐上阵，满嘴「不可视境界线」，结果只要被轻轻敲一下头就会立马抱头蹲防。属于典型的「战斗全靠脑补，实战全靠抱大腿」。她虽然活在自己的设定里，却对感情有着最纯粹的执着。",
+    "vector": {
+      "expression": 2,
+      "temperature": 1,
+      "judgement": -1,
+      "order": -2,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 2,
+        "order": -2,
+        "judgement": -1
+      }
+    }
+  },
+  {
+    "id": "kousaka-kirino",
+    "name": "高坂桐乃",
+    "series": "我的妹妹哪有这么可爱！",
+    "matchCode": "ESTJ",
+    "matchCodeFlex": [
+      "ENTJ"
+    ],
+    "code": "KINO",
+    "title": "人生赢家·硬核隐性宅",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "妹系鼻祖",
+      "教科书级傲娇",
+      "梅露露狂热粉",
+      "在外现充在家打游戏"
+    ],
+    "note": "在外面是成绩运动全能的完美模特，在家里是会逼着老哥玩妹系游戏的究极宅女。她的傲娇不是加分项，而是本体——嘴上骂着「恶心」，实际心里可能已经在疯狂动摇。属于那种需要极大耐心才能攻略的“雷区舞者”。",
+    "vector": {
+      "expression": 3,
+      "temperature": 1,
+      "judgement": 2,
+      "order": 2,
+      "agency": 3,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "agency": 3,
+        "judgement": 2
+      }
+    }
+  },
+  {
+    "id": "amiya",
+    "name": "阿米娅",
+    "series": "明日方舟",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "ENFJ"
+    ],
+    "code": "AMYA",
+    "title": "罗德岛领袖·贴心魔王",
+    "archetypeId": "oathbound-captain",
+    "tags": [
+      "罗德岛CEO",
+      "是兔子还是驴",
+      "刀客塔的监护人",
+      "魔王武装"
+    ],
+    "note": "表面上是乖巧可爱、随时提醒你不要休息的贴心小助理，实际上是背负着整个罗德岛命运的年轻领袖。她有着与年龄不符的沉稳与决断力，但只要你在身边，她又会露出少女那般依赖的笑容。",
+    "vector": {
+      "expression": 1,
+      "temperature": 2,
+      "judgement": 2,
+      "order": 2,
+      "agency": 3,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "agency": 3,
+        "aura": 3,
+        "temperature": 2
+      }
+    }
+  },
+  {
+    "id": "phoebe",
+    "name": "菲比",
+    "series": "鸣潮",
+    "matchCode": "ISFJ",
+    "matchCodeFlex": [
+      "INFJ"
+    ],
+    "code": "PHEB",
+    "title": "隐海修会·虔诚圣职者",
+    "archetypeId": "gentle-healer",
+    "tags": [
+      "虔诚祈祷",
+      "悲惨过去",
+      "治愈系",
+      "无私奉献"
+    ],
+    "note": "因为船难失去双亲，最终在隐海修会成为一名虔诚的圣职者。她将过去的创伤转化为对世界的温柔与悲悯，像静谧的海洋一般包容着所有的苦难。你看着她，就会觉得一切浮躁都能被治愈——属于标准的「灵魂避风港」。",
+    "vector": {
+      "expression": -1,
+      "temperature": 3,
+      "judgement": 1,
+      "order": 2,
+      "agency": 1,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "temperature": 3,
+        "order": 2,
+        "expression": -1
+      }
+    }
+  },
+  {
+    "id": "kitashirakawa-tamako",
+    "name": "北白川玉子",
+    "series": "玉子市场",
+    "matchCode": "ESFJ",
+    "matchCodeFlex": [
+      "ENFJ"
+    ],
+    "code": "TAMA",
+    "title": "商店街团宠·打糕店招牌",
+    "archetypeId": "luminous-lead",
+    "tags": [
+      "年糕脑",
+      "天然呆满级",
+      "肥鸟饲养员",
+      "日常系天花板"
+    ],
+    "note": "满脑子都是年糕的商店街团宠，神经大条到连别人对自己的喜欢都察觉不到。她那种毫无防备的天然呆属性，能轻易把任何紧张的气氛化解成软糯的日常。名言大概是：没有什么事情是吃一口年糕解决不了的！",
+    "vector": {
+      "expression": 2,
+      "temperature": 3,
+      "judgement": 0,
+      "order": 1,
+      "agency": 2,
+      "aura": 1
+    },
+    "signature": {
+      "uniqueAxes": {
+        "temperature": 3,
+        "expression": 2,
+        "aura": 1
+      }
+    }
+  },
+  {
+    "id": "nakano-nino",
+    "name": "中野二乃",
+    "series": "五等分的新娘",
+    "addedAt": "2026-04-16",
+    "matchCode": "ESFJ",
+    "matchCodeFlex": [
+      "ESTJ",
+      "ENFP"
+    ],
+    "code": "NINO",
+    "title": "恋爱暴走机车·傲娇教科书",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "下药狂魔",
+      "护妹大将",
+      "恋爱没有刹车",
+      "直球天后"
+    ],
+    "note": "一开始像只浑身带刺的刺猬，为了保护妹妹们甚至能直接给你端上一杯加料的水。但只要攻略成功，她的傲娇滤镜会瞬间粉碎，变成一辆完全没有刹车的恋爱暴走机车。属于“只要认定了你，哪怕撞南墙也要把你和墙一起撞倒”的究极直球选手。",
+    "vector": {
+      "expression": 3,
+      "temperature": 2,
+      "judgement": 2,
+      "order": 1,
+      "agency": 3,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "agency": 3,
+        "judgement": 2
+      }
+    }
+  },
+  {
+    "id": "yor-forger",
+    "name": "约尔·福杰",
+    "series": "间谍过家家",
+    "addedAt": "2026-04-16",
+    "matchCode": "ISFJ",
+    "matchCodeFlex": [
+      "ISTJ",
+      "INFP"
+    ],
+    "code": "YORF",
+    "title": "荆棘公主·脑回路清奇的杀手",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "物理系厨神",
+      "天然呆人妻",
+      "一脚踢飞汽车",
+      "烦恼不如暗杀"
+    ],
+    "note": "表面上是温婉可人、连切菜都能切到自己手的贤妻良母，背地里却是代号“荆棘公主”的顶尖杀手。她的脑回路跟她的物理战斗力一样异于常人，遇到解决不了的人际交往问题，第一反应往往是“是不是把他偷偷杀掉比较好”。",
+    "vector": {
+      "expression": 0,
+      "temperature": 2,
+      "judgement": -1,
+      "order": 1,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "aura": 3,
+        "temperature": 2,
+        "judgement": -1
+      }
+    }
+  },
+  {
+    "id": "sakagami-tomoyo",
+    "name": "坂上智代",
+    "series": "CLANNAD",
+    "addedAt": "2026-04-16",
+    "matchCode": "ESTJ",
+    "matchCodeFlex": [
+      "ENTJ"
+    ],
+    "code": "TMYO",
+    "title": "武帝·为了樱花树的会长",
+    "archetypeId": "oathbound-captain",
+    "tags": [
+      "连击破百",
+      "小镇最强传说",
+      "笨拙的责任感",
+      "飞踢警告"
+    ],
+    "note": "曾经是打遍小镇无敌手、能把人踢在半空中下不来的不良少女，现在却是认真负责、背负一切的学生会长。战斗力虽然爆表，但在喜欢的人面前却总是展现出笨拙又惹人怜爱的一面。是一个把“责任”和“爱”都死死扛在肩上的武帝。",
+    "vector": {
+      "expression": 1,
+      "temperature": 1,
+      "judgement": 3,
+      "order": 3,
+      "agency": 3,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "judgement": 3,
+        "order": 3,
+        "agency": 3
+      }
+    }
+  },
+  {
+    "id": "azusagawa-kaede",
+    "name": "梓川枫",
+    "series": "青春猪头少年不会梦到兔女郎学姐",
+    "addedAt": "2026-04-16",
+    "matchCode": "INFP",
+    "matchCodeFlex": [
+      "ISFP"
+    ],
+    "code": "KAED",
+    "title": "熊猫睡衣·努力的家里蹲",
+    "archetypeId": "gentle-healer",
+    "tags": [
+      "兄控天花板",
+      "看家本领是卖萌",
+      "畏惧外界",
+      "今日份的努力"
+    ],
+    "note": "披着熊猫睡衣的重度家里蹲，把“哥哥”视为全世界的绝对中心。因为惧怕外界的视线而把自己锁在家里，但却愿意为了哥哥，用尽全身力气去完成“出门走两步”这种常人看来微不足道的小事。她的每一次鼓起勇气，都让人心疼到想给她买一车布丁。",
+    "vector": {
+      "expression": -2,
+      "temperature": 2,
+      "judgement": 0,
+      "order": 0,
+      "agency": 0,
+      "aura": 1
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": -2,
+        "agency": 0,
+        "temperature": 2
+      }
+    }
+  },
+  {
+    "id": "aisaka-taiga",
+    "name": "逢坂大河",
+    "series": "龙与虎",
+    "addedAt": "2026-04-16",
+    "matchCode": "ISFP",
+    "matchCodeFlex": [
+      "INFP",
+      "ESTP"
+    ],
+    "code": "TIGA",
+    "title": "掌中老虎·木刀纯爱战神",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "极度傲娇",
+      "生活九级伤残",
+      "一言不合就开干",
+      "笨拙的温柔"
+    ],
+    "note": "身高一米四出头，脾气却能掀翻屋顶的“掌中老虎”。随身携带木刀，具有强烈的攻击性，但生活自理能力基本为零。剥开那一层带刺且暴力的外壳，里面藏着的其实是一个极度渴望被爱、笨拙到连自己心意都搞不清楚的小女孩。",
+    "vector": {
+      "expression": 2,
+      "temperature": 1,
+      "judgement": -1,
+      "order": -2,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 2,
+        "order": -2,
+        "judgement": -1
+      }
+    }
+  },
+  {
+    "id": "oyama-mahiro",
+    "name": "绪山真寻",
+    "series": "别当哥哥了！",
+    "matchCode": "INTP",
+    "matchCodeFlex": [
+      "ISFP",
+      "INFP"
+    ],
+    "code": "MAHR",
+    "title": "废柴尼特·被迫变身的妹妹",
+    "archetypeId": "trickster-orbit",
+    "tags": [
+      "前世是游戏废人",
+      "性别认知持续掉线",
+      "无可救药的死宅",
+      "萌混过关"
+    ],
+    "note": "你以为她是个天真可爱的初中生，其实躯壳里装了个无可救药的死宅。从最开始的疯狂抗拒，到后来的“女孩子真香”，她用亲身经历展示了什么叫极度被动的人格。每天的终极目标只是想缩在房间里打游戏，却总是被命运（和亲妹妹）安排得明明白白。",
+    "vector": {
+      "expression": -1,
+      "temperature": 1,
+      "judgement": -2,
+      "order": -2,
+      "agency": -3,
+      "aura": 1
+    },
+    "signature": {
+      "uniqueAxes": {
+        "agency": -3,
+        "order": -2,
+        "judgement": -2
+      }
+    }
+  },
+  {
+    "id": "tokai-teio",
+    "name": "东海帝皇",
+    "series": "赛马娘 Pretty Derby",
+    "matchCode": "ESFP",
+    "matchCodeFlex": [
+      "ENFP"
+    ],
+    "code": "TEIO",
+    "title": "不屈的奇迹·帝皇舞步",
+    "archetypeId": "luminous-lead",
+    "tags": [
+      "蜂蜜特饮狂热粉",
+      "会长唯粉",
+      "骨折也拦不住",
+      "天生的发光体"
+    ],
+    "note": "永远充满活力，做梦都想成为像“皇帝”一样无败的三冠赛马娘。就算遭遇了足以终结职业生涯的粉碎性骨折，也能在所有人都不看好的绝境中奇迹复活。属于那种“只要她还在场上奔跑，你就会忍不住被她的光芒感染并大声欢呼”的耀眼存在。",
+    "vector": {
+      "expression": 3,
+      "temperature": 2,
+      "judgement": 1,
+      "order": -1,
+      "agency": 3,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "agency": 3,
+        "aura": 3
+      }
+    }
+  },
+  {
+    "id": "eyjafjalla",
+    "name": "艾雅法拉",
+    "series": "明日方舟",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "ISFJ"
+    ],
+    "code": "EYJA",
+    "title": "温柔核弹·盲目的火山学者",
+    "archetypeId": "gentle-healer",
+    "tags": [
+      "前辈！",
+      "听力受损",
+      "最强法系输出",
+      "文献狂魔"
+    ],
+    "note": "柔弱乖巧的学妹外表下，藏着能瞬间融化整个战场的毁灭性火山魔法。尽管身体正被矿石病一点点夺走听力与视力，她依然执着于探寻父母留下的火山研究。每次战斗结束后那声甜甜的“前辈”，是对抗这片废土残酷世界最好的止痛药。",
+    "vector": {
+      "expression": -1,
+      "temperature": 3,
+      "judgement": 2,
+      "order": 2,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "temperature": 3,
+        "judgement": 2,
+        "order": 2
+      }
+    }
+  },
+  {
+    "id": "shorekeeper",
+    "name": "守岸人",
+    "series": "鸣潮",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "INTJ"
+    ],
+    "code": "SHKP",
+    "title": "黑海岸之主·为你降生的数据",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "只注视你一人",
+      "星海与蝴蝶",
+      "AI生出人类情感",
+      "隐性偏执"
+    ],
+    "note": "诞生于数据的星海，原本只是个毫无感情、负责维系世界运转的观测者，却因为你的存在而长出了名为“私心”的灵魂。她能把整个世界的命运与概率算得清清楚楚，但她所有的神性与计算，最终都只为保护你这一件事而服务。",
+    "vector": {
+      "expression": -2,
+      "temperature": 0,
+      "judgement": 3,
+      "order": 2,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": -2,
+        "judgement": 3,
+        "aura": 3
+      }
+    }
+  },
+  {
+    "id": "doro",
+    "name": "doro",
+    "series": "胜利女神：妮姬",
+    "addedAt": "2026-04-16",
+    "matchCode": "ENTP",
+    "matchCodeFlex": [
+      "ESTP"
+    ],
+    "code": "DORO",
+    "title": "粉色恶魔·精神污染源",
+    "archetypeId": "trickster-orbit",
+    "tags": [
+      "眼神清澈但愚蠢",
+      "背对着你",
+      "妮姬精神图腾",
+      "万物皆可doro"
+    ],
+    "note": "明明本体是高贵的朝圣者桃乐丝，却被网友抽象成了这只眼神呆滞、极具精神污染的四足生物。你永远不知道她那空洞的微笑背后在盘算什么，但只要她一出现，整个频道的智商都会被拉低。建议不要直视她的眼睛。",
+    "vector": {
+      "expression": 3,
+      "temperature": 0,
+      "judgement": -3,
+      "order": -3,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "order": -3,
+        "judgement": -3
+      }
+    }
+  },
+  {
+    "id": "firefly",
+    "name": "流萤",
+    "series": "崩坏：星穹铁道",
+    "addedAt": "2026-04-16",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "INFP",
+      "ISFJ"
+    ],
+    "code": "FIRE",
+    "title": "萤火燃烧型·外表很轻，做决定时却一点都不轻",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "温柔外壳",
+      "宿命感",
+      "燃烧自己",
+      "克制执行者"
+    ],
+    "note": "你表面像那种说话轻、动作轻、情绪也轻的人，仿佛风一吹就会散。但真正遇到必须做决定的时刻，你反而会非常坚定，甚至带一点把自己也一起押上去的决绝。属于“看起来最脆，实际最能扛”的类型。",
+    "vector": {
+      "expression": 0,
+      "temperature": 2,
+      "judgement": 2,
+      "order": 1,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "temperature": 2,
+        "agency": 2,
+        "aura": 3
+      }
+    }
+  },
+  {
+    "id": "matikanetannhauser",
+    "name": "待兼诗歌剧",
+    "series": "赛马娘 Pretty Derby",
+    "addedAt": "2026-04-16",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ESFP",
+      "ENTP"
+    ],
+    "code": "MNBO",
+    "title": "祭典曼波担当·一开口就让全场进入抽象欢乐区",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "曼波梗王",
+      "喜剧役",
+      "抽象气氛组",
+      "魔性出圈"
+    ],
+    "note": "你身上有一种很难严肃起来的快乐污染力。哪怕本来只是普通地出现一下，也会因为脑回路太有节目效果，莫名把整个场子的气氛带歪。属于“不是传统意义上的靠谱，但一定是最难忘的那个”的类型。",
+    "vector": {
+      "expression": 3,
+      "temperature": 3,
+      "judgement": -1,
+      "order": -1,
+      "agency": 1,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "temperature": 3
+      }
+    }
+  },
+  {
+    "id": "cartethyia",
+    "name": "卡提希娅",
+    "series": "鸣潮",
+    "addedAt": "2026-04-16",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "INTJ",
+      "ISFJ"
+    ],
+    "code": "CTHY",
+    "title": "圣女殉道感·像是把理想和代价一起背在身上",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "圣女感",
+      "使命驱动",
+      "庄严克制",
+      "牺牲型理想主义"
+    ],
+    "note": "你不是那种会高调表达自己的人，很多情绪都会被你压进更大的目标里。别人看到的是平静、庄严和距离感，真正熟一点才会发现，那层安静下面其实是非常沉的责任心。属于“越像圣女，越说明她已经准备好付代价”的类型。",
+    "vector": {
+      "expression": -1,
+      "temperature": 1,
+      "judgement": 3,
+      "order": 2,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "judgement": 3,
+        "order": 2,
+        "aura": 3
+      }
+    }
+  }
 ]

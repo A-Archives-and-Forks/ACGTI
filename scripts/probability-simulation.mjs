@@ -10,6 +10,8 @@ import characters from '../src/data/characters.json' with { type: 'json' }
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const outputPath = path.join(root, 'src/data/characterProbabilities.json')
+const cliArgs = process.argv.slice(2)
+const positionalArgs = cliArgs.filter((arg) => !arg.startsWith('--'))
 
 function createRng(seed) {
   let state = seed >>> 0
@@ -21,9 +23,9 @@ function createRng(seed) {
 }
 
 const answerScale = [-3, -2, -1, 0, 1, 2, 3]
-const seed = Number(process.argv[2] ?? 20260411)
-const runs = Number(process.argv[3] ?? 200000)
-const shouldWrite = process.argv.includes('--write')
+const seed = Number(positionalArgs[0] ?? 20260411)
+const runs = Number(positionalArgs[1] ?? 200000)
+const shouldWrite = cliArgs.includes('--write')
 const rng = createRng(seed)
 const winnerCounts = new Map(characters.map((character) => [character.id, 0]))
 const probabilityWeights = new Map(characters.map((character) => [character.id, 0]))
