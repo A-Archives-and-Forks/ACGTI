@@ -305,6 +305,12 @@ function getHandlePosition(traitId: TraitDimension, leftCode: string) {
   return 50 + (percent - 50)
 }
 
+function getPercentAlign(pos: number): string {
+  if (pos < 12) return 'left'
+  if (pos > 88) return 'right'
+  return 'center'
+}
+
 function getDominantTraitLabel(traitId: TraitDimension, leftCode: string, leftLabel: string, rightLabel: string) {
   if (!result.value) return ''
   return result.value.scores[traitId].dominant === leftCode ? leftLabel : rightLabel
@@ -442,6 +448,7 @@ function viewMatchedCharacter(characterId: string) {
               <div v-for="trait in traits" :key="trait.id" class="trait-row">
                 <div
                   class="trait-percent"
+                  :class="`trait-percent--${getPercentAlign(getHandlePosition(trait.id, trait.leftCode))}`"
                   :style="{
                     left: `${getHandlePosition(trait.id, trait.leftCode)}%`,
                     color: trait.color,
@@ -1002,6 +1009,15 @@ function viewMatchedCharacter(characterId: string) {
   font-size: 14px;
   font-weight: 800;
   margin-bottom: 7px;
+  white-space: nowrap;
+}
+
+.trait-percent--left {
+  transform: translateX(0);
+}
+
+.trait-percent--right {
+  transform: translateX(-100%);
 }
 
 .trait-track {

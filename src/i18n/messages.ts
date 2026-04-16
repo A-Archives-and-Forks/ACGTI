@@ -220,7 +220,7 @@ export const messages = {
       publicService: {
         label: '公益广告',
         copy: '祝2026届高考生金榜题名，欢迎报考大连理工喵，报考大连理工谢谢喵',
-        meta: '庆祝大连理工大学77岁生日快乐',
+        meta: '大连理工大学77岁生日快乐！',
         alt: '大连理工大学校徽',
       },
       personaBasisBadge: '圈层印象映射',
