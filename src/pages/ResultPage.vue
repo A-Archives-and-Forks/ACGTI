@@ -279,6 +279,14 @@ const rarityTierStyle = computed(() => {
     }
   }
 })
+
+const rarityFontSizeStyle = computed(() => {
+  const len = rarityTierLabel.value.length
+  if (len > 12) return { fontSize: '13px' }
+  if (len > 8) return { fontSize: '14px' }
+  if (len > 5) return { fontSize: '15px' }
+  return { fontSize: '18px' }
+})
 const rarityRankLabel = computed(() => {
   if (!rarityMeta.value) {
     return ''
@@ -407,7 +415,7 @@ function viewMatchedCharacter(characterId: string) {
           <div class="hero-metrics">
             <div class="hero-metric">
               <span>{{ t('result.rarity') }}</span>
-              <strong class="rarity-pill" :style="rarityTierStyle">{{ rarityTierLabel }}</strong>
+              <strong class="rarity-pill" :style="[rarityTierStyle, rarityFontSizeStyle]">{{ rarityTierLabel }}</strong>
             </div>
             <div class="hero-metric">
               <span>{{ t('result.match') }}</span>
@@ -620,7 +628,7 @@ function viewMatchedCharacter(characterId: string) {
           <p v-if="primaryCharacter && isHiddenCharacter(primaryCharacter)" class="profile-hidden-flag">{{ getHiddenCharacterTitle(locale, primaryCharacter) }}</p>
           <p class="profile-code">{{ displayCode }}</p>
           <p class="profile-rarity">
-            <span class="rarity-pill rarity-pill--sidebar" :style="rarityTierStyle">{{ rarityTierLabel }}</span>
+            <span class="rarity-pill rarity-pill--sidebar" :style="[rarityTierStyle, rarityFontSizeStyle]">{{ rarityTierLabel }}</span>
           </p>
           <p class="profile-probability">{{ raritySummaryLabel }}</p>
           <p class="profile-probability">{{ rarityRankLabel }}</p>

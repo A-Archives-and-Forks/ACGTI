@@ -151,6 +151,16 @@ const rarityTierStyle = computed(() => {
     }
   }
 })
+
+// Compute dynamic font size for the rarity text
+const rarityFontSizeStyle = computed(() => {
+  const len = rarityTierLabel.value.length
+  if (len > 12) return { fontSize: '13px' }
+  if (len > 8) return { fontSize: '14px' }
+  if (len > 5) return { fontSize: '15px' }
+  return { fontSize: '18px' } // Default size
+})
+
 const raritySummaryLabel = computed(() => {
   if (!rarityMeta.value) {
     return ''
@@ -195,7 +205,7 @@ const raritySummaryLabel = computed(() => {
             <div class="share-poster__metric-divider"></div>
             <div class="share-poster__metric">
               <span class="metric-label">{{ t('result.rarity') }}</span>
-              <strong class="metric-value metric-value--rarity" :style="rarityTierStyle">{{ rarityTierLabel }}</strong>
+              <strong class="metric-value metric-value--rarity" :style="[rarityTierStyle, rarityFontSizeStyle]">{{ rarityTierLabel }}</strong>
               <span class="metric-subvalue">{{ raritySummaryLabel }}</span>
             </div>
           </div>
@@ -405,7 +415,7 @@ const raritySummaryLabel = computed(() => {
   border: 1px solid transparent;
   font-size: 18px;
   letter-spacing: 0.04em;
-  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .metric-subvalue {
