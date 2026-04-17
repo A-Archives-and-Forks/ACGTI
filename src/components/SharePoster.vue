@@ -459,9 +459,8 @@ const raritySummaryLabel = computed(() => {
 }
 
 .share-poster__block {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(95, 137, 159, 0.12);
-  border-top: 4px solid var(--poster-accent);
+  background: linear-gradient(180deg, #ffffff, #fafdff);
+  border: 1px solid rgba(95, 137, 159, 0.15);
   padding: 16px 18px 18px;
   border-radius: 16px;
   min-height: 126px;

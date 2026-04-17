@@ -513,6 +513,8 @@ function viewMatchedCharacter(characterId: string) {
             <h2 class="section-title">{{ t('result.traitsTitle') }}</h2>
           </div>
 
+          <p class="traits-disclaimer">{{ t('result.traitsDisclaimer') }}</p>
+
           <div class="traits-card">
             <div class="traits-list">
               <div v-for="trait in traits" :key="trait.id" class="trait-row">
@@ -1172,6 +1174,15 @@ function viewMatchedCharacter(characterId: string) {
   color: #6c7780;
   font-size: 13px;
   font-weight: 600;
+}
+
+.traits-disclaimer {
+  margin: 0;
+  padding: 10px 24px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #9aa3ab;
+  font-weight: 500;
 }
 
 .traits-highlight {
