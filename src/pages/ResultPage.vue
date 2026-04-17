@@ -732,6 +732,12 @@ function viewMatchedCharacter(characterId: string) {
 }
 
 .result-hero {
+  --hero-pill-radius: 999px;
+  --hero-pill-border: 1px solid rgba(255, 255, 255, 0.28);
+  --hero-pill-bg: rgba(255, 255, 255, 0.16);
+  --hero-pill-shadow: 0 10px 24px rgba(17, 24, 39, 0.12);
+  --hero-pill-shadow-hover: 0 14px 30px rgba(17, 24, 39, 0.16);
+  --hero-pill-backdrop: blur(10px);
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -789,9 +795,11 @@ function viewMatchedCharacter(characterId: string) {
   align-items: center;
   min-height: 36px;
   padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--hero-pill-radius);
+  background: var(--hero-pill-bg);
+  border: var(--hero-pill-border);
+  box-shadow: var(--hero-pill-shadow);
+  backdrop-filter: var(--hero-pill-backdrop);
   color: #fff;
   font-size: 13px;
   font-weight: 800;
@@ -801,12 +809,14 @@ function viewMatchedCharacter(characterId: string) {
 .hero-badge-wrap {
   margin: 16px 0 0;
   display: inline-flex;
-  background: rgba(255, 255, 255, 0.2);
+  align-items: center;
+  min-height: 48px;
+  background: var(--hero-pill-bg);
   padding: 6px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(8px);
+  border-radius: var(--hero-pill-radius);
+  border: var(--hero-pill-border);
+  box-shadow: var(--hero-pill-shadow);
+  backdrop-filter: var(--hero-pill-backdrop);
 }
 
 .hero-code {
@@ -863,11 +873,12 @@ function viewMatchedCharacter(characterId: string) {
   justify-content: center;
   min-height: 36px;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--hero-pill-radius);
   border: 1px solid transparent;
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.04em;
+  box-shadow: var(--hero-pill-shadow);
 }
 
 .hero-metric small {
@@ -886,21 +897,29 @@ function viewMatchedCharacter(characterId: string) {
 }
 
 .action-btn {
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.12);
+  border: var(--hero-pill-border);
+  background: var(--hero-pill-bg);
   color: #fff;
-  border-radius: 999px;
+  border-radius: var(--hero-pill-radius);
   padding: 10px 16px;
   font-weight: 700;
   display: inline-flex;
   gap: 8px;
   align-items: center;
   cursor: pointer;
+  box-shadow: var(--hero-pill-shadow);
+  backdrop-filter: var(--hero-pill-backdrop);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 
 .action-btn:disabled {
   opacity: 0.72;
   cursor: not-allowed;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--hero-pill-shadow-hover);
 }
 
 .action-btn.light {
@@ -911,7 +930,6 @@ function viewMatchedCharacter(characterId: string) {
 
 .hero-export-btn {
   border-color: transparent;
-  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.18);
 }
 
 .action-btn.ghost {
@@ -1591,10 +1609,14 @@ function viewMatchedCharacter(characterId: string) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .sidebar-actions button:hover {
   border-color: #c8d0d7;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.12);
 }
 
 .sidebar-feedback {
