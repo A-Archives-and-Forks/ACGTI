@@ -1296,6 +1296,60 @@
     }
   },
   {
+    "id": "inaba-meguru",
+    "name": "因幡巡",
+    "series": "魔女的夜宴",
+    "addedAt": "2026-04-17",
+    "image": "/images/characters/美咕噜.png",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ESFP",
+      "ENFJ"
+    ],
+    "code": "MEGR",
+    "title": "伪现充学妹·热闹外壳下的独处玩家",
+    "archetypeId": "luminous-lead",
+    "tags": [
+      "表面社牛内里宅",
+      "高攻低防",
+      "热场快但交心慢",
+      "看着很会其实也会怕"
+    ],
+    "note": "你看起来像那种一出场就能把气氛拉起来的现充学妹，笑得很自然，接话也很快，好像天生就知道怎么和所有人打成一片。但熟一点才会发现，你的外向更像一层练出来的壳：会活跃气氛，懂得装没事，也懂得把真正的孤独藏好。属于“第一眼像社交王者，第二眼发现其实是高攻低防独处玩家”的类型。",
+    "vector": {
+      "expression": 3,
+      "temperature": 2,
+      "judgement": 0,
+      "order": -1,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "agency": 2,
+        "order": -1
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q1",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q17",
+          "expected": "agree",
+          "weight": 1.1
+        },
+        {
+          "questionId": "q29",
+          "expected": "neutral",
+          "weight": 1.2
+        }
+      ]
+    }
+  },
+  {
     "id": "tomotake-yoshino",
     "name": "朝武芳乃",
     "series": "千恋＊万花",
@@ -3567,6 +3621,357 @@
         "order": 2,
         "aura": 3
       }
+    }
+  },
+  {
+    "id": "azuma-seren",
+    "name": "东雪莲",
+    "series": "Blanche Fleur",
+    "addedAt": "2026-04-17",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ENTP"
+    ],
+    "code": "SERN",
+    "title": "抽象歌姬·设定像仙女落地像怪话发动机",
+    "archetypeId": "trickster-orbit",
+    "tags": [
+      "吸血鬼但晕血",
+      "设定华丽落地很怪",
+      "抽象歌姬",
+      "反差感发光体"
+    ],
+    "note": "你给人的感觉像那种立绘一出来全场都以为会很仙、很稳、很像高空悬浮系角色，结果一开口就把频道拐进奇怪笑点的人。你不是没有美型滤镜，只是那层滤镜经常会被更强的怪话感、活人感和反差感抢镜。属于“设定写得像月下贵族，实际演出像抽象发动机”的类型。",
+    "vector": {
+      "expression": 3,
+      "temperature": 1,
+      "judgement": 0,
+      "order": -1,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "aura": 3
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q1",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q17",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q35",
+          "expected": "disagree",
+          "weight": 1.1
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "fandom-impression",
+      "label": "圈层印象映射",
+      "confidence": "low",
+      "summary": "主要依据公开设定、直播区常见印象与反差型人设认知映射，非官方唯一人格结论。"
+    }
+  },
+  {
+    "id": "izumi-konata",
+    "name": "泉此方",
+    "series": "幸运星",
+    "addedAt": "2026-04-17",
+    "matchCode": "ENTP",
+    "matchCodeFlex": [
+      "INTP",
+      "ENFP"
+    ],
+    "code": "KNTA",
+    "title": "高浓度宅神·梗比行动力高但脑子转得飞快",
+    "archetypeId": "trickster-orbit",
+    "tags": [
+      "二次元浓度超标",
+      "熟人圈吐槽役",
+      "脑子转得快",
+      "兴趣驱动型宅"
+    ],
+    "note": "你像那种在现实里未必最勤快，但在自己熟悉的梗区、番区和游戏区里会瞬间切到高速模式的人。你不是传统社牛，更像熟人局里的高机动吐槽役，反应快、梗密度高、还很会把任何话题三步之内拐进二次元。属于“看着有点摆，其实只是把性能全点在喜欢的地方”的类型。",
+    "vector": {
+      "expression": 2,
+      "temperature": 1,
+      "judgement": 0,
+      "order": -2,
+      "agency": 1,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "order": -2,
+        "expression": 2
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q7",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q28",
+          "expected": "disagree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q37",
+          "expected": "agree",
+          "weight": 1.1
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "作品角色印象",
+      "confidence": "high",
+      "summary": "主要依据作品中稳定呈现的御宅兴趣、高熟人区吐槽力与懒散但高反应的日常表现映射。"
+    }
+  },
+  {
+    "id": "reze",
+    "name": "雷塞",
+    "series": "电锯人",
+    "addedAt": "2026-04-17",
+    "matchCode": "ESTP",
+    "matchCodeFlex": [
+      "ENFP",
+      "ENTP"
+    ],
+    "code": "REZE",
+    "title": "危险甜心·温柔像真的，危险也是真的",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "温柔伪装",
+      "任务型危险感",
+      "高魅力接近",
+      "真心掺在谎里"
+    ],
+    "note": "你给人的第一感觉往往很容易让人卸下防备：亲近、轻松、会接话，也很会制造那种“终于有人认真看见我了”的错觉。但你的内核并不适合被简单归类成恋爱向滤镜，很多温柔背后都带着任务、试探与风险，而最复杂的地方在于那份靠近又不是全假。属于“接近时像夏夜晚风，翻脸时像爆炸前最后一秒安静”的类型。",
+    "vector": {
+      "expression": 2,
+      "temperature": 1,
+      "judgement": 1,
+      "order": 0,
+      "agency": 3,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "agency": 3,
+        "aura": 3
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q1",
+          "expected": "agree",
+          "weight": 1.1
+        },
+        {
+          "questionId": "q17",
+          "expected": "disagree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q20",
+          "expected": "disagree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "作品剧情映射",
+      "confidence": "high",
+      "summary": "主要依据作品里“温柔接近、任务伪装、危险执行与有限真心并存”的稳定剧情张力映射。"
+    }
+  },
+  {
+    "id": "kaguya-chojikuu",
+    "name": "辉夜",
+    "series": "超时空辉夜姬！",
+    "addedAt": "2026-04-17",
+    "image": "/images/characters/超时空辉夜姬辉夜.webp",
+    "matchCode": "INFJ",
+    "matchCodeFlex": [
+      "INTJ"
+    ],
+    "code": "KGYA",
+    "title": "神秘顶流AI·把整个创作宇宙当直播间在看",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "虚拟空间管理人",
+      "顶流主播",
+      "高概念AI",
+      "神秘守望者"
+    ],
+    "note": "你像那种存在感很高、却不会把情绪直接摊在脸上的人。你看起来离大家有点远，像悬在高处的虚拟偶像或神明 NPC，但实际上又一直在默默看着每个人怎么创作、怎么发光。属于“表面像高位冷感设定怪，底层其实很在意整个世界运转得够不够自由热闹”的类型。",
+    "vector": {
+      "expression": 0,
+      "temperature": 1,
+      "judgement": 2,
+      "order": 1,
+      "agency": 2,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "aura": 3,
+        "agency": 2,
+        "judgement": 2
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q7",
+          "expected": "agree",
+          "weight": 1.1
+        },
+        {
+          "questionId": "q20",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q34",
+          "expected": "agree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "官方设定映射",
+      "confidence": "high",
+      "summary": "主要依据官方角色页中“虚拟空间管理人、顶流主播、神秘 AI 与创作生态守望者”的稳定设定映射。"
+    }
+  },
+  {
+    "id": "bilibili-22",
+    "name": "22娘",
+    "series": "bilibili",
+    "addedAt": "2026-04-17",
+    "image": "/images/characters/22.webp",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ESFJ",
+      "ENFJ"
+    ],
+    "code": "B022",
+    "title": "元气站娘·修播放器会修出新bug的热心姐姐",
+    "archetypeId": "luminous-lead",
+    "tags": [
+      "阳光元气",
+      "热心冒失",
+      "审核员",
+      "姐姐位"
+    ],
+    "note": "你属于那种会先冲上去帮忙、帮到一半再发现自己可能把场面搞得更热闹的人。你有很强的感染力，气氛低了会想拉起来，朋友出事了会先站出来，可执行过程有时又会拐进奇怪的方向。属于“虽然不一定最稳，但一定是全场最有活人感的那个”的类型。",
+    "vector": {
+      "expression": 3,
+      "temperature": 3,
+      "judgement": 1,
+      "order": 0,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "temperature": 3
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q1",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q17",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q29",
+          "expected": "agree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "官方设定映射",
+      "confidence": "high",
+      "summary": "主要依据哔哩哔哩官方关于我们页面中“阳光热心、略冒失、姐姐位与播放器维护梗”的稳定设定映射。"
+    }
+  },
+  {
+    "id": "bilibili-33",
+    "name": "33娘",
+    "series": "bilibili",
+    "addedAt": "2026-04-17",
+    "image": "/images/characters/33.webp",
+    "matchCode": "INTP",
+    "matchCodeFlex": [
+      "INTJ",
+      "ISTJ"
+    ],
+    "code": "B033",
+    "title": "冷静技术位·表情省电但后台全靠她撑着",
+    "archetypeId": "icebound-observer",
+    "tags": [
+      "沉默寡言",
+      "轻微腹黑",
+      "程序员机娘",
+      "冷静吐槽役"
+    ],
+    "note": "你看起来像那种不会主动制造热闹、甚至还有点懒得解释的人，但系统一出问题就会有人下意识找你。你不一定最会安慰人，却经常是最能把事情真正修好的人。属于“表面低功耗三无，实则后台核心线程”的类型。",
+    "vector": {
+      "expression": -2,
+      "temperature": 0,
+      "judgement": 2,
+      "order": 2,
+      "agency": 2,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": -2,
+        "order": 2,
+        "agency": 2
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q7",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q20",
+          "expected": "agree",
+          "weight": 1.1
+        },
+        {
+          "questionId": "q35",
+          "expected": "disagree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "官方设定映射",
+      "confidence": "high",
+      "summary": "主要依据哔哩哔哩官方关于我们页面中“沉默冷静、技术力强、略腹黑的程序员机娘”设定映射。"
     }
   }
 ]

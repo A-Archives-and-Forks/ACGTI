@@ -6,6 +6,7 @@ import AdsenseSlot from '../components/AdsenseSlot.vue'
 import AppIcon from '../components/AppIcon.vue'
 import { useShare } from '../composables/useShare'
 import { useQuiz } from '../composables/useQuiz'
+import { socialIcons, type SocialIconBrand } from '../data/socialIcons'
 import { useI18n } from '../i18n'
 import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
 import { getCharacterRarityMeta } from '../utils/characterRarity'
@@ -132,6 +133,60 @@ const displayTags = computed(() => {
 const displayCode = computed(() => result.value?.code ?? result.value?.mbtiCode ?? '')
 const displayProbability = computed(() => formatCharacterProbability(result.value?.matchProbability ?? 0))
 const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? result.value?.archetype.accent ?? '#e2ad3b')
+type CreatorLink = {
+  id: string
+  brand: SocialIconBrand
+  label: string
+  href: string
+  badgeStyle: Record<string, string>
+}
+
+const creatorLinks = computed<CreatorLink[]>(() => ([
+  {
+    id: 'xiaohongshu',
+    brand: 'xiaohongshu',
+    label: t('result.creatorLinks.items.xiaohongshu'),
+    href: 'http://xhslink.com/o/23CXgQXWL85',
+    badgeStyle: {
+      '--creator-icon-bg': socialIcons.xiaohongshu.background,
+      '--creator-icon-color': socialIcons.xiaohongshu.accent,
+      '--creator-icon-border': '#f3c9d3',
+    },
+  },
+  {
+    id: 'threads',
+    brand: 'threads',
+    label: t('result.creatorLinks.items.threads'),
+    href: 'https://www.threads.com/@tmxk39/post/DXMWAolETft?xmt=AQF0FQvz-R6ZtizfBRGlitwi5hRbV72jUSAnRctBOuPsF-Fm-nhZfUmRdPB4F-LBtxQb80AY&slof=1',
+    badgeStyle: {
+      '--creator-icon-bg': socialIcons.threads.background,
+      '--creator-icon-color': socialIcons.threads.accent,
+      '--creator-icon-border': '#d7dde2',
+    },
+  },
+  {
+    id: 'douyin',
+    brand: 'douyin',
+    label: t('result.creatorLinks.items.douyin'),
+    href: 'https://v.douyin.com/SCrImBFJouI/',
+    badgeStyle: {
+      '--creator-icon-bg': socialIcons.douyin.background,
+      '--creator-icon-color': socialIcons.douyin.accent,
+      '--creator-icon-border': '#c6e4ec',
+    },
+  },
+  {
+    id: 'bilibili',
+    brand: 'bilibili',
+    label: t('result.creatorLinks.items.bilibili'),
+    href: 'https://b23.tv/rdaQkwA',
+    badgeStyle: {
+      '--creator-icon-bg': socialIcons.bilibili.background,
+      '--creator-icon-color': socialIcons.bilibili.accent,
+      '--creator-icon-border': '#d5daf6',
+    },
+  },
+]))
 function hexToRgb(hex: string) {
   const normalized = hex.replace('#', '')
   const full = normalized.length === 3
@@ -162,20 +217,6 @@ function toRgbString(color: { r: number; g: number; b: number }, alpha?: number)
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
 }
 
-const exportBtnTextColor = computed(() => {
-  const { r, g, b } = hexToRgb(resultThemeColor.value)
-  // WCAG relative luminance
-  const toLinear = (c: number) => {
-    const s = c / 255
-    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
-  }
-  const bgL = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b)
-  const whiteL = 1.0
-  const darkL = 0.0222 // #111827
-  const whiteContrast = (Math.max(bgL, whiteL) + 0.05) / (Math.min(bgL, whiteL) + 0.05)
-  const darkContrast = (Math.max(bgL, darkL) + 0.05) / (Math.min(bgL, darkL) + 0.05)
-  return whiteContrast >= darkContrast ? '#ffffff' : '#111827'
-})
 const rarityMeta = computed(() => getCharacterRarityMeta(primaryCharacter.value?.id))
 const rarityTierLabel = computed(() => {
   const tier = rarityMeta.value?.tier
@@ -187,8 +228,18 @@ const rarityTierStyle = computed(() => {
   const base = hexToRgb(resultThemeColor.value)
   const white = { r: 255, g: 255, b: 255 }
   const dark = { r: 47, g: 58, b: 69 }
+  const hiddenBase = { r: 122, g: 92, b: 255 }
 
   switch (rarityMeta.value?.tier) {
+    case 'ex': {
+      const text = mixRgb(hiddenBase, white, 0.08)
+      return {
+        color: toRgbString(text),
+        background: 'linear-gradient(135deg, rgba(122, 92, 255, 0.16), rgba(255, 123, 172, 0.18))',
+        borderColor: 'rgba(122, 92, 255, 0.35)',
+        boxShadow: '0 10px 24px rgba(122, 92, 255, 0.18)',
+      }
+    }
     case 'ur': {
       const text = mixRgb(base, dark, 0.22)
       return {
@@ -246,6 +297,8 @@ const raritySummaryLabel = computed(() => {
   return t(`result.rarityTierDescriptions.${rarityMeta.value.tier}`, {
     start: rarityMeta.value.startRank,
     end: rarityMeta.value.endRank,
+    startPercent: rarityMeta.value.rangeStartPercent,
+    endPercent: rarityMeta.value.rangeEndPercent,
   })
 })
 const probabilityLabel = computed(() => {
@@ -355,7 +408,6 @@ function viewMatchedCharacter(characterId: string) {
             <div class="hero-metric">
               <span>{{ t('result.rarity') }}</span>
               <strong class="rarity-pill" :style="rarityTierStyle">{{ rarityTierLabel }}</strong>
-              <small>{{ raritySummaryLabel }}</small>
             </div>
             <div class="hero-metric">
               <span>{{ t('result.match') }}</span>
@@ -369,6 +421,16 @@ function viewMatchedCharacter(characterId: string) {
             <button class="action-btn light" @click="copyText">
               <AppIcon name="copy" />
               {{ t('result.copy') }}
+            </button>
+            <button
+              class="action-btn hero-export-btn"
+              :disabled="share.isExporting.value"
+              :style="{ backgroundColor: resultThemeColor, color: '#fff' }"
+              @click="exportPosterImage"
+            >
+              <AppIcon name="spinner" v-if="share.isExporting.value" style="animation: spin 1s linear infinite" />
+              <AppIcon name="download" v-else />
+              {{ share.isExporting.value ? t('common.generating', undefined, '生成中...') : t('common.saveImage', undefined, '生成并分享次元身份卡') }}
             </button>
             <a href="https://github.com/tianxingleo/ACGTI" target="_blank" rel="noopener noreferrer" class="action-btn" style="background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border: none;">
               <svg style="width: 18px; height: 18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
@@ -541,15 +603,6 @@ function viewMatchedCharacter(characterId: string) {
           </div>
         </section>
 
-        <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
-  <button @click="exportPosterImage" :disabled="share.isExporting.value" class="export-image-btn" :style="{ backgroundColor: resultThemeColor, color: exportBtnTextColor }">
-    <AppIcon name="spinner" v-if="share.isExporting.value" style="animation: spin 1s linear infinite" />
-    <AppIcon name="download" v-else />
-    <span style="letter-spacing: 0.05em">{{ share.isExporting.value ? t('common.generating', undefined, '生成中...') : t('common.saveImage', undefined, '生成并分享次元身份卡') }}</span>
-  </button>
-  <p v-if="share.feedback.value" class="export-feedback">{{ share.feedback.value }}</p>
-</div>
-
 <div class="poster-capture-wrapper">
   <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" />
 </div>
@@ -591,7 +644,7 @@ function viewMatchedCharacter(characterId: string) {
             {{ t('result.share') }}
           </button>
           
-          <button class="sidebar-export-btn" @click="exportPosterImage" :disabled="share.isExporting.value" :style="{ background: resultThemeColor, color: exportBtnTextColor, marginTop: '4px' }">
+          <button class="sidebar-export-btn" @click="exportPosterImage" :disabled="share.isExporting.value" :style="{ background: resultThemeColor, color: '#fff', marginTop: '4px' }">
             <AppIcon name="spinner" v-if="share.isExporting.value" style="animation: spin 1s linear infinite" />
             <AppIcon name="download" v-else />
             {{ share.isExporting.value ? t('common.generating', undefined, '生成中...') : t('common.saveImage', undefined, '导出图片') }}
@@ -622,6 +675,31 @@ function viewMatchedCharacter(characterId: string) {
             <a href="https://github.com/tianxingleo/ACGTI/issues" target="_blank" rel="noopener noreferrer">{{ t('result.ossIssue') }}</a>
           </p>
         </div>
+
+        <div class="sidebar-card creator-card">
+          <p class="small-title">{{ t('result.creatorLinks.title') }}</p>
+          <p class="creator-copy">{{ t('result.creatorLinks.copy') }}</p>
+          <div class="creator-links">
+            <a
+              v-for="item in creatorLinks"
+              :key="item.id"
+              :href="item.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="creator-link"
+            >
+              <span class="creator-link-main">
+                <span class="creator-link-icon" :style="item.badgeStyle" aria-hidden="true">
+                  <svg :viewBox="socialIcons[item.brand].viewBox" fill="currentColor">
+                    <path v-for="path in socialIcons[item.brand].paths" :key="path" :d="path" />
+                  </svg>
+                </span>
+                <span class="creator-link-label">{{ item.label }}</span>
+              </span>
+              <span class="creator-link-action">{{ t('result.creatorLinks.action') }}</span>
+            </a>
+          </div>
+        </div>
       </aside>
     </div>
   </div>
@@ -639,6 +717,12 @@ function viewMatchedCharacter(characterId: string) {
 }
 
 .result-hero {
+  --hero-pill-radius: 999px;
+  --hero-pill-border: 1px solid rgba(255, 255, 255, 0.28);
+  --hero-pill-bg: rgba(255, 255, 255, 0.16);
+  --hero-pill-shadow: 0 10px 24px rgba(17, 24, 39, 0.12);
+  --hero-pill-shadow-hover: 0 14px 30px rgba(17, 24, 39, 0.16);
+  --hero-pill-backdrop: blur(10px);
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -696,9 +780,11 @@ function viewMatchedCharacter(characterId: string) {
   align-items: center;
   min-height: 36px;
   padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--hero-pill-radius);
+  background: var(--hero-pill-bg);
+  border: var(--hero-pill-border);
+  box-shadow: var(--hero-pill-shadow);
+  backdrop-filter: var(--hero-pill-backdrop);
   color: #fff;
   font-size: 13px;
   font-weight: 800;
@@ -708,12 +794,14 @@ function viewMatchedCharacter(characterId: string) {
 .hero-badge-wrap {
   margin: 16px 0 0;
   display: inline-flex;
-  background: rgba(255, 255, 255, 0.2);
+  align-items: center;
+  min-height: 48px;
+  background: var(--hero-pill-bg);
   padding: 6px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(8px);
+  border-radius: var(--hero-pill-radius);
+  border: var(--hero-pill-border);
+  box-shadow: var(--hero-pill-shadow);
+  backdrop-filter: var(--hero-pill-backdrop);
 }
 
 .hero-code {
@@ -770,11 +858,12 @@ function viewMatchedCharacter(characterId: string) {
   justify-content: center;
   min-height: 36px;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--hero-pill-radius);
   border: 1px solid transparent;
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.04em;
+  box-shadow: var(--hero-pill-shadow);
 }
 
 .hero-metric small {
@@ -793,22 +882,39 @@ function viewMatchedCharacter(characterId: string) {
 }
 
 .action-btn {
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.12);
+  border: var(--hero-pill-border);
+  background: var(--hero-pill-bg);
   color: #fff;
-  border-radius: 999px;
+  border-radius: var(--hero-pill-radius);
   padding: 10px 16px;
   font-weight: 700;
   display: inline-flex;
   gap: 8px;
   align-items: center;
   cursor: pointer;
+  box-shadow: var(--hero-pill-shadow);
+  backdrop-filter: var(--hero-pill-backdrop);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.action-btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--hero-pill-shadow-hover);
 }
 
 .action-btn.light {
   background: #fff;
   border-color: #fff;
   color: #2f3a45;
+}
+
+.hero-export-btn {
+  border-color: transparent;
 }
 
 .action-btn.ghost {
@@ -1440,6 +1546,7 @@ function viewMatchedCharacter(characterId: string) {
 .rarity-pill--sidebar {
   min-height: 34px;
   font-size: 16px;
+  border-radius: 999px;
 }
 
 .profile-probability {
@@ -1488,10 +1595,14 @@ function viewMatchedCharacter(characterId: string) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .sidebar-actions button:hover {
   border-color: #c8d0d7;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.12);
 }
 
 .sidebar-feedback {
@@ -1541,16 +1652,93 @@ function viewMatchedCharacter(characterId: string) {
   font-weight: 700;
 }
 
+.creator-card {
+  background: linear-gradient(180deg, #ffffff, #f6fbf8);
+  border-color: #dde8e2;
+}
+
+.creator-copy {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5f6b75;
+}
+
+.creator-links {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.creator-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #dce7e0;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #2f3a45;
+  text-decoration: none;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.creator-link:hover {
+  border-color: #b9d7c7;
+  box-shadow: 0 12px 24px rgba(51, 164, 116, 0.08);
+  transform: translateY(-1px);
+}
+
+.creator-link-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.creator-link-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  border: 1px solid var(--creator-icon-border, #dce7e0);
+  background: var(--creator-icon-bg, #f3f8f5);
+  color: var(--creator-icon-color, #3b4b46);
+  flex: none;
+}
+
+.creator-link-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.creator-link-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.creator-link-action {
+  color: #33a474;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .sidebar-export-btn {
   border-color: transparent !important;
 }
 
 .project-card {
-  text-align: center;
+  text-align: left;
 }
 
 .project-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 6px;
   color: #33a474;
   font-weight: 700;
@@ -1846,37 +2034,6 @@ function viewMatchedCharacter(characterId: string) {
   }
 }
 
-.export-image-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: none;
-  border-radius: 999px;
-  padding: 16px 36px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s, box-shadow 0.2s;
-  width: 100%;
-  max-width: 360px;
-}
-.export-image-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-.export-image-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
-}
-.export-feedback {
-  margin: 0;
-  font-size: 14px;
-  color: #3ba17c;
-  font-weight: 600;
-}
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }

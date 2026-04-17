@@ -229,7 +229,7 @@ const relayFeedback = ref('')
 const isPopupReady = ref(false)
 const showUpdatePopup = ref(false)
 
-const HOME_UPDATE_DISMISS_KEY = 'acgti:home-update-2026-04-15-popup-v2-dismissed'
+const HOME_UPDATE_DISMISS_KEY = 'acgti:home-update-2026-04-17-popup-v3-dismissed'
 const UPDATE_POPUP_DELAY_MS = 500
 const UPDATE_POPUP_AUTO_HIDE_MS = 5200
 

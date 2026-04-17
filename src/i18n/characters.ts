@@ -574,6 +574,42 @@ const characterNameI18n: Record<string, LocalizedText> = {
     en: 'Cartethyia',
     ja: 'カルテシア',
   },
+  'azuma-seren': {
+    'zh-CN': '东雪莲',
+    'zh-TW': '東雪蓮',
+    en: 'Azuma Seren',
+    ja: '東雪蓮',
+  },
+  'izumi-konata': {
+    'zh-CN': '泉此方',
+    'zh-TW': '泉此方',
+    en: 'Konata Izumi',
+    ja: '泉こなた',
+  },
+  reze: {
+    'zh-CN': '雷塞',
+    'zh-TW': '蕾潔',
+    en: 'Reze',
+    ja: 'レゼ',
+  },
+  'kaguya-chojikuu': {
+    'zh-CN': '辉夜',
+    'zh-TW': '輝夜',
+    en: 'Kaguya',
+    ja: '輝夜',
+  },
+  'bilibili-22': {
+    'zh-CN': '22娘',
+    'zh-TW': '22娘',
+    en: '22 Niang',
+    ja: '22娘',
+  },
+  'bilibili-33': {
+    'zh-CN': '33娘',
+    'zh-TW': '33娘',
+    en: '33 Niang',
+    ja: '33娘',
+  },
 }
 
 const seriesI18n: Record<string, LocalizedText> = {
@@ -900,6 +936,30 @@ const seriesI18n: Record<string, LocalizedText> = {
     'zh-TW': '重返未來:1999',
     en: 'Reverse:1999',
     ja: 'リバース:1999',
+  },
+  'Blanche Fleur': {
+    'zh-CN': 'Blanche Fleur',
+    'zh-TW': 'Blanche Fleur',
+    en: 'Blanche Fleur',
+    ja: 'Blanche Fleur',
+  },
+  '幸运星': {
+    'zh-CN': '幸运星',
+    'zh-TW': '幸運星',
+    en: 'Lucky Star',
+    ja: 'らき☆すた',
+  },
+  '电锯人': {
+    'zh-CN': '电锯人',
+    'zh-TW': '鏈鋸人',
+    en: 'Chainsaw Man',
+    ja: 'チェンソーマン',
+  },
+  bilibili: {
+    'zh-CN': 'bilibili',
+    'zh-TW': 'bilibili',
+    en: 'bilibili',
+    ja: 'bilibili',
   },
 }
 

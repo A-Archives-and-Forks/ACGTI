@@ -154,6 +154,11 @@
     "thumb": "/images/characters/thumbs/绫地宁宁.webp",
     "accent": "#e4a9ba"
   },
+  "inaba-meguru": {
+    "image": "/images/characters/美咕噜.png",
+    "thumb": "/images/characters/thumbs/美咕噜.png",
+    "accent": "#f08a43"
+  },
   "tomotake-yoshino": {
     "image": "/images/characters/朝武芳乃.webp",
     "thumb": "/images/characters/thumbs/朝武芳乃.webp",
@@ -445,13 +450,43 @@
     "accent": "#7FD8B3"
   },
   "matikanetannhauser": {
-    "image": "/images/characters/待兼诗歌剧.webp",
-    "thumb": "/images/characters/thumbs/待兼诗歌剧.webp",
+    "image": "/images/characters/曼波.webp",
+    "thumb": "/images/characters/thumbs/曼波.webp",
     "accent": "#F5C04D"
   },
   "cartethyia": {
-    "image": "/images/characters/卡提希娅.webp",
-    "thumb": "/images/characters/thumbs/卡提希娅.webp",
+    "image": "/images/characters/卡提西亚.webp",
+    "thumb": "/images/characters/thumbs/卡提西亚.webp",
     "accent": "#9FD5E8"
+  },
+  "azuma-seren": {
+    "image": "/images/characters/东雪莲.webp",
+    "thumb": "/images/characters/thumbs/东雪莲.webp",
+    "accent": "#d8dff8"
+  },
+  "izumi-konata": {
+    "image": "/images/characters/泉此方.webp",
+    "thumb": "/images/characters/thumbs/泉此方.webp",
+    "accent": "#3f8cff"
+  },
+  "reze": {
+    "image": "/images/characters/雷塞.webp",
+    "thumb": "/images/characters/thumbs/雷塞.webp",
+    "accent": "#7b5bbd"
+  },
+  "kaguya-chojikuu": {
+    "image": "/images/characters/超时空辉夜姬辉夜.webp",
+    "thumb": "/images/characters/thumbs/超时空辉夜姬辉夜.webp",
+    "accent": "#c8b6ff"
+  },
+  "bilibili-22": {
+    "image": "/images/characters/22.webp",
+    "thumb": "/images/characters/thumbs/22.webp",
+    "accent": "#5aa9ff"
+  },
+  "bilibili-33": {
+    "image": "/images/characters/33.webp",
+    "thumb": "/images/characters/thumbs/33.webp",
+    "accent": "#7aa7ff"
   }
 }
