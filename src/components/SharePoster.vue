@@ -105,8 +105,17 @@ const rarityTierStyle = computed(() => {
   const base = hexToRgb(resultThemeColor.value)
   const white = { r: 255, g: 255, b: 255 }
   const dark = { r: 47, g: 58, b: 69 }
+  const hiddenBase = { r: 122, g: 92, b: 255 }
 
   switch (rarityMeta.value?.tier) {
+    case 'ex': {
+      const text = mixRgb(hiddenBase, white, 0.08)
+      return {
+        color: toRgbString(text),
+        background: 'linear-gradient(135deg, rgba(122, 92, 255, 0.16), rgba(255, 123, 172, 0.18))',
+        borderColor: 'rgba(122, 92, 255, 0.35)',
+      }
+    }
     case 'ur': {
       const text = mixRgb(base, dark, 0.22)
       return {
@@ -150,6 +159,8 @@ const raritySummaryLabel = computed(() => {
   return t(`result.rarityTierDescriptions.${rarityMeta.value.tier}`, {
     start: rarityMeta.value.startRank,
     end: rarityMeta.value.endRank,
+    startPercent: rarityMeta.value.rangeStartPercent,
+    endPercent: rarityMeta.value.rangeEndPercent,
   })
 })
 </script>
