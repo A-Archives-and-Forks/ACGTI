@@ -610,12 +610,6 @@ const characterNameI18n: Record<string, LocalizedText> = {
     en: '33 Niang',
     ja: '33娘',
   },
-  'ayanokoji-kiyotaka': {
-    'zh-CN': '绫小路清隆',
-    'zh-TW': '綾小路清隆',
-    en: 'Kiyotaka Ayanokōji',
-    ja: '綾小路清隆',
-  },
 }
 
 const seriesI18n: Record<string, LocalizedText> = {
@@ -852,12 +846,6 @@ const seriesI18n: Record<string, LocalizedText> = {
     'zh-TW': '果然我的青春戀愛喜劇搞錯了',
     en: 'My Teen Romantic Comedy SNAFU',
     ja: 'やはり俺の青春ラブコメはまちがっている。',
-  },
-  '欢迎来到实力至上主义的教室': {
-    'zh-CN': '欢迎来到实力至上主义的教室',
-    'zh-TW': '歡迎來到實力至上主義的教室',
-    en: 'Classroom of the Elite',
-    ja: 'ようこそ実力至上主義の教室へ',
   },
   '青春猪头少年不会梦到兔女郎学姐': {
     'zh-CN': '青春猪头少年不会梦到兔女郎学姐',

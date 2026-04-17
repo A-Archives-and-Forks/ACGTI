@@ -4389,51 +4389,5 @@
       "confidence": "high",
       "summary": "主要依据Fate官站与士郎契约的最优从者、TYPE-MOON系资料中重视骑士道、公平对决的王设定映射。"
     }
-  },
-  {
-    "id": "ayanokoji-kiyotaka",
-    "name": "绫小路清隆",
-    "series": "欢迎来到实力至上主义的教室",
-    "addedAt": "2026-04-17",
-    "birthday": "10月20日",
-    "age": "初登场15，现17",
-    "height": "176cm",
-    "hairColor": "棕",
-    "eyeColor": "金",
-    "voiceActors": ["千叶翔也", "花江夏树"],
-    "image": "/images/characters/绫小路清隆.webp",
-    "matchCode": "INTJ",
-    "matchWeight": 1.08,
-    "code": "KIYO",
-    "title": "白房出身·静默策士",
-    "archetypeId": "shadow-strategist",
-    "tags": [
-      "白色房间",
-      "死鱼眼",
-      "面瘫",
-      "节能主义"
-    ],
-    "note": "表面上像是不爱出风头的普通学生，实际上一直在观察规则、人际关系和每个人的情绪走向。你更习惯把自己放在幕后，用冷静、计算和最省力的方式达成目的；别人看到的是低存在感和面无表情，你真正擅长的却是先听、先看、先算，再在最关键的节点把全局都算进去。",
-    "vector": {
-      "expression": -3,
-      "temperature": -1,
-      "judgement": 3,
-      "order": 3,
-      "agency": 3,
-      "aura": 2
-    },
-    "signature": {
-      "uniqueAxes": {
-        "judgement": 3,
-        "order": 3,
-        "agency": 3
-      }
-    },
-    "personaBasis": {
-      "type": "canon",
-      "label": "官方设定映射",
-      "confidence": "high",
-      "summary": "基于《欢迎来到实力至上主义的教室》中绫小路清隆的白色房间出身、低调观察、幕后布局与高效率行事风格整理。"
-    }
   }
 ]
