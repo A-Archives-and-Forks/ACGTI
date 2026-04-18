@@ -12,6 +12,7 @@ import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle
 import { getCharacterRarityMeta } from '../utils/characterRarity'
 import { formatCharacterProbability } from '../utils/characterProbability'
 import { normalizeMbtiCode } from '../utils/quizEngine'
+import { reportResultInBackground, submitFeedback } from '../utils/statsReporter'
 
 // SharePoster 只在用户点击"导出图片"时才加载和挂载
 const SharePosterAsync = defineAsyncComponent(() => import('../components/SharePoster.vue'))
@@ -56,6 +57,14 @@ onMounted(async () => {
 
   if (!result.value) {
     void router.replace('/quiz')
+    return
+  }
+
+  // 后台静默上报（fire-and-forget）
+  submissionId.value = crypto.randomUUID()
+  const payload = buildSubmitPayload()
+  if (payload) {
+    reportResultInBackground(payload)
   }
 })
 
@@ -416,6 +425,73 @@ function viewMatchedCharacter(characterId: string) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
+
+// ── 统计上报：结果确定后 fire-and-forget 上报 ──
+const submissionId = ref<string>('')
+
+function buildSubmitPayload() {
+  if (!result.value) return null
+  const r = result.value
+  const scores = r.scores
+
+  // 从 localStorage 拿 answers（useQuiz state 里存的）
+  const record = quiz.state.latestRecord
+  const rawAnswers = record?.answers ?? []
+
+  return {
+    submissionId: submissionId.value,
+    archetypeCode: r.archetype.id,
+    characterCode: r.code || r.mbtiCode,
+    dimensionScores: {
+      ei: scores.E_I?.percentage ?? null,
+      sn: scores.S_N?.percentage ?? null,
+      tf: scores.T_F?.percentage ?? null,
+      jp: scores.J_P?.percentage ?? null,
+    },
+    answers: rawAnswers.map((val: number, idx: number) => ({
+      questionId: `q${idx + 1}`,
+      answerValue: val,
+    })),
+    durationMs: undefined,
+  }
+}
+
+// ── 用户反馈 ──
+const feedbackEi = ref<'E' | 'I' | ''>('')
+const feedbackSn = ref<'S' | 'N' | ''>('')
+const feedbackTf = ref<'T' | 'F' | ''>('')
+const feedbackJp = ref<'J' | 'P' | ''>('')
+const feedbackConfidence = ref(0)
+const feedbackNote = ref('')
+const feedbackSubmitting = ref(false)
+const feedbackDone = ref(false)
+const feedbackError = ref('')
+
+const feedbackMbtiComplete = computed(() =>
+  feedbackEi.value && feedbackSn.value && feedbackTf.value && feedbackJp.value
+)
+
+async function handleFeedbackSubmit() {
+  if (!feedbackMbtiComplete.value) return
+  feedbackSubmitting.value = true
+  feedbackError.value = ''
+
+  const selfMbti = feedbackEi.value + feedbackSn.value + feedbackTf.value + feedbackJp.value
+
+  const ok = await submitFeedback({
+    submissionId: submissionId.value,
+    selfMbti,
+    confidence: feedbackConfidence.value,
+    note: feedbackNote.value || undefined,
+  })
+
+  feedbackSubmitting.value = false
+  if (ok) {
+    feedbackDone.value = true
+  } else {
+    feedbackError.value = t('result.feedbackError', undefined, '提交失败，请稍后再试')
+  }
+}
 </script>
 
 <template>
@@ -638,6 +714,81 @@ function viewMatchedCharacter(characterId: string) {
   <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" />
 </div>
 
+        <!-- 用户反馈卡片 -->
+        <section class="feedback-section" v-reveal>
+          <div class="section-title-wrap">
+            <div class="section-index">?</div>
+            <h2 class="section-title">{{ t('result.feedbackTitle', undefined, '帮助我们校准') }}</h2>
+          </div>
+
+          <div v-if="feedbackDone" class="feedback-card feedback-done">
+            <p>{{ t('result.feedbackDone', undefined, '感谢反馈！你的数据将帮助我们校准题目与角色映射。') }}</p>
+          </div>
+
+          <div v-else class="feedback-card">
+            <p class="feedback-desc">{{ t('result.feedbackDesc', undefined, '知道自己更接近哪个真实 MBTI 吗？欢迎匿名反馈，帮助我们校准题目与角色映射。') }}</p>
+
+            <div class="feedback-field">
+              <label class="feedback-label">{{ t('result.feedbackMbtiLabel', undefined, '我的真实 MBTI') }}</label>
+              <div class="feedback-dimension-row">
+                <button class="dim-btn" :class="{ active: feedbackEi === 'E' }" @click="feedbackEi = 'E'"><span class="dim-letter">E</span><span class="dim-name">{{ t('result.dimE', undefined, '外向') }}</span></button>
+                <button class="dim-btn" :class="{ active: feedbackEi === 'I' }" @click="feedbackEi = 'I'"><span class="dim-letter">I</span><span class="dim-name">{{ t('result.dimI', undefined, '内向') }}</span></button>
+              </div>
+              <div class="feedback-dimension-row">
+                <button class="dim-btn" :class="{ active: feedbackSn === 'S' }" @click="feedbackSn = 'S'"><span class="dim-letter">S</span><span class="dim-name">{{ t('result.dimS', undefined, '实感') }}</span></button>
+                <button class="dim-btn" :class="{ active: feedbackSn === 'N' }" @click="feedbackSn = 'N'"><span class="dim-letter">N</span><span class="dim-name">{{ t('result.dimN', undefined, '直觉') }}</span></button>
+              </div>
+              <div class="feedback-dimension-row">
+                <button class="dim-btn" :class="{ active: feedbackTf === 'T' }" @click="feedbackTf = 'T'"><span class="dim-letter">T</span><span class="dim-name">{{ t('result.dimT', undefined, '理智') }}</span></button>
+                <button class="dim-btn" :class="{ active: feedbackTf === 'F' }" @click="feedbackTf = 'F'"><span class="dim-letter">F</span><span class="dim-name">{{ t('result.dimF', undefined, '情感') }}</span></button>
+              </div>
+              <div class="feedback-dimension-row">
+                <button class="dim-btn" :class="{ active: feedbackJp === 'J' }" @click="feedbackJp = 'J'"><span class="dim-letter">J</span><span class="dim-name">{{ t('result.dimJ', undefined, '判断') }}</span></button>
+                <button class="dim-btn" :class="{ active: feedbackJp === 'P' }" @click="feedbackJp = 'P'"><span class="dim-letter">P</span><span class="dim-name">{{ t('result.dimP', undefined, '感知') }}</span></button>
+              </div>
+              <div v-if="feedbackMbtiComplete" class="feedback-mbti-preview">
+                {{ feedbackEi }}{{ feedbackSn }}{{ feedbackTf }}{{ feedbackJp }}
+              </div>
+            </div>
+
+            <div class="feedback-field">
+              <label class="feedback-label">{{ t('result.feedbackConfidenceLabel', undefined, '确定程度') }}</label>
+              <div class="confidence-row">
+                <button
+                  v-for="n in 5"
+                  :key="n"
+                  class="confidence-btn"
+                  :class="{ active: feedbackConfidence === n }"
+                  @click="feedbackConfidence = n"
+                >{{ n }}</button>
+                <span class="confidence-hint">
+                  {{ feedbackConfidence <= 2 ? t('result.confidenceLow', undefined, '不太确定') : feedbackConfidence >= 4 ? t('result.confidenceHigh', undefined, '非常确定') : t('result.confidenceMid', undefined, '一般') }}
+                </span>
+              </div>
+            </div>
+
+            <div class="feedback-field">
+              <label class="feedback-label">{{ t('result.feedbackNoteLabel', undefined, '备注（可选）') }}</label>
+              <input
+                v-model="feedbackNote"
+                type="text"
+                class="feedback-input"
+                :placeholder="t('result.feedbackNotePlaceholder', undefined, '可以补充说明，也可以不填')"
+                maxlength="200"
+              />
+            </div>
+
+            <button
+              class="feedback-submit-btn"
+              :disabled="!feedbackMbtiComplete || feedbackConfidence === 0 || feedbackSubmitting"
+              @click="handleFeedbackSubmit"
+            >
+              {{ feedbackSubmitting ? t('result.feedbackSubmitting', undefined, '提交中...') : t('result.feedbackSubmit', undefined, '提交反馈') }}
+            </button>
+
+            <p v-if="feedbackError" class="feedback-error">{{ feedbackError }}</p>
+          </div>
+        </section>
 
         <section v-if="resultAdSlot" class="result-ad-section">
           <AdsenseSlot :slot="resultAdSlot" :label="t('app.common.sponsored')" />
@@ -2102,5 +2253,224 @@ function viewMatchedCharacter(characterId: string) {
   height: max-content;
   pointer-events: none;
   z-index: -9999;
+}
+
+/* ── 用户反馈卡片 ── */
+.feedback-section {
+  margin-top: 32px;
+}
+
+.feedback-card {
+  background: linear-gradient(180deg, #ffffff, #fbfdfb);
+  border: 1px solid #e8ecef;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.feedback-done {
+  text-align: center;
+  color: #33a474;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.feedback-done p {
+  margin: 0;
+}
+
+.feedback-desc {
+  margin: 0 0 20px;
+  color: #5f6b75;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.feedback-field {
+  margin-bottom: 18px;
+}
+
+.feedback-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #4c5863;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.feedback-dimension-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.dim-btn {
+  flex: 1;
+  border: 1px solid #dce1e5;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dim-btn:hover {
+  border-color: #b0bac2;
+  background: #f4f7f9;
+}
+
+.dim-btn.active {
+  background: #33a474;
+  border-color: #33a474;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(51, 164, 116, 0.25);
+}
+
+.dim-letter {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.dim-name {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.dim-btn.active .dim-name {
+  opacity: 1;
+}
+
+.feedback-mbti-preview {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #33a474;
+}
+
+.confidence-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confidence-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dce1e5;
+  background: #fff;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #4c5863;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.confidence-btn:hover {
+  border-color: #b0bac2;
+  background: #f4f7f9;
+}
+
+.confidence-btn.active {
+  background: #e4ae3a;
+  border-color: #e4ae3a;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(228, 174, 58, 0.25);
+}
+
+.confidence-hint {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8f9ba5;
+}
+
+.feedback-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dce1e5;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #2f3a45;
+  transition: border-color 0.15s ease;
+  outline: none;
+}
+
+.feedback-input:focus {
+  border-color: #33a474;
+}
+
+.feedback-input::placeholder {
+  color: #b5bfc7;
+}
+
+.feedback-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 999px;
+  background: #33a474;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 8px 20px rgba(51, 164, 116, 0.22);
+}
+
+.feedback-submit-btn:hover:not(:disabled) {
+  background: #2e9469;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(51, 164, 116, 0.28);
+}
+
+.feedback-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback-error {
+  margin: 12px 0 0;
+  color: #e26666;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 520px) {
+  .feedback-dimension-row {
+    gap: 6px;
+  }
+
+  .dim-btn {
+    padding: 8px 4px;
+  }
+
+  .dim-letter {
+    font-size: 16px;
+  }
+
+  .dim-name {
+    font-size: 11px;
+  }
+
+  .feedback-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
 }
 </style>
