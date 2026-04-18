@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 
 import archetypesData from '../data/archetypes.json'
+import charactersData from '../data/characters.json'
 import characterVisualsData from '../data/characterVisuals.json'
 import { useI18n } from '../i18n'
 import { getLocalizedCharacterName, getLocalizedCharacterSeries } from '../i18n/characters'
@@ -28,6 +29,22 @@ const archetypeMap = computed(() => {
 type CharacterVisual = { thumb?: string; accent: string }
 const visualMap = characterVisualsData as Record<string, CharacterVisual>
 
+interface CharacterDef {
+  id: string
+  code: string
+  name: string
+  series: string
+  hidden?: boolean
+}
+
+const characterCodeMap = computed(() => {
+  const map = new Map<string, CharacterDef>()
+  for (const item of charactersData as CharacterDef[]) {
+    map.set(item.code.toUpperCase(), item)
+  }
+  return map
+})
+
 // --- Stats data ---
 interface OverviewData {
   totalSubmissions: number
@@ -45,6 +62,60 @@ const overview = ref<OverviewData | null>(null)
 const archetypes = ref<RankedItem[]>([])
 const characters = ref<RankedItem[]>([])
 const updatedAt = ref<string | null>(null)
+const loadError = ref<string | null>(null)
+
+function getLocaleLoadErrorMessage(): string {
+  if (locale.value === 'zh-TW') {
+    return '統計資料目前無法載入。若在本機開發，請使用 wrangler pages dev 啟動，才能訪問 /api/stats/*。'
+  }
+  if (locale.value === 'en') {
+    return 'Stats data is currently unavailable. In local development, please run with wrangler pages dev so /api/stats/* works.'
+  }
+  if (locale.value === 'ja') {
+    return '統計データを読み込めません。ローカル開発では wrangler pages dev で起動して /api/stats/* にアクセスしてください。'
+  }
+  return '统计数据暂时无法加载。本地开发请使用 wrangler pages dev 启动，才能访问 /api/stats/*。'
+}
+
+async function fetchStatsJson(url: string) {
+  const response = await fetch(url, {
+    headers: { Accept: 'application/json' },
+  })
+  const contentType = response.headers.get('content-type') ?? ''
+  if (!response.ok || !contentType.includes('application/json')) {
+    throw new Error('stats_api_unavailable')
+  }
+  return response.json()
+}
+
+function getCharacterFromCode(code: string): CharacterDef | null {
+  return characterCodeMap.value.get(code.toUpperCase()) ?? null
+}
+
+function getCharacterName(code: string): string {
+  const character = getCharacterFromCode(code)
+  if (!character) return code
+  return getLocalizedCharacterName(character, locale.value)
+}
+
+function getCharacterSeries(code: string): string {
+  const character = getCharacterFromCode(code)
+  if (!character) return ''
+  return getLocalizedCharacterSeries(character, locale.value)
+}
+
+function getCharacterThumb(code: string): string | null {
+  const character = getCharacterFromCode(code)
+  if (!character) return null
+  const thumb = visualMap[character.id]?.thumb
+  return thumb ? resolvePublicAsset(thumb) : null
+}
+
+function getCharacterAccent(code: string): string {
+  const character = getCharacterFromCode(code)
+  if (!character) return '#3ba17c'
+  return visualMap[character.id]?.accent ?? '#3ba17c'
+}
 
 function formatNumber(n: number): string {
   if (n >= 10000) return (n / 10000).toFixed(1) + 'W'
@@ -63,14 +134,14 @@ const topCharacters = computed(() => characters.value.slice(0, 20))
 onMounted(async () => {
   try {
     const [overviewRes, archetypesRes, charactersRes] = await Promise.all([
-      fetch('/api/stats/overview'),
-      fetch('/api/stats/archetypes'),
-      fetch('/api/stats/characters'),
+      fetchStatsJson('/api/stats/overview'),
+      fetchStatsJson('/api/stats/archetypes'),
+      fetchStatsJson('/api/stats/characters'),
     ])
 
-    const overviewJson = await overviewRes.json()
-    const archetypesJson = await archetypesRes.json()
-    const charactersJson = await charactersRes.json()
+    const overviewJson = overviewRes
+    const archetypesJson = archetypesRes
+    const charactersJson = charactersRes
 
     if (overviewJson.data) overview.value = overviewJson.data
     if (archetypesJson.data?.items) archetypes.value = archetypesJson.data.items
@@ -78,6 +149,7 @@ onMounted(async () => {
     updatedAt.value = overviewJson.updatedAt ?? archetypesJson.updatedAt ?? charactersJson.updatedAt ?? null
   } catch (err) {
     console.error('Failed to load stats:', err)
+    loadError.value = getLocaleLoadErrorMessage()
   } finally {
     loading.value = false
   }
@@ -107,6 +179,12 @@ onMounted(async () => {
     </section>
 
     <template v-else>
+      <section v-if="loadError" class="stats-section" v-reveal>
+        <div class="container">
+          <div class="error-card">{{ loadError }}</div>
+        </div>
+      </section>
+
       <!-- Overview cards -->
       <section class="stats-section" v-reveal>
         <div class="container">
@@ -180,23 +258,24 @@ onMounted(async () => {
             >
               <span class="ranking-index">{{ index + 1 }}</span>
               <img
-                v-if="visualMap[item.code]?.thumb"
-                :src="resolvePublicAsset(visualMap[item.code].thumb)"
-                :alt="item.code"
+                v-if="getCharacterThumb(item.code)"
+                :src="getCharacterThumb(item.code) ?? undefined"
+                :alt="getCharacterName(item.code)"
                 class="ranking-avatar"
               />
               <div v-else class="ranking-avatar placeholder"></div>
               <div class="ranking-info">
                 <div class="ranking-header">
-                  <span class="ranking-name">{{ item.code }}</span>
+                  <span class="ranking-name">{{ getCharacterName(item.code) }}</span>
                   <span class="ranking-percent">{{ item.percent.toFixed(1) }}%</span>
                 </div>
+                <span class="ranking-subtitle">{{ getCharacterSeries(item.code) || item.code }}</span>
                 <div class="ranking-bar-track">
                   <div
                     class="ranking-bar-fill"
                     :style="{
                       width: `${Math.max(item.percent, 1)}%`,
-                      backgroundColor: visualMap[item.code]?.accent ?? '#3ba17c',
+                      backgroundColor: getCharacterAccent(item.code),
                     }"
                   ></div>
                 </div>
@@ -354,6 +433,12 @@ onMounted(async () => {
   color: #3ba17c;
   flex-shrink: 0;
 }
+.ranking-subtitle {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  color: #8a8a8a;
+}
 .ranking-bar-track {
   width: 100%;
   height: 6px;
@@ -408,6 +493,15 @@ onMounted(async () => {
   background: #fff;
   border-radius: 12px;
   padding: 2rem 1.5rem;
+}
+.error-card {
+  border: 1px solid #f0d9a6;
+  background: #fff8e8;
+  color: #7a5a16;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 .skeleton-line {
   border-radius: 4px;

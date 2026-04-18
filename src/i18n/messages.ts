@@ -441,9 +441,7 @@ export const messages = {
       generating: '生成中...',
       saveImage: '生成并分享次元身份卡',
     },
-  },
-
-  stats: {
+    stats: {
     title: '全网人格分布',
     subtitle: '基于所有匿名测试结果的实时统计',
     overview: {
@@ -472,7 +470,9 @@ export const messages = {
       updateFreq: '数据每 15 分钟更新一次',
       lastUpdate: '最后更新：{time}',
     },
+    },
   },
+
   'zh-TW': {
     app: {
       nav: {
@@ -1185,9 +1185,7 @@ export const messages = {
       generating: '生成中...',
       saveImage: '生成並分享次元身份卡',
     },
-  },
-
-  stats: {
+    stats: {
     title: '全網人格分佈',
     subtitle: '基於所有匿名測試結果的即時統計',
     overview: {
@@ -1216,7 +1214,9 @@ export const messages = {
       updateFreq: '數據每 15 分鐘更新一次',
       lastUpdate: '最後更新：{time}',
     },
+    },
   },
+
   en: {
     app: {
       nav: {
@@ -1809,9 +1809,7 @@ export const messages = {
       generating: 'Generating...',
       saveImage: 'Generate & Share Identity Card',
     },
-  },
-
-  stats: {
+    stats: {
     title: 'Global Personality Distribution',
     subtitle: 'Real-time statistics based on all anonymous test results',
     overview: {
@@ -1840,7 +1838,9 @@ export const messages = {
       updateFreq: 'Data updates every 15 minutes',
       lastUpdate: 'Last updated: {time}',
     },
+    },
   },
+
   ja: {
     app: {
       nav: {
@@ -2433,9 +2433,7 @@ export const messages = {
       generating: '生成中...',
       saveImage: 'アイデンティティカードを生成・シェア',
     },
-  },
-
-  stats: {
+    stats: {
     title: '全世界の性格分佈',
     subtitle: 'すべての匿名テスト結果に基づくリアルタイム統計',
     overview: {
@@ -2463,6 +2461,7 @@ export const messages = {
       note: 'データは匿名統計集計です。科学的な性格診断ではありません。娯楽目的のみ。',
       updateFreq: 'データは15分ごとに更新されます',
       lastUpdate: '最終更新：{time}',
+    },
     },
   },
 } as const

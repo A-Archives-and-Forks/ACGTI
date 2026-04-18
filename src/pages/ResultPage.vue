@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AdsenseSlot from '../components/AdsenseSlot.vue'
@@ -13,51 +13,6 @@ import { getCharacterRarityMeta } from '../utils/characterRarity'
 import { formatCharacterProbability } from '../utils/characterProbability'
 import { normalizeMbtiCode } from '../utils/quizEngine'
 import { reportResultInBackground, submitFeedback } from '../utils/statsReporter'
-
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (container: HTMLElement | string, options: Record<string, unknown>) => number
-      reset: (widgetId?: number) => void
-      remove?: (widgetId: number) => void
-    }
-  }
-}
-
-let turnstileScriptPromise: Promise<void> | null = null
-
-function ensureTurnstileScript() {
-  if (typeof window === 'undefined') {
-    return Promise.reject(new Error('Turnstile is not available during SSR'))
-  }
-
-  if (window.turnstile) {
-    return Promise.resolve()
-  }
-
-  if (!turnstileScriptPromise) {
-    turnstileScriptPromise = new Promise<void>((resolve, reject) => {
-      const existing = document.querySelector<HTMLScriptElement>('script[data-turnstile-script="true"]')
-
-      if (existing) {
-        existing.addEventListener('load', () => resolve(), { once: true })
-        existing.addEventListener('error', () => reject(new Error('Failed to load Turnstile script')), { once: true })
-        return
-      }
-
-      const script = document.createElement('script')
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-      script.async = true
-      script.defer = true
-      script.dataset.turnstileScript = 'true'
-      script.onload = () => resolve()
-      script.onerror = () => reject(new Error('Failed to load Turnstile script'))
-      document.head.appendChild(script)
-    })
-  }
-
-  return turnstileScriptPromise
-}
 
 // SharePoster 只在用户点击"导出图片"时才加载和挂载
 const SharePosterAsync = defineAsyncComponent(() => import('../components/SharePoster.vue'))
@@ -73,39 +28,6 @@ const posterRef = ref<{ rootEl: HTMLElement | null } | null>(null)
 const shouldMountPoster = ref(false)
 const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
-const buildTimeTurnstileSiteKey = String(import.meta.env.VITE_TURNSTILE_SITE_KEY ?? '').trim()
-const legacyBuildTimeTurnstileSiteKey = String((import.meta.env as Record<string, unknown>).TURNSTILE_SITE_KEY ?? '').trim()
-
-function summarizeKeyForLog(value: string) {
-  if (!value) {
-    return {
-      present: false,
-      length: 0,
-      preview: '',
-    }
-  }
-
-  return {
-    present: true,
-    length: value.length,
-    preview: `${value.slice(0, 6)}...${value.slice(-4)}`,
-  }
-}
-
-function logTurnstileDiagnostics(stage: string, extra?: Record<string, unknown>) {
-  const payload: Record<string, unknown> = {
-    stage,
-    host: typeof window !== 'undefined' ? window.location.host : 'ssr',
-    path: typeof window !== 'undefined' ? window.location.pathname : 'ssr',
-    isDev: import.meta.env.DEV,
-    isProd: import.meta.env.PROD,
-    buildTimeViteKey: summarizeKeyForLog(buildTimeTurnstileSiteKey),
-    buildTimeLegacyKey: summarizeKeyForLog(legacyBuildTimeTurnstileSiteKey),
-    ...extra,
-  }
-
-  console.info('[Turnstile][diagnostics]', payload)
-}
 
 const heroQuote = computed(() => {
   if (!result.value) return ''
@@ -129,25 +51,23 @@ const heroQuote = computed(() => {
 
 // 结果页需要数据来处理 debug 查询和角色匹配
 onMounted(async () => {
-  logTurnstileDiagnostics('result-page-mounted:start')
   await quiz.ensureData()
   quiz.resumeLastResult()
   applyDebugResultFromRoute()
-  await loadRuntimeTurnstileSiteKey()
-  logTurnstileDiagnostics('result-page-mounted:after-runtime-load', {
-    finalKey: summarizeKeyForLog(turnstileSiteKey.value),
-  })
 
-  if (!hasTurnstile.value) {
-    console.warn('[Turnstile] site key is missing after startup. Feedback verification will be skipped.')
-  }
+  // Turnstile temporarily disabled.
+  // await loadRuntimeTurnstileSiteKey()
+  // logTurnstileDiagnostics('result-page-mounted:after-runtime-load', {
+  //   finalKey: summarizeKeyForLog(turnstileSiteKey.value),
+  // })
 
   if (!result.value) {
     void router.replace('/quiz')
     return
   }
 
-  void mountTurnstileWidget()
+  // Turnstile temporarily disabled.
+  // void mountTurnstileWidget()
 
   // 后台静默上报（fire-and-forget）
   const payload = buildSubmitPayload()
@@ -628,153 +548,17 @@ const feedbackNote = ref('')
 const feedbackSubmitting = ref(false)
 const feedbackDone = ref(false)
 const feedbackError = ref('')
-const turnstileContainer = ref<HTMLElement | null>(null)
-const turnstileToken = ref('')
-const turnstileWidgetId = ref<number | null>(null)
-const turnstileStatus = ref<'idle' | 'loading' | 'ready' | 'verified' | 'error'>('idle')
-const turnstileSiteKey = ref(buildTimeTurnstileSiteKey)
 const submissionId = ref('')
-
-const hasTurnstile = computed(() => turnstileSiteKey.value.length > 0)
 const feedbackMbtiComplete = computed(() =>
   feedbackEi.value && feedbackSn.value && feedbackTf.value && feedbackJp.value
 )
 
-async function loadRuntimeTurnstileSiteKey() {
-  if (turnstileSiteKey.value) {
-    logTurnstileDiagnostics('runtime-config:skip-fetch-because-build-key-exists', {
-      finalKey: summarizeKeyForLog(turnstileSiteKey.value),
-    })
-    return
-  }
-
-  try {
-    logTurnstileDiagnostics('runtime-config:fetch-start')
-    const resp = await fetch('/api/config')
-    if (!resp.ok) {
-      console.warn('[Turnstile] runtime config request failed', {
-        status: resp.status,
-        statusText: resp.statusText,
-      })
-      return
-    }
-    const data = await resp.json() as { turnstileSiteKey?: string }
-    const runtimeKey = String(data?.turnstileSiteKey ?? '').trim()
-    if (runtimeKey) {
-      turnstileSiteKey.value = runtimeKey
-      console.info('[Turnstile] site key loaded from runtime config', {
-        runtimeKey: summarizeKeyForLog(runtimeKey),
-      })
-    } else {
-      console.warn('[Turnstile] runtime config returned no site key')
-    }
-  } catch (error) {
-    console.warn('[Turnstile] failed to load runtime site key', error)
-  }
-}
-
-const turnstileHint = computed(() => {
-  if (!hasTurnstile.value) {
-    return t('result.turnstileLocalHint', undefined, '当前未配置 Turnstile，开发环境将自动跳过验证。')
-  }
-
-  if (turnstileStatus.value === 'loading') {
-    return t('result.turnstileLoading', undefined, '人机验证加载中...')
-  }
-
-  if (turnstileStatus.value === 'error') {
-    return t('result.turnstileErrorHint', undefined, '验证组件加载失败，请刷新重试。')
-  }
-
-  if (!turnstileToken.value) {
-    return t('result.turnstilePrompt', undefined, '提交前请先完成人机验证。')
-  }
-
-  return t('result.turnstileVerified', undefined, '验证已通过。')
-})
-
 const feedbackCanSubmit = computed(() =>
-  !!feedbackMbtiComplete.value && feedbackConfidence.value > 0 && !feedbackSubmitting.value && (!hasTurnstile.value || !!turnstileToken.value)
+  !!feedbackMbtiComplete.value && feedbackConfidence.value > 0 && !feedbackSubmitting.value
 )
-
-async function mountTurnstileWidget() {
-  if (!hasTurnstile.value) {
-    console.warn('[Turnstile] mount skipped because site key is missing')
-    return
-  }
-
-  if (typeof window === 'undefined') {
-    console.warn('[Turnstile] mount skipped because window is unavailable')
-    return
-  }
-
-  turnstileStatus.value = 'loading'
-  logTurnstileDiagnostics('widget-mount:start', {
-    finalKey: summarizeKeyForLog(turnstileSiteKey.value),
-  })
-
-  try {
-    await ensureTurnstileScript()
-
-    if (!turnstileContainer.value || !window.turnstile) {
-      console.error('[Turnstile] mount failed because container or API is unavailable', {
-        hasContainer: !!turnstileContainer.value,
-        hasTurnstileApi: !!window.turnstile,
-      })
-      turnstileStatus.value = 'error'
-      return
-    }
-
-    if (turnstileWidgetId.value !== null && window.turnstile.remove) {
-      window.turnstile.remove(turnstileWidgetId.value)
-    }
-
-    turnstileWidgetId.value = window.turnstile.render(turnstileContainer.value, {
-      sitekey: turnstileSiteKey.value,
-      theme: 'light',
-      callback: (token: string) => {
-        turnstileToken.value = token
-        turnstileStatus.value = 'verified'
-        feedbackError.value = ''
-      },
-      'expired-callback': () => {
-        turnstileToken.value = ''
-        turnstileStatus.value = 'ready'
-      },
-      'error-callback': () => {
-        turnstileToken.value = ''
-        turnstileStatus.value = 'error'
-        console.error('[Turnstile] widget reported error callback')
-      },
-    })
-
-    turnstileStatus.value = 'ready'
-    console.info('[Turnstile] widget mounted', {
-      widgetId: turnstileWidgetId.value,
-    })
-  } catch (error) {
-    console.error('Turnstile render error:', error)
-    turnstileStatus.value = 'error'
-  }
-}
-
-function resetTurnstileWidget() {
-  turnstileToken.value = ''
-
-  if (typeof window === 'undefined' || turnstileWidgetId.value === null || !window.turnstile) {
-    return
-  }
-
-  window.turnstile.reset(turnstileWidgetId.value)
-  turnstileStatus.value = 'ready'
-}
 
 async function handleFeedbackSubmit() {
   if (!feedbackMbtiComplete.value) return
-  if (hasTurnstile.value && !turnstileToken.value) {
-    feedbackError.value = t('result.turnstileRequired', undefined, '请先完成人机验证后再提交。')
-    return
-  }
 
   feedbackSubmitting.value = true
   feedbackError.value = ''
@@ -787,29 +571,16 @@ async function handleFeedbackSubmit() {
     selfMbti,
     confidence: feedbackConfidence.value,
     note: feedbackNote.value || undefined,
-    turnstileToken: turnstileToken.value || undefined,
     answers,
   })
 
   feedbackSubmitting.value = false
   if (ok) {
     feedbackDone.value = true
-    if (hasTurnstile.value) {
-      resetTurnstileWidget()
-    }
   } else {
-    if (hasTurnstile.value) {
-      resetTurnstileWidget()
-    }
     feedbackError.value = t('result.feedbackError', undefined, '提交失败，请稍后再试')
   }
 }
-
-onBeforeUnmount(() => {
-  if (typeof window !== 'undefined' && turnstileWidgetId.value !== null && window.turnstile?.remove) {
-    window.turnstile.remove(turnstileWidgetId.value)
-  }
-})
 </script>
 
 <template>
@@ -1094,12 +865,6 @@ onBeforeUnmount(() => {
                 :placeholder="t('result.feedbackNotePlaceholder', undefined, '可以补充说明，也可以不填')"
                 maxlength="200"
               />
-            </div>
-
-            <div class="feedback-field turnstile-block">
-              <label class="feedback-label">{{ t('result.turnstileLabel', undefined, '人机验证') }}</label>
-              <div ref="turnstileContainer" class="turnstile-container"></div>
-              <p class="turnstile-hint" :class="{ 'turnstile-hint--error': turnstileStatus === 'error' }">{{ turnstileHint }}</p>
             </div>
 
             <button

@@ -180,8 +180,25 @@ npm run dev
 npm run build
 
 # 启动全栈本地开发（含 Cloudflare D1 + Pages Functions）
-npx wrangler pages dev dist --d1=DB
+npm run dev:pages
 ```
+
+推荐的本地联调流程（避免 `--proxy` 弃用告警）：
+
+```bash
+# 终端 1（仓库根目录）：监听构建产物到 dist/
+npm run build:watch
+
+# 终端 2（仓库根目录）：启动 Pages + Functions + D1
+npm run dev:pages
+```
+
+然后访问：`http://127.0.0.1:8788/#/stats`
+
+注意：
+
+- `wrangler pages dev ...` 必须在仓库根目录执行，不要在 `cron-worker/` 目录执行。
+- 如果需要单独调试 Cron Worker，请在 `cron-worker/` 目录运行 `npm run dev`。该模式下出现 “Scheduled Workers are not automatically triggered during local development.” 是正常提示，可按日志里的 `curl /cdn-cgi/handler/scheduled` 手动触发。
 
 构建产物输出到 `dist/`，配置为相对路径（`base: './'`）。后端 API 基于 Cloudflare Pages Functions，使用 D1 数据库存储匿名统计数据，部署在 Cloudflare Pages 上。
 
@@ -192,7 +209,12 @@ npx wrangler pages dev dist --d1=DB
 - `VITE_TURNSTILE_SITE_KEY`：前端使用的 Turnstile site key，建议配置在 Cloudflare Pages 的环境变量中。
 - `TURNSTILE_SECRET`：后端验证用的 secret，建议使用 `wrangler pages secret put TURNSTILE_SECRET --project-name acgti` 写入。
 
-补充说明：结果页会优先读取构建期的 `VITE_TURNSTILE_SITE_KEY`，并在为空时回退到运行时 `/api/config`。运行时接口支持从 `VITE_TURNSTILE_SITE_KEY` 或 `TURNSTILE_SITE_KEY` 读取站点密钥。
+本地联调建议：
+
+- 前端本地变量写入 `.env.local`（已在 `.gitignore` 忽略）：`VITE_TURNSTILE_SITE_KEY=你的真实或测试 site key`
+- Pages Functions 本地变量写入 `.dev.vars`（已在 `.gitignore` 忽略）：`TURNSTILE_SECRET=你的真实或测试 secret`
+
+补充说明：结果页会优先读取构建期的 `VITE_TURNSTILE_SITE_KEY`，并在为空时回退到运行时 `/api/config`。运行时接口支持从 `VITE_TURNSTILE_SITE_KEY` 或 `TURNSTILE_SITE_KEY` 读取站点密钥。本地地址（localhost / 127.0.0.1 / 0.0.0.0）在未配置 Turnstile 时会自动回退到 Cloudflare 官方测试 key，方便你直接跑通完整链路。
 
 当前实现会在未配置这些值时自动降级，方便本地联调；但生产环境建议补齐后再公开反馈入口。
 

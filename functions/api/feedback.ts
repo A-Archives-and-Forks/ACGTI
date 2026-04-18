@@ -7,11 +7,28 @@ import {
   isValidMbti,
   isValidUuid,
   validateAnswers,
-  verifyTurnstile,
   checkRateLimit,
 } from './_shared'
 
+async function ensureFeedbackTable(DB: any) {
+  await DB.prepare(
+    `CREATE TABLE IF NOT EXISTS mbti_feedback (
+      id TEXT PRIMARY KEY,
+      submission_id TEXT,
+      created_at TEXT NOT NULL,
+      app_version TEXT NOT NULL,
+      self_mbti TEXT NOT NULL,
+      confidence INTEGER NOT NULL,
+      note TEXT,
+      answers_json TEXT,
+      answer_count INTEGER
+    )`
+  ).run()
+}
+
 async function ensureFeedbackAnswerColumns(DB: any) {
+  await ensureFeedbackTable(DB)
+
   try {
     const info = await DB.prepare('PRAGMA table_info(mbti_feedback)').all()
     const names = new Set((info?.results ?? []).map((col: any) => String(col.name)))
@@ -24,6 +41,7 @@ async function ensureFeedbackAnswerColumns(DB: any) {
     }
   } catch (err) {
     console.warn('ensureFeedbackAnswerColumns failed:', err)
+    throw err
   }
 }
 
@@ -31,6 +49,11 @@ function isMissingFeedbackAnswerColumns(err: unknown) {
   const text = String(err ?? '').toLowerCase()
   return text.includes('no such column') &&
     (text.includes('answers_json') || text.includes('answer_count'))
+}
+
+function isMissingFeedbackTable(err: unknown) {
+  const text = String(err ?? '').toLowerCase()
+  return text.includes('no such table') && text.includes('mbti_feedback')
 }
 
 async function insertFeedbackWithAnswers(
@@ -105,18 +128,8 @@ export async function onRequestPost(context: any) {
     return new Response('Invalid JSON', { status: 400 })
   }
 
-  // Turnstile 校验（前端需传 turnstileToken 字段）
-  const turnstileToken = str(raw.turnstileToken, 2048)
-  const turnstileSecret = String(context.env.TURNSTILE_SECRET ?? '').trim()
-  if (turnstileSecret && !turnstileToken) {
-    return new Response('Missing Turnstile token', { status: 400 })
-  }
-  if (turnstileToken) {
-    const turnstileOk = await verifyTurnstile(turnstileToken, ip, context.env)
-    if (!turnstileOk) {
-      return new Response('Forbidden', { status: 403 })
-    }
-  }
+  // Turnstile temporarily disabled.
+  // 原本会要求 turnstileToken 并做服务端校验，这里先跳过，保持反馈提交可用。
 
   // 白名单提取字段
   const submissionId = str(raw.submissionId, 64)
@@ -167,8 +180,9 @@ export async function onRequestPost(context: any) {
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
-    if (isMissingFeedbackAnswerColumns(err)) {
+    if (isMissingFeedbackTable(err) || isMissingFeedbackAnswerColumns(err)) {
       try {
+        await ensureFeedbackTable(DB)
         await ensureFeedbackAnswerColumns(DB)
         await insertFeedbackWithAnswers(DB, {
           feedbackId,
@@ -187,7 +201,9 @@ export async function onRequestPost(context: any) {
           headers: { 'Content-Type': 'application/json' },
         })
       } catch (retryErr) {
+        console.error('Feedback retry after schema repair failed:', retryErr)
         try {
+          await ensureFeedbackTable(DB)
           await insertFeedbackLegacy(DB, {
             feedbackId,
             submissionId: submissionIdOrNull,
