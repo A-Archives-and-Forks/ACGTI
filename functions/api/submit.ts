@@ -37,7 +37,7 @@ async function ensureSubmissionColumns(DB: any) {
 
 function isMissingSubmissionColumns(err: unknown) {
   const text = JSON.stringify(formatError(err)).toLowerCase()
-  return text.includes('no such column') && text.includes('predicted_mbti')
+  return (text.includes('no such column') || text.includes('no column named')) && text.includes('predicted_mbti')
 }
 
 async function insertSubmissionWithPredicted(

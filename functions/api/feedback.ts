@@ -47,7 +47,7 @@ async function ensureFeedbackAnswerColumns(DB: any) {
 
 function isMissingFeedbackAnswerColumns(err: unknown) {
   const text = String(err ?? '').toLowerCase()
-  return text.includes('no such column') &&
+  return (text.includes('no such column') || text.includes('no column named')) &&
     (text.includes('answers_json') || text.includes('answer_count'))
 }
 
