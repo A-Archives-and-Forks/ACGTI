@@ -81,8 +81,12 @@ export async function submitFeedback(payload: Omit<FeedbackPayload, 'appVersion'
       body: JSON.stringify({ ...payload, appVersion: APP_VERSION }),
     })
     const data = await res.json()
+    if (res.status !== 200) {
+      console.error('❌ /api/feedback failed:', res.status, data)
+    }
     return data.ok === true
-  } catch {
+  } catch (err) {
+    console.error('❌ submitFeedback error:', err)
     return false
   }
 }

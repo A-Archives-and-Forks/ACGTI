@@ -188,7 +188,7 @@ export async function onRequestPost(context: any) {
   const now = new Date().toISOString()
 
   try {
-    await insertSubmissionWithPredicted(DB, {
+    const res = await insertSubmissionWithPredicted(DB, {
       submissionId,
       now,
       appVersion,
@@ -204,14 +204,19 @@ export async function onRequestPost(context: any) {
 
     console.log('✅ submission stored', {
       submissionId,
+      results: res
     })
 
     return new Response(null, { status: 204 })
   } catch (err) {
+    const errInfo = formatError(err)
+    console.error('❌ Submit error (initial attempt):', errInfo)
+
     if (isMissingSubmissionColumns(err)) {
       try {
+        console.log('🔧 Attempting submit schema repair...')
         await ensureSubmissionColumns(DB)
-        await insertSubmissionWithPredicted(DB, {
+        const res = await insertSubmissionWithPredicted(DB, {
           submissionId,
           now,
           appVersion,
@@ -227,12 +232,15 @@ export async function onRequestPost(context: any) {
 
         console.log('✅ submission stored after schema repair', {
           submissionId,
+          results: res
         })
 
         return new Response(null, { status: 204 })
       } catch (retryErr) {
+        console.error('❌ Submit retry after schema repair failed:', formatError(retryErr))
         try {
-          await insertSubmissionLegacy(DB, {
+          console.log('🔧 Attempting submit legacy fallback...')
+          const res = await insertSubmissionLegacy(DB, {
             submissionId,
             now,
             appVersion,
@@ -247,17 +255,17 @@ export async function onRequestPost(context: any) {
 
           console.log('✅ submission stored with legacy schema', {
             submissionId,
+            results: res
           })
 
           return new Response(null, { status: 204 })
         } catch (legacyErr) {
-          console.error('Submit legacy fallback error:', formatError(legacyErr))
+          console.error('❌ Submit legacy fallback error:', formatError(legacyErr))
         }
       }
     }
 
-    console.error('Submit error:', formatError(err))
-    // 依然返回 204，不暴露内部错误
+    // 依然返回 204，不暴露内部错误给前端，但日志中详细保留
     return new Response(null, { status: 204 })
   }
 }

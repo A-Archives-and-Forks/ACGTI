@@ -163,7 +163,7 @@ export async function onRequestPost(context: any) {
   const selfMbtiUpper = selfMbti.toUpperCase()
 
   try {
-    await insertFeedbackWithAnswers(DB, {
+    const res = await insertFeedbackWithAnswers(DB, {
       feedbackId,
       submissionId: submissionIdOrNull,
       now,
@@ -175,16 +175,20 @@ export async function onRequestPost(context: any) {
       answerCount,
     })
 
+    console.log('✅ Feedback stored', { feedbackId, res })
+
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
+    console.error('❌ Feedback error (initial attempt):', err)
     if (isMissingFeedbackTable(err) || isMissingFeedbackAnswerColumns(err)) {
       try {
+        console.log('🔧 Attempting feedback schema repair...')
         await ensureFeedbackTable(DB)
         await ensureFeedbackAnswerColumns(DB)
-        await insertFeedbackWithAnswers(DB, {
+        const res = await insertFeedbackWithAnswers(DB, {
           feedbackId,
           submissionId: submissionIdOrNull,
           now,
@@ -196,15 +200,18 @@ export async function onRequestPost(context: any) {
           answerCount,
         })
 
+        console.log('✅ Feedback stored after schema repair', { feedbackId, res })
+
         return new Response(JSON.stringify({ ok: true }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         })
       } catch (retryErr) {
-        console.error('Feedback retry after schema repair failed:', retryErr)
+        console.error('❌ Feedback retry after schema repair failed:', retryErr)
         try {
+          console.log('🔧 Attempting feedback legacy fallback...')
           await ensureFeedbackTable(DB)
-          await insertFeedbackLegacy(DB, {
+          const res = await insertFeedbackLegacy(DB, {
             feedbackId,
             submissionId: submissionIdOrNull,
             now,
@@ -214,13 +221,15 @@ export async function onRequestPost(context: any) {
             note,
           })
 
+          console.log('✅ Feedback stored with legacy schema', { feedbackId, res })
+
           return new Response(JSON.stringify({ ok: true }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
           })
         } catch (legacyErr) {
-          console.error('Feedback error after legacy fallback:', legacyErr)
-          return new Response(JSON.stringify({ ok: false, error: 'internal' }), {
+          console.error('❌ Feedback error after legacy fallback:', legacyErr)
+          return new Response(JSON.stringify({ ok: false, error: 'internal', details: String(legacyErr) }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
           })
@@ -228,8 +237,7 @@ export async function onRequestPost(context: any) {
       }
     }
 
-    console.error('Feedback error:', err)
-    return new Response(JSON.stringify({ ok: false, error: 'internal' }), {
+    return new Response(JSON.stringify({ ok: false, error: 'internal', details: String(err) }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
