@@ -7,7 +7,7 @@ const { t } = useI18n()
 const isPopupReady = ref(false)
 const showUpdatePopup = ref(false)
 
-const HOME_UPDATE_DISMISS_KEY = 'acgti:home-update-2026-04-17-popup-v3-dismissed'
+const HOME_UPDATE_DISMISS_KEY = 'acgti:home-update-2026-04-18-popup-v4-dismissed'
 const UPDATE_POPUP_DELAY_MS = 3000
 const UPDATE_POPUP_AUTO_HIDE_MS = 5200
 

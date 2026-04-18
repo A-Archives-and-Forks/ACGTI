@@ -79,7 +79,7 @@ export const messages = {
       updateBadge: {
         tag: '角色数量更新',
         title: '角色数量已达到 110 位',
-        text: '欢迎回来再测一次。最近新增了很多角色，这次命中的角色代码可能和你之前完全不同。',
+        text: '欢迎回来再测一次。最近新增了很多角色，这次命中的角色代码可能和你之前完全不同。主播流量太高被刷欠费了，没法回血，求给个 star 支持一下 ❤',
         link: '开始测试 / 重新测试',
         dismiss: '关闭更新公告',
       },
@@ -491,7 +491,7 @@ export const messages = {
         updateBadge: {
           tag: '角色數量更新',
           title: '角色數量已達到 110 位',
-          text: '歡迎回來再測一次。最近新增了很多角色，這次命中的角色代碼可能和你之前完全不同。',
+          text: '歡迎回來再測一次。最近新增了很多角色，這次命中的角色代碼可能和你之前完全不同。主播流量太高被刷欠費了，沒法回血，求給個 star 支持一下 ❤',
           link: '開始測試 / 重新測試',
           dismiss: '關閉更新公告',
         },
@@ -533,7 +533,7 @@ export const messages = {
       updateBadge: {
         tag: '4.17 重大更新',
         title: '角色庫擴充到原來的 400%',
-        text: '歡迎回來再測一次。最近新增了很多角色，這次命中的角色代碼可能和你之前完全不同。',
+        text: '歡迎回來再測一次。最近新增了很多角色，這次命中的角色代碼可能和你之前完全不同。主播流量太高被刷欠費了，沒法回血，求給個 star 支持一下 ❤',
         link: '開始測試 / 重新測試',
         dismiss: '關閉更新公告',
       },
@@ -1277,7 +1277,7 @@ export const messages = {
       updateBadge: {
         tag: '4.17 Major Update',
         title: 'The character library is now 400% of the original size',
-        text: 'Come back and retake it. A lot of new characters were added, so your matched character code may be very different this time.',
+        text: 'Come back and retake it. A lot of new characters were added, so your matched character code may be very different this time. The server bill went through the roof — please give us a star to show your support ❤',
         link: 'Start / Retake',
         dismiss: 'Dismiss update notice',
       },
@@ -1901,7 +1901,7 @@ export const messages = {
       updateBadge: {
         tag: '4.17 大型更新',
         title: 'キャラライブラリが初期比 400% に拡張',
-        text: '前に遊んだ人も、もう一度どうぞ。最近たくさんの新キャラが追加され、今回のキャラコードは以前とかなり変わる可能性があります。',
+        text: '前に遊んだ人も、もう一度どうぞ。最近たくさんの新キャラが追加され、今回のキャラコードは以前とかなり変わる可能性があります。サーバー代が爆増して赤字ピンチです、Star で応援してください ❤',
         link: '始める / もう一度',
         dismiss: '更新告知を閉じる',
       },

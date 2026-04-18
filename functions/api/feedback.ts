@@ -39,6 +39,15 @@ async function ensureFeedbackAnswerColumns(DB: any) {
     if (!names.has('answer_count')) {
       await DB.exec('ALTER TABLE mbti_feedback ADD COLUMN answer_count INTEGER;')
     }
+    if (!names.has('predicted_mbti')) {
+      await DB.exec('ALTER TABLE mbti_feedback ADD COLUMN predicted_mbti TEXT;')
+    }
+    if (!names.has('archetype_code')) {
+      await DB.exec('ALTER TABLE mbti_feedback ADD COLUMN archetype_code TEXT;')
+    }
+    if (!names.has('character_code')) {
+      await DB.exec('ALTER TABLE mbti_feedback ADD COLUMN character_code TEXT;')
+    }
   } catch (err) {
     console.warn('ensureFeedbackAnswerColumns failed:', err)
     throw err
@@ -68,11 +77,14 @@ async function insertFeedbackWithAnswers(
     note: string | null
     answersJson: string | null
     answerCount: number | null
+    predictedMbti: string | null
+    archetypeCode: string | null
+    characterCode: string | null
   }
 ) {
   return DB.prepare(
-    `INSERT INTO mbti_feedback (id, submission_id, created_at, app_version, self_mbti, confidence, note, answers_json, answer_count)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO mbti_feedback (id, submission_id, created_at, app_version, self_mbti, confidence, note, answers_json, answer_count, predicted_mbti, archetype_code, character_code)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(
     params.feedbackId,
     params.submissionId,
@@ -83,6 +95,9 @@ async function insertFeedbackWithAnswers(
     params.note,
     params.answersJson,
     params.answerCount,
+    params.predictedMbti,
+    params.archetypeCode,
+    params.characterCode,
   ).run()
 }
 
@@ -138,6 +153,9 @@ export async function onRequestPost(context: any) {
   const note = typeof raw.note === 'string' ? raw.note.slice(0, 200) : null
   const appVersion = str(raw.appVersion, 16)
   const validatedAnswers = raw.answers === undefined ? null : validateAnswers(raw.answers)
+  const predictedMbti = str(raw.predictedMbti, 4)
+  const archetypeCode = str(raw.archetypeCode, 32)
+  const characterCode = str(raw.characterCode, 32)
   if (raw.answers !== undefined && !validatedAnswers) {
     return new Response('Invalid answers', { status: 400 })
   }
@@ -173,6 +191,9 @@ export async function onRequestPost(context: any) {
       note,
       answersJson,
       answerCount,
+      predictedMbti: predictedMbti || null,
+      archetypeCode: archetypeCode || null,
+      characterCode: characterCode || null,
     })
 
     console.log('✅ Feedback stored', { feedbackId, res })
@@ -198,6 +219,9 @@ export async function onRequestPost(context: any) {
           note,
           answersJson,
           answerCount,
+          predictedMbti: predictedMbti || null,
+          archetypeCode: archetypeCode || null,
+          characterCode: characterCode || null,
         })
 
         console.log('✅ Feedback stored after schema repair', { feedbackId, res })

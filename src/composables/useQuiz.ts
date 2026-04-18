@@ -123,6 +123,7 @@ function finalizeQuiz(): QuizResult | null {
     answers: [...state.answers],
     createdAt: new Date().toISOString(),
     startedAt: state.startedAt || undefined,
+    submissionId: crypto.randomUUID(),
     result,
   }
 

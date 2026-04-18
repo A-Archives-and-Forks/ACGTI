@@ -112,6 +112,8 @@ export interface QuizRecord {
   answers: number[]
   createdAt: string
   startedAt?: string
+  /** 每次完成测试时生成，一路沿用到结果页，用于上报去重 */
+  submissionId?: string
   result: QuizResult
 }
 

@@ -70,8 +70,27 @@ onMounted(async () => {
   // void mountTurnstileWidget()
 
   // 后台静默上报（fire-and-forget）
+  const record = quiz.state.latestRecord
+  const answerCount = Array.isArray(record?.answers)
+    ? record.answers.filter((v: number) => Number.isFinite(v) && v >= -3 && v <= 3).length
+    : 0
+
+  // 没有完整答案不上报（debug 结果、分享链接等场景）
+  if (answerCount < quiz.questions.value.length) {
+    console.log('⏭️ Skip submit: answers incomplete', { answerCount, expected: quiz.questions.value.length })
+    return
+  }
+
+  // 会话级去重：同一测试结果只上报一次
+  const reportKey = `acgti:reported:${record?.createdAt ?? 'unknown'}`
+  if (sessionStorage.getItem(reportKey)) {
+    console.log('⏭️ Skip submit: already reported in this session')
+    return
+  }
+
   const payload = buildSubmitPayload()
   if (payload) {
+    sessionStorage.setItem(reportKey, '1')
     reportResultInBackground(payload)
   }
 })
@@ -465,6 +484,9 @@ function buildSubmitPayload() {
     }
   }
 
+  // 收集答案列表，供后端校验"是否真正完成测试"
+  const answerList = collectAnswerList()
+
   const payload = {
     submissionId: submissionIdValue,
     archetypeCode: r.archetype?.id || 'unknown-archetype',
@@ -477,6 +499,7 @@ function buildSubmitPayload() {
       jp: typeof scores.J_P?.percentage === 'number' ? Math.max(0, Math.min(100, scores.J_P.percentage)) : 50,
     },
     durationMs,
+    answers: answerList,
   }
 
   console.log('✅ Payload validation:', {
@@ -531,11 +554,18 @@ function collectAnswerList() {
 }
 
 function ensureSubmissionId() {
-  if (!submissionId.value) {
-    submissionId.value = crypto.randomUUID()
+  // 优先使用 record 中存储的稳定 ID（方案三：开始测试时生成，一路沿用）
+  const record = quiz.state.latestRecord
+  if (record?.submissionId) {
+    return record.submissionId
   }
 
-  return submissionId.value
+  // 旧记录可能没有 submissionId，生成一个并回写
+  const newId = crypto.randomUUID()
+  if (record) {
+    ;(record as any).submissionId = newId
+  }
+  return newId
 }
 
 // ── 用户反馈 ──
@@ -548,7 +578,6 @@ const feedbackNote = ref('')
 const feedbackSubmitting = ref(false)
 const feedbackDone = ref(false)
 const feedbackError = ref('')
-const submissionId = ref('')
 const feedbackMbtiComplete = computed(() =>
   feedbackEi.value && feedbackSn.value && feedbackTf.value && feedbackJp.value
 )
@@ -572,6 +601,9 @@ async function handleFeedbackSubmit() {
     confidence: feedbackConfidence.value,
     note: feedbackNote.value || undefined,
     answers,
+    predictedMbti: result.value?.mbtiCode || undefined,
+    archetypeCode: result.value?.archetype?.id || undefined,
+    characterCode: result.value?.code || result.value?.mbtiCode || undefined,
   })
 
   feedbackSubmitting.value = false

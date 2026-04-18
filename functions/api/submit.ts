@@ -1,5 +1,6 @@
-// /api/submit — 记录一次问卷提交（单行落盘，题目答案打包为 JSON）
-// 纯落盘接口，快速返回 204，不阻塞用户
+// /api/submit — 聚合计数 + 抽样明细
+// 每次提交只做 UPSERT 自增聚合表，原始明细 2% 抽样
+// 不再全量写 submissions，不写 _rate_limit
 
 import {
   str,
@@ -7,127 +8,23 @@ import {
   isValidCode,
   isValidUuid,
   isValidMbti,
-  checkRateLimit,
 } from './_shared'
 
-function formatError(err: unknown) {
-  if (err instanceof Error) {
-    return {
-      name: err.name,
-      message: err.message,
-      stack: err.stack,
-    }
-  }
-
-  return err
-}
-
-async function ensureSubmissionColumns(DB: any) {
-  try {
-    const info = await DB.prepare('PRAGMA table_info(submissions)').all()
-    const names = new Set((info?.results ?? []).map((col: any) => String(col.name)))
-
-    if (!names.has('predicted_mbti')) {
-      await DB.exec('ALTER TABLE submissions ADD COLUMN predicted_mbti TEXT;')
-    }
-  } catch (err) {
-    console.warn('ensureSubmissionColumns failed:', formatError(err))
-  }
-}
-
-function isMissingSubmissionColumns(err: unknown) {
-  const text = JSON.stringify(formatError(err)).toLowerCase()
-  return (text.includes('no such column') || text.includes('no column named')) && text.includes('predicted_mbti')
-}
-
-async function insertSubmissionWithPredicted(
-  DB: any,
-  params: {
-    submissionId: string
-    now: string
-    appVersion: string
-    archetypeCode: string
-    characterCode: string
-    ei: number
-    sn: number
-    tf: number
-    jp: number
-    durationMs: number
-    predictedMbti: string | null
-  }
-) {
-  return DB.prepare(
-    `INSERT OR IGNORE INTO submissions
-      (id, created_at, app_version, archetype_code, character_code,
-       ei_score, sn_score, tf_score, jp_score, duration_ms,
-       predicted_mbti)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(
-    params.submissionId,
-    params.now,
-    params.appVersion,
-    params.archetypeCode,
-    params.characterCode,
-    params.ei,
-    params.sn,
-    params.tf,
-    params.jp,
-    params.durationMs,
-    params.predictedMbti,
-  ).run()
-}
-
-async function insertSubmissionLegacy(
-  DB: any,
-  params: {
-    submissionId: string
-    now: string
-    appVersion: string
-    archetypeCode: string
-    characterCode: string
-    ei: number
-    sn: number
-    tf: number
-    jp: number
-    durationMs: number
-  }
-) {
-  return DB.prepare(
-    `INSERT OR IGNORE INTO submissions
-      (id, created_at, app_version, archetype_code, character_code,
-       ei_score, sn_score, tf_score, jp_score, duration_ms)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(
-    params.submissionId,
-    params.now,
-    params.appVersion,
-    params.archetypeCode,
-    params.characterCode,
-    params.ei,
-    params.sn,
-    params.tf,
-    params.jp,
-    params.durationMs,
-  ).run()
-}
+// 抽样比例：2% 的提交保留完整明细
+const SAMPLE_RATE = 0.02
+// answers 最少条数，低于此值视为无效提交
+const MIN_ANSWERS = 20
 
 export async function onRequestPost(context: any) {
   const { DB } = context.env as { DB: any }
-
-  // --- 限流 ---
-  const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
-  const allowed = await checkRateLimit(DB, ip, 10)
-  if (!allowed) return new Response(null, { status: 429 })
 
   // --- 解析 payload ---
   let raw: any
   try {
     raw = await context.request.json()
   } catch {
-    return new Response('Invalid JSON', { status: 400 })
+    return new Response(null, { status: 204 })
   }
-
-  console.log('📊 Submit payload received:', JSON.stringify(raw, null, 2))
 
   // 白名单提取字段
   const submissionId = str(raw.submissionId, 64)
@@ -135,39 +32,24 @@ export async function onRequestPost(context: any) {
   const archetypeCode = str(raw.archetypeCode, 32)
   const characterCode = str(raw.characterCode, 32)
   const predictedMbti = str(raw.predictedMbti, 4)
-  const durationMs = num(raw.durationMs, 1000, 3600000) // 1s ~ 1h
+  const durationMs = num(raw.durationMs, 1000, 3600000)
 
   // 必填校验
   if (!submissionId || !appVersion || !archetypeCode || !characterCode) {
-    console.error('❌ Missing required fields:', { submissionId, appVersion, archetypeCode, characterCode })
-    return new Response('Missing required fields', { status: 400 })
+    return new Response(null, { status: 204 })
   }
   if (!isValidUuid(submissionId)) {
-    console.error('❌ Invalid submissionId format:', submissionId)
-    return new Response('Invalid submissionId', { status: 400 })
+    return new Response(null, { status: 204 })
   }
   if (!isValidCode(archetypeCode) || !isValidCode(characterCode)) {
-    console.error('❌ Invalid code format:', { archetypeCode, characterCode })
-    return new Response('Invalid code format', { status: 400 })
+    return new Response(null, { status: 204 })
   }
   if (predictedMbti && !isValidMbti(predictedMbti)) {
-    console.error('❌ Invalid predictedMbti format:', predictedMbti)
-    return new Response('Invalid predictedMbti', { status: 400 })
+    return new Response(null, { status: 204 })
   }
-  // duration_ms < 3s 的请求几乎不可能是真人
   if (durationMs === null) {
-    console.error('❌ Invalid durationMs:', raw.durationMs)
-    return new Response('Invalid durationMs', { status: 400 })
+    return new Response(null, { status: 204 })
   }
-
-  console.log('📦 Submit payload summary:', {
-    submissionId,
-    appVersion,
-    archetypeCode,
-    characterCode,
-    predictedMbti: predictedMbti || null,
-    durationMs,
-  })
 
   // 四维分数校验（0~100 范围）
   const ds = raw.dimensionScores
@@ -176,47 +58,58 @@ export async function onRequestPost(context: any) {
   const tf = num(ds?.tf, 0, 100)
   const jp = num(ds?.jp, 0, 100)
   if (ei === null || sn === null || tf === null || jp === null) {
-    console.error('❌ Invalid dimensionScores:', { 
-      ei: [raw.dimensionScores?.ei, 'validated to', ei],
-      sn: [raw.dimensionScores?.sn, 'validated to', sn],
-      tf: [raw.dimensionScores?.tf, 'validated to', tf],
-      jp: [raw.dimensionScores?.jp, 'validated to', jp],
-    })
-    return new Response('Invalid dimensionScores', { status: 400 })
+    return new Response(null, { status: 204 })
+  }
+
+  // answers 校验：没有完整答案的提交不写库
+  if (!Array.isArray(raw.answers) || raw.answers.length < MIN_ANSWERS) {
+    return new Response(null, { status: 204 })
   }
 
   const now = new Date().toISOString()
+  const today = now.slice(0, 10)
 
   try {
-    const res = await insertSubmissionWithPredicted(DB, {
-      submissionId,
-      now,
-      appVersion,
-      archetypeCode,
-      characterCode,
-      ei,
-      sn,
-      tf,
-      jp,
-      durationMs,
-      predictedMbti: predictedMbti || null,
-    })
+    // ── 核心写入：聚合表 UPSERT 自增 ──
+    await DB.batch([
+      DB.prepare(
+        `INSERT INTO archetype_counts (archetype_code, cnt, updated_at)
+         VALUES (?, 1, ?)
+         ON CONFLICT(archetype_code)
+         DO UPDATE SET cnt = cnt + 1, updated_at = excluded.updated_at`
+      ).bind(archetypeCode, now),
 
-    console.log('✅ submission stored', {
-      submissionId,
-      results: res
-    })
+      DB.prepare(
+        `INSERT INTO character_counts (character_code, cnt, updated_at)
+         VALUES (?, 1, ?)
+         ON CONFLICT(character_code)
+         DO UPDATE SET cnt = cnt + 1, updated_at = excluded.updated_at`
+      ).bind(characterCode, now),
 
-    return new Response(null, { status: 204 })
-  } catch (err) {
-    const errInfo = formatError(err)
-    console.error('❌ Submit error (initial attempt):', errInfo)
+      DB.prepare(
+        `INSERT INTO pair_counts (archetype_code, character_code, cnt, updated_at)
+         VALUES (?, ?, 1, ?)
+         ON CONFLICT(archetype_code, character_code)
+         DO UPDATE SET cnt = cnt + 1, updated_at = excluded.updated_at`
+      ).bind(archetypeCode, characterCode, now),
 
-    if (isMissingSubmissionColumns(err)) {
-      try {
-        console.log('🔧 Attempting submit schema repair...')
-        await ensureSubmissionColumns(DB)
-        const res = await insertSubmissionWithPredicted(DB, {
+      DB.prepare(
+        `INSERT INTO daily_counts (stat_date, total_cnt, updated_at)
+         VALUES (?, 1, ?)
+         ON CONFLICT(stat_date)
+         DO UPDATE SET total_cnt = total_cnt + 1, updated_at = excluded.updated_at`
+      ).bind(today, now),
+    ])
+
+    // ── 抽样：保留少量原始明细用于校准和排查 ──
+    if (Math.random() < SAMPLE_RATE) {
+      await DB.batch([
+        DB.prepare(
+          `INSERT OR IGNORE INTO submissions_sampled
+           (id, created_at, app_version, archetype_code, character_code,
+            ei_score, sn_score, tf_score, jp_score, duration_ms, predicted_mbti)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ).bind(
           submissionId,
           now,
           appVersion,
@@ -227,45 +120,21 @@ export async function onRequestPost(context: any) {
           tf,
           jp,
           durationMs,
-          predictedMbti: predictedMbti || null,
-        })
+          predictedMbti || null,
+        ),
 
-        console.log('✅ submission stored after schema repair', {
-          submissionId,
-          results: res
-        })
-
-        return new Response(null, { status: 204 })
-      } catch (retryErr) {
-        console.error('❌ Submit retry after schema repair failed:', formatError(retryErr))
-        try {
-          console.log('🔧 Attempting submit legacy fallback...')
-          const res = await insertSubmissionLegacy(DB, {
-            submissionId,
-            now,
-            appVersion,
-            archetypeCode,
-            characterCode,
-            ei,
-            sn,
-            tf,
-            jp,
-            durationMs,
-          })
-
-          console.log('✅ submission stored with legacy schema', {
-            submissionId,
-            results: res
-          })
-
-          return new Response(null, { status: 204 })
-        } catch (legacyErr) {
-          console.error('❌ Submit legacy fallback error:', formatError(legacyErr))
-        }
-      }
+        DB.prepare(
+          `INSERT OR IGNORE INTO submission_answers_blob
+           (submission_id, answers_json)
+           VALUES (?, ?)`
+        ).bind(submissionId, JSON.stringify(raw.answers)),
+      ])
     }
 
-    // 依然返回 204，不暴露内部错误给前端，但日志中详细保留
+    return new Response(null, { status: 204 })
+  } catch (err) {
+    // 聚合表可能还不存在（migration 未执行），降级静默处理
+    console.error('Submit aggregate error:', err instanceof Error ? err.message : err)
     return new Response(null, { status: 204 })
   }
 }
