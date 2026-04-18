@@ -4389,8 +4389,6 @@
       "confidence": "high",
       "summary": "主要依据Fate官站与士郎契约的最优从者、TYPE-MOON系资料中重视骑士道、公平对决的王设定映射。"
     }
-<<<<<<< HEAD
-=======
   },
   {
     "id": "qb",
@@ -4676,6 +4674,5 @@
       "confidence": "high",
       "summary": "主要依据《命运石之门》中来自未来的反抗军战士、高行动力与使命感并存的设定映射。"
     }
->>>>>>> 71c5d75 (fix(data): 修复 characters.json 中 kushima-kamome 条目缺少闭合括号的语法错误)
   }
 ]
