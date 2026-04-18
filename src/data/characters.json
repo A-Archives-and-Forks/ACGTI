@@ -4389,5 +4389,183 @@
       "confidence": "high",
       "summary": "主要依据Fate官站与士郎契约的最优从者、TYPE-MOON系资料中重视骑士道、公平对决的王设定映射。"
     }
+  },
+  {
+    "id": "makise-kurisu",
+    "name": "牧濑红莉栖",
+    "series": "命运石之门",
+    "addedAt": "2026-04-18",
+    "image": "/images/characters/牧濑红莉栖.png",
+    "matchCode": "INTJ",
+    "matchCodeFlex": [
+      "INFJ",
+      "ISTJ"
+    ],
+    "code": "KRSU",
+    "title": "傲娇天才·助手",
+    "archetypeId": "shadow-strategist",
+    "tags": [
+      "克里斯蒂娜（禁止）",
+      "脑科学天才",
+      "栗悟饭与龟波气功",
+      "傲娇教科书"
+    ],
+    "note": "18岁拿到大学学位的天才脑科学家，嘴上说「我对这种非科学话题没兴趣」，身体却很诚实地留在Lab里帮你修微波炉。你给人的第一印象是高冷难接近，但相处久了会发现你只是不擅长表达柔软的一面——明明很在意却要用「笨蛋」来掩饰。属于「表面像冰山，内心其实一直在偷偷观察你」的类型。",
+    "vector": {
+      "expression": 0,
+      "temperature": 0,
+      "judgement": 3,
+      "order": 2,
+      "agency": 3,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "judgement": 3,
+        "agency": 3,
+        "order": 2
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q7",
+          "expected": "agree",
+          "weight": 1.3
+        },
+        {
+          "questionId": "q20",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q34",
+          "expected": "disagree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "作品剧情映射",
+      "confidence": "high",
+      "summary": "主要依据《命运石之门》中天才科学家身份、理性分析能力与隐藏的温柔一面映射。"
+    }
+  },
+  {
+    "id": "shiina-mayuri",
+    "name": "椎名真由理",
+    "series": "命运石之门",
+    "addedAt": "2026-04-18",
+    "image": "/images/characters/椎名真由理.png",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ESFJ",
+      "ENFJ"
+    ],
+    "code": "MYRI",
+    "title": "命运天使·纯洁透明的星辰",
+    "archetypeId": "gentle-healer",
+    "tags": [
+      "嘟嘟噜",
+      "多汁炸鸡NO.1",
+      "真由理的怀表怎么停了",
+      "全员的精神锚点"
+    ],
+    "note": "她的存在本身就像一个温柔的锚点——不管世界线怎么变动、不管时间机器把一切搅得多乱，她都会笑着对你说一句「嘟嘟噜」。你不是那种会主动解决问题的人，但你有一种神奇的能力：只要你在，周围的人就会觉得「好像也没那么糟」。属于「看起来最柔弱，实际上撑住了整个团队精神状态」的类型。",
+    "vector": {
+      "expression": 3,
+      "temperature": 3,
+      "judgement": 0,
+      "order": -1,
+      "agency": 1,
+      "aura": 2
+    },
+    "signature": {
+      "uniqueAxes": {
+        "expression": 3,
+        "temperature": 3
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q1",
+          "expected": "agree",
+          "weight": 1.3
+        },
+        {
+          "questionId": "q17",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q23",
+          "expected": "agree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "作品剧情映射",
+      "confidence": "high",
+      "summary": "主要依据《命运石之门》中作为精神支柱、温柔接纳一切的「命运天使」形象映射。"
+    }
+  },
+  {
+    "id": "amane-suzuha",
+    "name": "阿万音铃羽",
+    "series": "命运石之门",
+    "addedAt": "2026-04-18",
+    "image": "/images/characters/阿万音铃羽.png",
+    "matchCode": "ESTP",
+    "matchCodeFlex": [
+      "ENTP",
+      "ENTJ"
+    ],
+    "code": "SZHA",
+    "title": "打工战士·从未来而来的少女",
+    "archetypeId": "oathbound-captain",
+    "tags": [
+      "Okey Donkey",
+      "约翰·提托",
+      "打工战士",
+      "失败了失败了失败了"
+    ],
+    "note": "从2036年骑着自行车穿越回来的人，比起「思考人生」更擅长直接动手改变它。你身上有一种很纯粹的执行力——认准了目标就会冲上去，坚定地奋斗到底。你不是那种会在意别人怎么看自己的人，但你对重要的事和重要的人有着近乎执拗的追求。属于「嘴上不说，但会用行动把整个世界扛起来」的类型。",
+    "vector": {
+      "expression": 2,
+      "temperature": 1,
+      "judgement": 1,
+      "order": 0,
+      "agency": 3,
+      "aura": 3
+    },
+    "signature": {
+      "uniqueAxes": {
+        "agency": 3,
+        "aura": 3
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q7",
+          "expected": "agree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q9",
+          "expected": "disagree",
+          "weight": 1.2
+        },
+        {
+          "questionId": "q29",
+          "expected": "agree",
+          "weight": 1.3
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "作品剧情映射",
+      "confidence": "high",
+      "summary": "主要依据《命运石之门》中来自未来的反抗军战士、高行动力与使命感并存的设定映射。"
+    }
   }
 ]
