@@ -11,6 +11,84 @@ import {
   checkRateLimit,
 } from './_shared'
 
+async function ensureFeedbackAnswerColumns(DB: any) {
+  try {
+    const info = await DB.prepare('PRAGMA table_info(mbti_feedback)').all()
+    const names = new Set((info?.results ?? []).map((col: any) => String(col.name)))
+
+    if (!names.has('answers_json')) {
+      await DB.exec('ALTER TABLE mbti_feedback ADD COLUMN answers_json TEXT;')
+    }
+    if (!names.has('answer_count')) {
+      await DB.exec('ALTER TABLE mbti_feedback ADD COLUMN answer_count INTEGER;')
+    }
+  } catch (err) {
+    console.warn('ensureFeedbackAnswerColumns failed:', err)
+  }
+}
+
+function isMissingFeedbackAnswerColumns(err: unknown) {
+  const text = String(err ?? '').toLowerCase()
+  return text.includes('no such column') &&
+    (text.includes('answers_json') || text.includes('answer_count'))
+}
+
+async function insertFeedbackWithAnswers(
+  DB: any,
+  params: {
+    feedbackId: string
+    submissionId: string | null
+    now: string
+    appVersion: string
+    selfMbti: string
+    confidence: number
+    note: string | null
+    answersJson: string | null
+    answerCount: number | null
+  }
+) {
+  return DB.prepare(
+    `INSERT INTO mbti_feedback (id, submission_id, created_at, app_version, self_mbti, confidence, note, answers_json, answer_count)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(
+    params.feedbackId,
+    params.submissionId,
+    params.now,
+    params.appVersion,
+    params.selfMbti,
+    params.confidence,
+    params.note,
+    params.answersJson,
+    params.answerCount,
+  ).run()
+}
+
+async function insertFeedbackLegacy(
+  DB: any,
+  params: {
+    feedbackId: string
+    submissionId: string | null
+    now: string
+    appVersion: string
+    selfMbti: string
+    confidence: number
+    note: string | null
+  }
+) {
+  return DB.prepare(
+    `INSERT INTO mbti_feedback (id, submission_id, created_at, app_version, self_mbti, confidence, note)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).bind(
+    params.feedbackId,
+    params.submissionId,
+    params.now,
+    params.appVersion,
+    params.selfMbti,
+    params.confidence,
+    params.note,
+  ).run()
+}
+
 export async function onRequestPost(context: any) {
   const { DB } = context.env as { DB: any }
 
@@ -68,28 +146,72 @@ export async function onRequestPost(context: any) {
 
   const feedbackId = crypto.randomUUID()
   const now = new Date().toISOString()
+  const submissionIdOrNull = submissionId || null
+  const selfMbtiUpper = selfMbti.toUpperCase()
 
   try {
-    await DB.prepare(
-      `INSERT INTO mbti_feedback (id, submission_id, created_at, app_version, self_mbti, confidence, note, answers_json, answer_count)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(
+    await insertFeedbackWithAnswers(DB, {
       feedbackId,
-      submissionId || null,
+      submissionId: submissionIdOrNull,
       now,
       appVersion,
-      selfMbti.toUpperCase(),
+      selfMbti: selfMbtiUpper,
       confidence,
       note,
       answersJson,
       answerCount,
-    ).run()
+    })
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
+    if (isMissingFeedbackAnswerColumns(err)) {
+      try {
+        await ensureFeedbackAnswerColumns(DB)
+        await insertFeedbackWithAnswers(DB, {
+          feedbackId,
+          submissionId: submissionIdOrNull,
+          now,
+          appVersion,
+          selfMbti: selfMbtiUpper,
+          confidence,
+          note,
+          answersJson,
+          answerCount,
+        })
+
+        return new Response(JSON.stringify({ ok: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      } catch (retryErr) {
+        try {
+          await insertFeedbackLegacy(DB, {
+            feedbackId,
+            submissionId: submissionIdOrNull,
+            now,
+            appVersion,
+            selfMbti: selfMbtiUpper,
+            confidence,
+            note,
+          })
+
+          return new Response(JSON.stringify({ ok: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        } catch (legacyErr) {
+          console.error('Feedback error after legacy fallback:', legacyErr)
+          return new Response(JSON.stringify({ ok: false, error: 'internal' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+      }
+    }
+
     console.error('Feedback error:', err)
     return new Response(JSON.stringify({ ok: false, error: 'internal' }), {
       status: 500,

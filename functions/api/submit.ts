@@ -22,6 +22,95 @@ function formatError(err: unknown) {
   return err
 }
 
+async function ensureSubmissionColumns(DB: any) {
+  try {
+    const info = await DB.prepare('PRAGMA table_info(submissions)').all()
+    const names = new Set((info?.results ?? []).map((col: any) => String(col.name)))
+
+    if (!names.has('predicted_mbti')) {
+      await DB.exec('ALTER TABLE submissions ADD COLUMN predicted_mbti TEXT;')
+    }
+  } catch (err) {
+    console.warn('ensureSubmissionColumns failed:', formatError(err))
+  }
+}
+
+function isMissingSubmissionColumns(err: unknown) {
+  const text = JSON.stringify(formatError(err)).toLowerCase()
+  return text.includes('no such column') && text.includes('predicted_mbti')
+}
+
+async function insertSubmissionWithPredicted(
+  DB: any,
+  params: {
+    submissionId: string
+    now: string
+    appVersion: string
+    archetypeCode: string
+    characterCode: string
+    ei: number
+    sn: number
+    tf: number
+    jp: number
+    durationMs: number
+    predictedMbti: string | null
+  }
+) {
+  return DB.prepare(
+    `INSERT OR IGNORE INTO submissions
+      (id, created_at, app_version, archetype_code, character_code,
+       ei_score, sn_score, tf_score, jp_score, duration_ms,
+       predicted_mbti)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(
+    params.submissionId,
+    params.now,
+    params.appVersion,
+    params.archetypeCode,
+    params.characterCode,
+    params.ei,
+    params.sn,
+    params.tf,
+    params.jp,
+    params.durationMs,
+    params.predictedMbti,
+  ).run()
+}
+
+async function insertSubmissionLegacy(
+  DB: any,
+  params: {
+    submissionId: string
+    now: string
+    appVersion: string
+    archetypeCode: string
+    characterCode: string
+    ei: number
+    sn: number
+    tf: number
+    jp: number
+    durationMs: number
+  }
+) {
+  return DB.prepare(
+    `INSERT OR IGNORE INTO submissions
+      (id, created_at, app_version, archetype_code, character_code,
+       ei_score, sn_score, tf_score, jp_score, duration_ms)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(
+    params.submissionId,
+    params.now,
+    params.appVersion,
+    params.archetypeCode,
+    params.characterCode,
+    params.ei,
+    params.sn,
+    params.tf,
+    params.jp,
+    params.durationMs,
+  ).run()
+}
+
 export async function onRequestPost(context: any) {
   const { DB } = context.env as { DB: any }
 
@@ -99,13 +188,7 @@ export async function onRequestPost(context: any) {
   const now = new Date().toISOString()
 
   try {
-    await DB.prepare(
-      `INSERT OR IGNORE INTO submissions
-        (id, created_at, app_version, archetype_code, character_code,
-         ei_score, sn_score, tf_score, jp_score, duration_ms,
-         predicted_mbti)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(
+    await insertSubmissionWithPredicted(DB, {
       submissionId,
       now,
       appVersion,
@@ -116,8 +199,8 @@ export async function onRequestPost(context: any) {
       tf,
       jp,
       durationMs,
-      predictedMbti || null,
-    ).run()
+      predictedMbti: predictedMbti || null,
+    })
 
     console.log('✅ submission stored', {
       submissionId,
@@ -125,6 +208,54 @@ export async function onRequestPost(context: any) {
 
     return new Response(null, { status: 204 })
   } catch (err) {
+    if (isMissingSubmissionColumns(err)) {
+      try {
+        await ensureSubmissionColumns(DB)
+        await insertSubmissionWithPredicted(DB, {
+          submissionId,
+          now,
+          appVersion,
+          archetypeCode,
+          characterCode,
+          ei,
+          sn,
+          tf,
+          jp,
+          durationMs,
+          predictedMbti: predictedMbti || null,
+        })
+
+        console.log('✅ submission stored after schema repair', {
+          submissionId,
+        })
+
+        return new Response(null, { status: 204 })
+      } catch (retryErr) {
+        try {
+          await insertSubmissionLegacy(DB, {
+            submissionId,
+            now,
+            appVersion,
+            archetypeCode,
+            characterCode,
+            ei,
+            sn,
+            tf,
+            jp,
+            durationMs,
+          })
+
+          console.log('✅ submission stored with legacy schema', {
+            submissionId,
+          })
+
+          return new Response(null, { status: 204 })
+        } catch (legacyErr) {
+          console.error('Submit legacy fallback error:', formatError(legacyErr))
+        }
+      }
+    }
+
     console.error('Submit error:', formatError(err))
     // 依然返回 204，不暴露内部错误
     return new Response(null, { status: 204 })

@@ -73,6 +73,39 @@ const posterRef = ref<{ rootEl: HTMLElement | null } | null>(null)
 const shouldMountPoster = ref(false)
 const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
+const buildTimeTurnstileSiteKey = String(import.meta.env.VITE_TURNSTILE_SITE_KEY ?? '').trim()
+const legacyBuildTimeTurnstileSiteKey = String((import.meta.env as Record<string, unknown>).TURNSTILE_SITE_KEY ?? '').trim()
+
+function summarizeKeyForLog(value: string) {
+  if (!value) {
+    return {
+      present: false,
+      length: 0,
+      preview: '',
+    }
+  }
+
+  return {
+    present: true,
+    length: value.length,
+    preview: `${value.slice(0, 6)}...${value.slice(-4)}`,
+  }
+}
+
+function logTurnstileDiagnostics(stage: string, extra?: Record<string, unknown>) {
+  const payload: Record<string, unknown> = {
+    stage,
+    host: typeof window !== 'undefined' ? window.location.host : 'ssr',
+    path: typeof window !== 'undefined' ? window.location.pathname : 'ssr',
+    isDev: import.meta.env.DEV,
+    isProd: import.meta.env.PROD,
+    buildTimeViteKey: summarizeKeyForLog(buildTimeTurnstileSiteKey),
+    buildTimeLegacyKey: summarizeKeyForLog(legacyBuildTimeTurnstileSiteKey),
+    ...extra,
+  }
+
+  console.info('[Turnstile][diagnostics]', payload)
+}
 
 const heroQuote = computed(() => {
   if (!result.value) return ''
@@ -96,16 +129,17 @@ const heroQuote = computed(() => {
 
 // 结果页需要数据来处理 debug 查询和角色匹配
 onMounted(async () => {
+  logTurnstileDiagnostics('result-page-mounted:start')
   await quiz.ensureData()
   quiz.resumeLastResult()
   applyDebugResultFromRoute()
   await loadRuntimeTurnstileSiteKey()
+  logTurnstileDiagnostics('result-page-mounted:after-runtime-load', {
+    finalKey: summarizeKeyForLog(turnstileSiteKey.value),
+  })
 
-  if (!hasTurnstile.value && import.meta.env.DEV) {
-    console.warn('Turnstile site key is missing; feedback verification will be skipped', {
-      isDev: import.meta.env.DEV,
-      isProd: import.meta.env.PROD,
-    })
+  if (!hasTurnstile.value) {
+    console.warn('[Turnstile] site key is missing after startup. Feedback verification will be skipped.')
   }
 
   if (!result.value) {
@@ -598,7 +632,7 @@ const turnstileContainer = ref<HTMLElement | null>(null)
 const turnstileToken = ref('')
 const turnstileWidgetId = ref<number | null>(null)
 const turnstileStatus = ref<'idle' | 'loading' | 'ready' | 'verified' | 'error'>('idle')
-const turnstileSiteKey = ref(String(import.meta.env.VITE_TURNSTILE_SITE_KEY ?? '').trim())
+const turnstileSiteKey = ref(buildTimeTurnstileSiteKey)
 const submissionId = ref('')
 
 const hasTurnstile = computed(() => turnstileSiteKey.value.length > 0)
@@ -608,26 +642,34 @@ const feedbackMbtiComplete = computed(() =>
 
 async function loadRuntimeTurnstileSiteKey() {
   if (turnstileSiteKey.value) {
+    logTurnstileDiagnostics('runtime-config:skip-fetch-because-build-key-exists', {
+      finalKey: summarizeKeyForLog(turnstileSiteKey.value),
+    })
     return
   }
 
   try {
+    logTurnstileDiagnostics('runtime-config:fetch-start')
     const resp = await fetch('/api/config')
     if (!resp.ok) {
+      console.warn('[Turnstile] runtime config request failed', {
+        status: resp.status,
+        statusText: resp.statusText,
+      })
       return
     }
     const data = await resp.json() as { turnstileSiteKey?: string }
     const runtimeKey = String(data?.turnstileSiteKey ?? '').trim()
     if (runtimeKey) {
       turnstileSiteKey.value = runtimeKey
-      console.log('Turnstile site key loaded from runtime config')
-    } else if (import.meta.env.DEV) {
-      console.warn('Runtime config returned no Turnstile site key')
+      console.info('[Turnstile] site key loaded from runtime config', {
+        runtimeKey: summarizeKeyForLog(runtimeKey),
+      })
+    } else {
+      console.warn('[Turnstile] runtime config returned no site key')
     }
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('Failed to load runtime Turnstile site key:', error)
-    }
+    console.warn('[Turnstile] failed to load runtime site key', error)
   }
 }
 
@@ -656,16 +698,29 @@ const feedbackCanSubmit = computed(() =>
 )
 
 async function mountTurnstileWidget() {
-  if (!hasTurnstile.value || typeof window === 'undefined') {
+  if (!hasTurnstile.value) {
+    console.warn('[Turnstile] mount skipped because site key is missing')
+    return
+  }
+
+  if (typeof window === 'undefined') {
+    console.warn('[Turnstile] mount skipped because window is unavailable')
     return
   }
 
   turnstileStatus.value = 'loading'
+  logTurnstileDiagnostics('widget-mount:start', {
+    finalKey: summarizeKeyForLog(turnstileSiteKey.value),
+  })
 
   try {
     await ensureTurnstileScript()
 
     if (!turnstileContainer.value || !window.turnstile) {
+      console.error('[Turnstile] mount failed because container or API is unavailable', {
+        hasContainer: !!turnstileContainer.value,
+        hasTurnstileApi: !!window.turnstile,
+      })
       turnstileStatus.value = 'error'
       return
     }
@@ -689,10 +744,14 @@ async function mountTurnstileWidget() {
       'error-callback': () => {
         turnstileToken.value = ''
         turnstileStatus.value = 'error'
+        console.error('[Turnstile] widget reported error callback')
       },
     })
 
     turnstileStatus.value = 'ready'
+    console.info('[Turnstile] widget mounted', {
+      widgetId: turnstileWidgetId.value,
+    })
   } catch (error) {
     console.error('Turnstile render error:', error)
     turnstileStatus.value = 'error'
