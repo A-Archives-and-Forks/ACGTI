@@ -99,6 +99,7 @@ onMounted(async () => {
   await quiz.ensureData()
   quiz.resumeLastResult()
   applyDebugResultFromRoute()
+  await loadRuntimeTurnstileSiteKey()
 
   if (!result.value) {
     void router.replace('/quiz')
@@ -492,9 +493,23 @@ function buildSubmitPayload() {
   // 每次构建 payload 时生成全新的 UUID，确保重复提交（即使是返回修改数据后再次提交）也能被记录
   const submissionId = crypto.randomUUID()
 
-  // 从 localStorage 拿 answers（useQuiz state 里存的）
+  // 优先 latestRecord.answers；如缺失则回退当前 state.answers
   const record = quiz.state.latestRecord
-  const rawAnswers = record?.answers ?? []
+  const recordAnswers = Array.isArray(record?.answers) ? record.answers : []
+  const stateAnswers = Array.isArray(quiz.state.answers) ? quiz.state.answers : []
+  const rawAnswers = recordAnswers.length > 0 ? recordAnswers : stateAnswers
+  const answerList = rawAnswers
+    .map((val: number, idx: number) => {
+      if (!Number.isFinite(val) || val < -3 || val > 3) {
+        return null
+      }
+      const questionId = quiz.questions.value[idx]?.id ?? `q${idx + 1}`
+      return {
+        questionId,
+        answerValue: Math.max(-2, Math.min(2, Math.round(val))),
+      }
+    })
+    .filter((item): item is { questionId: string; answerValue: number } => item !== null)
   
   let durationMs = 30000 // 默认值 30 秒
   if (record?.startedAt && record?.createdAt) {
@@ -518,12 +533,7 @@ function buildSubmitPayload() {
       tf: typeof scores.T_F?.percentage === 'number' ? Math.max(0, Math.min(100, scores.T_F.percentage)) : 50,
       jp: typeof scores.J_P?.percentage === 'number' ? Math.max(0, Math.min(100, scores.J_P.percentage)) : 50,
     },
-    answers: rawAnswers.length > 0
-      ? rawAnswers.map((val: number, idx: number) => ({
-          questionId: `q${idx + 1}`,
-          answerValue: Math.max(-2, Math.min(2, Math.round(val))),
-        }))
-      : undefined,
+    answers: answerList.length > 0 ? answerList : undefined,
     durationMs,
   }
 
@@ -533,6 +543,7 @@ function buildSubmitPayload() {
     characterCodeValid: /^[A-Za-z0-9_-]{1,32}$/.test(payload.characterCode),
     durationMsValid: payload.durationMs >= 1000 && payload.durationMs <= 3600000,
     dimensionScoresValid: Object.values(payload.dimensionScores).every(v => typeof v === 'number' && v >= 0 && v <= 100),
+    answersCount: payload.answers?.length ?? 0,
   })
 
   return payload
@@ -552,12 +563,33 @@ const turnstileContainer = ref<HTMLElement | null>(null)
 const turnstileToken = ref('')
 const turnstileWidgetId = ref<number | null>(null)
 const turnstileStatus = ref<'idle' | 'loading' | 'ready' | 'verified' | 'error'>('idle')
-const turnstileSiteKey = String(import.meta.env.VITE_TURNSTILE_SITE_KEY ?? '').trim()
+const turnstileSiteKey = ref(String(import.meta.env.VITE_TURNSTILE_SITE_KEY ?? '').trim())
 
-const hasTurnstile = computed(() => turnstileSiteKey.length > 0)
+const hasTurnstile = computed(() => turnstileSiteKey.value.length > 0)
 const feedbackMbtiComplete = computed(() =>
   feedbackEi.value && feedbackSn.value && feedbackTf.value && feedbackJp.value
 )
+
+async function loadRuntimeTurnstileSiteKey() {
+  if (turnstileSiteKey.value) {
+    return
+  }
+
+  try {
+    const resp = await fetch('/api/config')
+    if (!resp.ok) {
+      return
+    }
+    const data = await resp.json() as { turnstileSiteKey?: string }
+    const runtimeKey = String(data?.turnstileSiteKey ?? '').trim()
+    if (runtimeKey) {
+      turnstileSiteKey.value = runtimeKey
+      console.log('Turnstile site key loaded from runtime config')
+    }
+  } catch (error) {
+    console.warn('Failed to load runtime Turnstile site key:', error)
+  }
+}
 
 const turnstileHint = computed(() => {
   if (!hasTurnstile.value) {
@@ -603,7 +635,7 @@ async function mountTurnstileWidget() {
     }
 
     turnstileWidgetId.value = window.turnstile.render(turnstileContainer.value, {
-      sitekey: turnstileSiteKey,
+      sitekey: turnstileSiteKey.value,
       theme: 'light',
       callback: (token: string) => {
         turnstileToken.value = token
