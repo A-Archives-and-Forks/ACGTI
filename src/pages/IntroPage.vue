@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from '../i18n'
+import { useSeo } from '../composables/useSeo'
 
 const { t, tm } = useI18n()
 const relayFeedback = ref('')
+
+useSeo({
+  title: 'ACGTI 介绍页 - ACG Type Indicator | 测试说明',
+  description: '了解 ACGTI（ACG Type Indicator）的测试规则、隐私说明和分享方式；如需查看项目说明，请前往关于页面。',
+  path: '/intro',
+})
 
 async function copyQuizLink() {
   try {
@@ -27,6 +34,7 @@ async function copyQuizLink() {
           </div>
           <p class="eyebrow">{{ t('intro.eyebrow') }}</p>
           <h1 class="page-title">{{ t('intro.title') }}</h1>
+          <p class="brand-line">ACGTI 介绍页 · ACG Type Indicator</p>
           <p class="lead">{{ t('intro.lead') }}</p>
           <div class="action-wrap">
             <RouterLink class="btn btn-primary main-btn" to="/quiz">{{ t('intro.start') }}</RouterLink>
@@ -153,6 +161,14 @@ async function copyQuizLink() {
   font-weight: 800;
   color: #2f3a45;
   line-height: 1.2;
+}
+
+.brand-line {
+  margin: -8px 0 16px;
+  color: #3ba17c;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .lead {

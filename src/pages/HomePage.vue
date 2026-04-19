@@ -134,8 +134,8 @@ import { useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 
 useSeo({
-  title: 'ACGTI - ACG Type Indicator | 二次元角色原型测试',
-  description: 'ACGTI 是以 MBTI 为基础的二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，解锁你的二次元人格原型。纯前端运行，无需注册，105 位角色等你来测。',
+  title: 'ACGTI 官网 - ACG Type Indicator | 二次元角色原型测试',
+  description: 'ACGTI 官网，ACG Type Indicator 二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，查看 MBTI 维度倾向与二次元角色原型解析。',
   path: '/',
   jsonLd: {
     '@context': 'https://schema.org',

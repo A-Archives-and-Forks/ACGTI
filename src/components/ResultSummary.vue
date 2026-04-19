@@ -20,7 +20,7 @@ const slides = computed(() => [
     subtitle: `${props.result.archetype.name} (${props.result.mbtiCode})`,
     description: props.result.archetype.description,
     learnMoreText: '查看类型说明',
-    to: '/intro'
+    to: '/about'
   },
   {
     id: 'role',

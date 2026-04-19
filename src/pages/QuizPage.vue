@@ -93,7 +93,6 @@
         <div class="share-count">{{ t('quiz.footerCount', { count: questions.length }) }}</div>
         <div class="footer-links">
           <RouterLink to="/">{{ tm<Record<string, string>>('app.footer.social').home }}</RouterLink>
-          <RouterLink to="/intro">{{ tm<Record<string, string>>('app.footer.social').intro }}</RouterLink>
           <RouterLink to="/about">{{ tm<Record<string, string>>('app.footer.social').about }}</RouterLink>
           <RouterLink to="/result">{{ t('app.nav.result') }}</RouterLink>
           <span>{{ t('quiz.footerLocal') }}</span>
@@ -114,8 +113,8 @@ import { useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 
 useSeo({
-  title: '开始测试 - ACGTI | 二次元角色原型测试',
-  description: '开始 ACGTI 二次元角色原型测试。回答 39 道精心设计的情境式问题，探索你的 MBTI 人格维度，获得唯一命中的角色代码。免费、无需注册、纯前端运行。',
+  title: '开始 ACGTI 测试 - ACG Type Indicator | 二次元角色原型测试',
+  description: '进入 ACGTI 官网的测试页，回答 39 道情境式问题，获得唯一命中的角色代码、MBTI 维度倾向与二次元角色原型解析。免费、无需注册、纯前端运行。',
   path: '/quiz',
 })
 

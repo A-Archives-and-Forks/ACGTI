@@ -11,6 +11,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'home', component: () => import('../pages/HomePage.vue') },
+    { path: '/intro', redirect: '/about' },
     { path: '/quiz', name: 'quiz', component: () => import('../pages/QuizPage.vue') },
     { path: '/result', name: 'result', component: () => import('../pages/ResultPage.vue') },
     { path: '/characters', name: 'characters', component: () => import('../pages/CharactersPage.vue') },

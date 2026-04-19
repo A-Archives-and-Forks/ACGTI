@@ -9,13 +9,14 @@ interface SeoOptions {
   description: MaybeRef<string>
   path?: MaybeRef<string>
   image?: MaybeRef<string>
-  jsonLd?: Record<string, unknown>
+  jsonLd?: MaybeRef<Record<string, unknown> | Record<string, unknown>[]>
 }
 
 export function useSeo(options: SeoOptions) {
   const url = computed(() => {
     const p = unref(options.path) ?? ''
-    return `${SITE_URL}${p}`
+    const normalizedPath = p === '' || p === '/' ? '/' : (p.startsWith('/') ? p : `/${p}`)
+    return normalizedPath === '/' ? `${SITE_URL}/` : `${SITE_URL}${normalizedPath}`
   })
 
   const fullTitle = computed(() => {
@@ -46,7 +47,7 @@ export function useSeo(options: SeoOptions) {
       { rel: 'canonical', href: url },
     ],
     script: options.jsonLd
-      ? [{ type: 'application/ld+json', innerHTML: JSON.stringify(options.jsonLd) }]
+      ? [{ type: 'application/ld+json', innerHTML: JSON.stringify(unref(options.jsonLd)) }]
       : undefined,
   })
 }

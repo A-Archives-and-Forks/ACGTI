@@ -15,8 +15,8 @@ import { getCharacterRarityMeta } from '../utils/characterRarity'
 import type { CharacterMatch } from '../types/quiz'
 
 useSeo({
-  title: '角色库 - ACGTI | 105+ 二次元角色原型',
-  description: '浏览 ACGTI 角色库，包含 105+ 位二次元角色原型。每角色均基于 MBTI 十六型人格映射，展示性格维度、稀有度和角色来源。',
+  title: 'ACGTI 角色库 - 105+ 二次元角色原型',
+  description: '浏览 ACGTI 官网角色库，包含 105+ 位二次元角色原型。每角色均基于 MBTI 十六型人格映射，展示性格维度、稀有度和角色来源。',
   path: '/characters',
 })
 

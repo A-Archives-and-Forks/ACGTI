@@ -1,14 +1,52 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 
-useSeo({
-  title: '关于 ACGTI - ACG Type Indicator',
-  description: '了解 ACGTI（ACG Type Indicator）项目。以 MBTI 为基础的二次元角色原型测试工具，开源、免费、纯前端运行。',
-  path: '/about',
-})
-
 const { t, tm } = useI18n()
+
+const faqItems = computed(() => tm<string[][]>('about.faqItems'))
+const faqJsonLd = computed(() => [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.value.map(([question, answer]) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answer,
+      },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'ACGTI',
+    alternateName: 'ACG Type Indicator',
+    description: '以 MBTI 为基础的二次元角色原型测试工具，通过情境式问题生成专属角色代码和原型报告。',
+    url: 'https://acgti.tianxingleo.top',
+    applicationCategory: 'Entertainment',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'CNY',
+    },
+    author: {
+      '@type': 'Person',
+      name: 'tianxingleo',
+      url: 'https://github.com/tianxingleo',
+    },
+  },
+])
+
+useSeo({
+  title: '关于 ACGTI - ACG Type Indicator 二次元人格测试 | 项目说明与常见问题',
+  description: 'ACGTI（ACG Type Indicator）是以 MBTI 为基础的二次元角色原型测试工具。39 道情境题、8 大原型、110 位角色，支持中英日多语言。了解项目定位、当前功能、技术边界与常见问题。',
+  path: '/about',
+  jsonLd: faqJsonLd,
+})
 </script>
 
 <template>
@@ -59,6 +97,20 @@ const { t, tm } = useI18n()
               </div>
             </div>
           </article>
+        </section>
+
+        <section class="faq-panel" v-reveal>
+          <div class="faq-header">
+            <p class="eyebrow">{{ t('about.faqEyebrow') }}</p>
+            <h2 class="panel-title">{{ t('about.faqTitle') }}</h2>
+            <p class="faq-lead">{{ t('about.faqLead') }}</p>
+          </div>
+          <div class="faq-grid">
+            <article v-for="item in faqItems" :key="item[0]" class="faq-card">
+              <h3 class="faq-question">{{ item[0] }}</h3>
+              <p class="faq-answer">{{ item[1] }}</p>
+            </article>
+          </div>
         </section>
       </div>
     </div>
@@ -211,6 +263,60 @@ const { t, tm } = useI18n()
 .custom-list {
   display: grid;
   gap: 24px;
+}
+
+.faq-panel {
+  background: linear-gradient(180deg, #ffffff, #fafcfb);
+  border: 1px solid #e8ecef;
+  border-radius: 18px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.faq-header {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.faq-lead {
+  margin: 0;
+  color: #5f6b75;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.faq-card {
+  background: #f9fbfc;
+  border: 1px solid #e8ecef;
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.faq-question {
+  margin: 0 0 12px;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #2f3a45;
+}
+
+.faq-answer {
+  margin: 0;
+  color: #5f6b75;
+  line-height: 1.75;
+  font-size: 15px;
+}
+
+@media (max-width: 900px) {
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .list-item {
