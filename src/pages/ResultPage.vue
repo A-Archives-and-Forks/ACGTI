@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AdsenseSlot from '../components/AdsenseSlot.vue'
 import AppIcon from '../components/AppIcon.vue'
 import { useShare } from '../composables/useShare'
+import { useSeo } from '../composables/useSeo'
 import { useQuiz } from '../composables/useQuiz'
 import { socialIcons, type SocialIconBrand } from '../data/socialIcons'
 import { useI18n } from '../i18n'
@@ -29,6 +30,20 @@ const shouldMountPoster = ref(false)
 const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
 const liveStats = ref<ResultStats | null>(null)
+
+// 动态 SEO：根据测试结果更新页面标题
+const seoTitle = computed(() => {
+  if (result.value) {
+    const name = result.value.code || result.value.mbtiCode || ''
+    return `测试结果 ${name} - ACGTI`
+  }
+  return '你的测试结果 - ACGTI | 二次元角色原型测试'
+})
+useSeo({
+  title: seoTitle,
+  description: '查看你的 ACGTI 二次元角色原型测试结果，了解你的角色代码、MBTI 维度倾向和对应二次元角色原型解析。',
+  path: '/result',
+})
 
 function formatCount(n: number): string {
   if (n >= 10000) {

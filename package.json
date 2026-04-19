@@ -12,6 +12,7 @@
     "dev:pages": "wrangler pages dev dist --d1=DB --port 8788"
   },
   "dependencies": {
+    "@unhead/vue": "^3.0.4",
     "html-to-image": "^1.11.13",
     "vue": "^3.5.32",
     "vue-router": "^4.6.2"

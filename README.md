@@ -1,48 +1,69 @@
-<div align="center">
+<h1 align="center">ACGTI</h1>
 
-# ACGTI
+<p align="center">
+  <strong>ACG Type Indicator — 一个以 MBTI 为基础的二次元角色原型测试站点</strong>
+</p>
 
-ACG Type Indicator
+<p align="center">
+  回答情境式问题 · 获得唯一命中的角色代码 · 解锁你的二次元人格原型
+</p>
 
-**一个以 MBTI 为基础的二次元角色原型测试站点**
-
-回答情境式问题 · 获得唯一命中的角色代码 · 解锁你的二次元人格原型
+<p align="center">
+  <a href="https://acgti.tianxingleo.top/">✨ 立即体验</a> ·
+  <a href="#️-架构与原理">📖 阅读文档</a> ·
+  <a href="#-贡献">🤝 参与贡献</a>
+</p>
 
 <p align="center">
   <a href="https://acgti.tianxingleo.top/"><img src="https://img.shields.io/badge/Deploy-Cloudflare_Pages-F38020?style=flat-square&logo=cloudflare" alt="Deploy to Cloudflare Pages" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg?style=flat-square" alt="License" /></a>
   <img src="https://img.shields.io/badge/Hits-5.5M+-green.svg?style=flat-square" alt="Hits" />
+  <img
+    src="https://count.getloli.com/@ACG-TI?name=ACG-TI&theme=asoul&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto"
+    alt="ACG-TI counter"
+  />
 </p>
 
-[**✨ 立即体验**](https://acgti.tianxingleo.top/) | [**📖 阅读文档**](#️-架构与原理) | [**🤝 参与贡献**](#-贡献)
+<p align="center">
+  <img
+    src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_85afc638204090e964a385ef024963af.webp"
+    alt="首页截图"
+    width="45%"
+  />
+  &nbsp;
+  <img
+    src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_53f6126c96077f9990f8c8f4aef7d20d.webp"
+    alt="答题截图"
+    width="45%"
+  />
+</p>
+
+<p align="center">
+  <img
+    src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_a4b8624d8dfeeeb23ca0b2de7a344e24.webp"
+    alt="结果截图一"
+    width="45%"
+  />
+  &nbsp;
+  <img
+    src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_83aa34b38a795f68b26eadbef4fca2b8.webp"
+    alt="结果截图二"
+    width="45%"
+  />
+</p>
 
 > ⚠️ 本工具仅作娱乐用途，不作为心理诊断、医学评估或现实人格结论。
 
-</div>
-
 ---
-
-## 🎮 界面预览
-
-<div align="center">
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_85afc638204090e964a385ef024963af.webp" alt="首页截图" width="45%" />
-  &nbsp;
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_53f6126c96077f9990f8c8f4aef7d20d.webp" alt="答题截图" width="45%" />
-  <br />
-  <br />
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_a4b8624d8dfeeeb23ca0b2de7a344e24.webp" alt="结果截图一" width="45%" />
-  &nbsp;
-  <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_83aa34b38a795f68b26eadbef4fca2b8.webp" alt="结果截图二" width="45%" />
-</div>
 
 ## ✨ 核心特性
 
 - **MBTI 四维判定**：基于 E/I、S/N、T/F、J/P 四大维度构建严谨的底层框架。
 - **8 种专属原型**：发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者。
-- **110 位角色库**：当前包含 110 位角色，涵盖 60+ 部热门作品，包括 BanG Dream!（Ave Mujica / MyGO）、孤独摇滚！、鸣潮、明日方舟、轻音少女、我推的孩子、Re:从零开始的异世界生活、败犬女主太多了！、辉夜大小姐想让我告白、青春猪头少年、魔法少女小圆、某科学的超电磁炮、名侦探柯南、EVA、东方Project、VOCALOID、原神、崩坏：星穹铁道、紫罗兰永恒花园、四月是你的谎言、葬送的芙丽莲、间谍过家家、刀剑神域、Fate/stay night、电锯人、少女乐队的呐喊等，持续扩充中。
+- **110 位角色库**：涵盖 BanG Dream!、孤独摇滚！、鸣潮、明日方舟、轻音少女、我推的孩子、Re:从零开始的异世界生活、原神、崩坏：星穹铁道、葬送的芙丽莲、Fate/stay night 等 60+ 部热门作品，持续扩充中。
 - **可视化交互**：16personalities 风格的交互式倾向滑块，直观展现你的思维倾向。
 - **一键分享**：精美的结果图报表，支持一键导出 PNG 海报分享给同好。
-- **轻量全栈**：测试结果在本地浏览器完成计算；结果页会匿名上报最终命中角色与原型到后端，用于全站统计、题目校准与角色映射优化；不要求注册，不收集邮箱等直接身份信息。
+- **轻量全栈**：测试结果在本地浏览器完成计算；结果页会匿名上报最终命中角色与原型到后端，用于全站统计与角色映射优化；不要求注册，不收集邮箱等直接身份信息。
 
 ## 🛠️ 技术栈
 
@@ -53,8 +74,7 @@ ACG Type Indicator
   &nbsp;
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
   &nbsp;
-  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
-  &nbsp;
+  
   <img src="https://img.shields.io/badge/Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare Pages" />
   &nbsp;
   <img src="https://img.shields.io/badge/Cloudflare_D1-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare D1" />
@@ -166,10 +186,9 @@ migrations/               # Cloudflare D1 数据库迁移
 
 ## 📰 时间线
 
-- **2026.4.18 12:00:** GitHub 仓库 ⭐ 数量达到 500，访问量达到550W
-- **2026.4.14 15:00:** [网站](https://acgti.tianxingleo.top/)访问量超过 400 万，
-  发布 blog：[【复盘】从一晚上一米工位到3天400w+浏览量的网站，我做了什么](https://tianxingleo.top/2026/04/12/%E4%BB%8E%E4%B8%80%E6%99%9A%E4%B8%8A%E4%B8%80%E7%B1%B3%E5%B7%A5%E4%BD%8D%E5%88%B02%E5%A4%A968w%E4%BA%BA%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%EF%BC%8C%E6%88%91%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
-- **2026.4.13 21:00:** [网站](https://acgti.tianxingleo.top/)访问人数达到 100 万，仓库Star 数达到 300
+- **2026.4.18 12:00:** GitHub 仓库 ⭐ 数量达到 500，访问量达到 550W
+- **2026.4.14 15:00:** [网站](https://acgti.tianxingleo.top/)访问量超过 400 万，发布 blog：[【复盘】从一晚上一米工位到3天400w+浏览量的网站，我做了什么](https://tianxingleo.top/2026/04/12/%E4%BB%8E%E4%B8%80%E6%99%9A%E4%B8%8A%E4%B8%80%E7%B1%B3%E5%B7%A5%E4%BD%9C%E4%BD%8D%E5%88%B02%E5%A4%A968w%E4%BA%BA%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%EF%BC%8C%E6%88%91%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
+- **2026.4.13 21:00:** [网站](https://acgti.tianxingleo.top/)访问人数达到 100 万，仓库 Star 数达到 300
 - **2026.4.12 8:00:** 访问人数达到 50 万
 - **2026.4.11 23:00:** 进入 [永雏塔菲](https://www.bilibili.com/video/BV11FDyBZEN1/?spm_id_from=333.337.search-card.all.click) 直播间
 - **2026.4.11 12:00:** 在校内 100 人 BanG Dream 群测试，首次公开
@@ -208,7 +227,7 @@ npm run dev:pages
 注意：
 
 - `wrangler pages dev ...` 必须在仓库根目录执行，不要在 `cron-worker/` 目录执行。
-- 如果需要单独调试 Cron Worker，请在 `cron-worker/` 目录运行 `npm run dev`。该模式下出现 “Scheduled Workers are not automatically triggered during local development.” 是正常提示，可按日志里的 `curl /cdn-cgi/handler/scheduled` 手动触发。
+- 如果需要单独调试 Cron Worker，请在 `cron-worker/` 目录运行 `npm run dev`。该模式下出现 "Scheduled Workers are not automatically triggered during local development." 是正常提示，可按日志里的 `curl /cdn-cgi/handler/scheduled` 手动触发。
 
 构建产物输出到 `dist/`，配置为相对路径（`base: './'`）。后端 API 基于 Cloudflare Pages Functions，使用 D1 数据库存储匿名统计数据，部署在 Cloudflare Pages 上。
 
@@ -272,7 +291,7 @@ SELECT * FROM aggregate_counts ORDER BY count DESC LIMIT 50;
 如果你基于本项目发布自己的版本，建议同时做到以下几点：
 
 - 在仓库 `README`、网站页脚、关于页或发布说明中明确标注出处，并附上原项目链接：<https://github.com/tianxingleo/ACGTI>
-- 在说明文案中清楚写明“基于 ACGTI 项目二次创作 / 修改”
+- 在说明文案中清楚写明"基于 ACGTI 项目二次创作 / 修改"
 - 保留当前仓库可追溯的 Git 提交历史与贡献记录，不要在迁移或改版时刻意抹除原始贡献者信息
 - 如果你的版本做了明显调整，请额外注明改动范围，避免与原始项目混淆
 

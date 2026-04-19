@@ -7,6 +7,13 @@ import characterVisualsData from '../data/characterVisuals.json'
 import { useI18n } from '../i18n'
 import { getLocalizedCharacterName, getLocalizedCharacterSeries } from '../i18n/characters'
 import { resolvePublicAsset } from '../utils/characterVisuals'
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: '全局统计 - ACGTI | 测试数据概览',
+  description: '查看 ACGTI 全局测试统计数据，包括各人格类型分布、热门角色命中排行和测试参与趋势。',
+  path: '/stats',
+})
 
 const { t, locale } = useI18n()
 

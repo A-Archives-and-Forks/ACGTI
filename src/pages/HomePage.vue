@@ -131,6 +131,26 @@ import FeaturedStream from '../components/home/FeaturedStream.vue'
 import TestimonialsSection from '../components/home/TestimonialsSection.vue'
 import { computed } from 'vue'
 import { useI18n } from '../i18n'
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: 'ACGTI - ACG Type Indicator | 二次元角色原型测试',
+  description: 'ACGTI 是以 MBTI 为基础的二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，解锁你的二次元人格原型。纯前端运行，无需注册，105 位角色等你来测。',
+  path: '/',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'ACGTI',
+    alternateName: 'ACG Type Indicator',
+    url: 'https://acgti.tianxingleo.top',
+    description: '以 MBTI 为基础的二次元角色原型测试',
+    potentialAction: {
+      '@type': 'TakeAction',
+      target: 'https://acgti.tianxingleo.top/quiz',
+      name: '开始测试',
+    },
+  },
+})
 
 const homeAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_HOME ?? '').trim()
 const { t, tm } = useI18n()

@@ -111,6 +111,13 @@ import { useRouter } from 'vue-router'
 
 import { useQuiz } from '../composables/useQuiz'
 import { useI18n } from '../i18n'
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: '开始测试 - ACGTI | 二次元角色原型测试',
+  description: '开始 ACGTI 二次元角色原型测试。回答 39 道精心设计的情境式问题，探索你的 MBTI 人格维度，获得唯一命中的角色代码。免费、无需注册、纯前端运行。',
+  path: '/quiz',
+})
 
 type ScaleSide = 'agree' | 'neutral' | 'disagree'
 

@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from '../i18n'
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: '关于 ACGTI - ACG Type Indicator',
+  description: '了解 ACGTI（ACG Type Indicator）项目。以 MBTI 为基础的二次元角色原型测试工具，开源、免费、纯前端运行。',
+  path: '/about',
+})
 
 const { t, tm } = useI18n()
 </script>
