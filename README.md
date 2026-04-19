@@ -258,20 +258,46 @@ npm run dev:pages
 - Production 环境使用独立的 `acgti-stats-prod`
 - 两边都先执行 `migrations/0001_init.sql`、`migrations/0002_rate_limit.sql`、`migrations/0003_simplify_answers.sql`、`migrations/0004_stats_snapshot.sql`、`migrations/0005_restore_submission_answers.sql`、`migrations/0006_add_feedback_answers.sql`、`migrations/0007_aggregate_counts.sql`、`migrations/0008_feedback_add_predicted.sql`
 
-如果需要按题查看提交明细，可查询 `submission_answers` 表（抽样写入，非全量）：
+如果需要按题查看提交明细，新版抽样数据优先查询 `submission_answers_blob` 表；旧版数据库可能仍保留 `submission_answers` 一题一行表：
 
 ```sql
-SELECT submission_id, question_id, answer_value
-FROM submission_answers
-ORDER BY submission_id DESC, question_id ASC
+SELECT submission_id, answers_json
+FROM submission_answers_blob
+ORDER BY submission_id DESC
 LIMIT 200;
 ```
 
-聚合统计存储在 `aggregate_counts` 表中，按角色/原型维度自增计数：
+聚合统计按维度拆分在 `archetype_counts`、`character_counts`、`pair_counts`、`daily_counts` 中：
 
 ```sql
-SELECT * FROM aggregate_counts ORDER BY count DESC LIMIT 50;
+SELECT * FROM character_counts ORDER BY cnt DESC LIMIT 50;
+SELECT * FROM archetype_counts ORDER BY cnt DESC LIMIT 50;
 ```
+
+### Feedback 数据导出与分析
+
+仓库内提供了独立的 `analysis/` 流水线，用于下载 D1 反馈数据并生成本地报表：
+
+```powershell
+# 1. 安装 Python 分析依赖
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r analysis\requirements.txt
+
+# 2. 导出远程 D1 数据库
+.\analysis\export_feedback.ps1
+
+# 3. 将 SQL dump 落地为本地 SQLite，并导出 CSV
+python analysis\build_sqlite.py --sql analysis\backup\full_YYYY-MM-DD.sql --db analysis\acgti_feedback.db
+
+# 4. 生成一致率、错配、版本、角色争议度报表
+python analysis\analyze_feedback.py --db analysis\acgti_feedback.db
+
+# 5. 样本足够后，生成题目权重参考
+python analysis\train_dimension_models.py --db analysis\acgti_feedback.db
+```
+
+这条线优先使用 `mbti_feedback` 中用户主动提交的 `self_mbti + confidence + answers_json + predicted_mbti`，再按需回退到抽样提交表。普通匿名提交适合做全站分布统计；真正适合题目校准和权重微调的是高置信反馈样本。详细说明见 [`analysis/README.md`](analysis/README.md)。
 
 ## 🤝 贡献
 
