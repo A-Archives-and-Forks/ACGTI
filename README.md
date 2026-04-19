@@ -398,6 +398,24 @@ git push origin v0.2.0
 
 > 赞助为自愿行为，不对应任何商品或服务。ACGTI 核心功能对所有用户完全免费。
 
+<details>
+<summary><b>扫码赞助</b></summary>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_2cebfcbc467809e334f38fd4b2e22aa8.webp" alt="微信收款码" width="200" />
+      <br/>微信支付
+    </td>
+    <td align="center">
+      <img src="https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_d2c89724432aca7063429257cb363d62.webp" alt="支付宝收款码" width="200" />
+      <br/>支付宝
+    </td>
+  </tr>
+</table>
+
+</details>
+
 ## 作者
 
 **tianxingleo** · [GitHub 主页](https://github.com/tianxingleo/) · [作者主页](https://tianxingleo.top)

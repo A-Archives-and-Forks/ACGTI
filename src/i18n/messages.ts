@@ -278,6 +278,8 @@ export const messages = {
       feedbackSubmitting: '提交中...',
       feedbackDone: '感谢反馈！你的数据将帮助我们校准题目与角色映射。',
       feedbackError: '提交失败，请稍后再试',
+      sponsorHero: '赞助支持',
+      sponsorSidebar: '赞助项目维护',
       liveStats: {
         title: '站内实况',
         sameCharacter: '已有 {count} 人和你测出同一角色',
@@ -803,6 +805,8 @@ export const messages = {
       feedbackSubmitting: '提交中...',
       feedbackDone: '感謝回饋！你的資料將幫助我們校準題目與角色映射。',
       feedbackError: '提交失敗，請稍後再試',
+      sponsorHero: '贊助支持',
+      sponsorSidebar: '贊助專案維護',
       liveStats: {
         title: '站內實況',
         sameCharacter: '已有 {count} 人和你測出同一角色',
