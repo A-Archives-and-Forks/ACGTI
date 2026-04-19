@@ -17,6 +17,7 @@ const router = createRouter({
     { path: '/characters', name: 'characters', component: () => import('../pages/CharactersPage.vue') },
     { path: '/about', name: 'about', component: () => import('../pages/AboutPage.vue') },
     { path: '/stats', name: 'stats', component: () => import('../pages/StatsPage.vue') },
+    { path: '/sponsor', name: 'sponsor', component: () => import('../pages/SponsorPage.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
   scrollBehavior() {
