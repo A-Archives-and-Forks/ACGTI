@@ -1,5 +1,6 @@
 import { readonly, ref } from 'vue'
 
+import characterMessages from '../data/characterMessages.json'
 import { localeLabels, messages } from './messages'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type AppLocale } from './types'
 
@@ -58,6 +59,31 @@ function interpolate(template: string, params?: Record<string, string | number>)
   return template.replace(/\{(\w+)\}/g, (_, key) => String(params[key] ?? ''))
 }
 
+type CharacterMessage = {
+  title?: string
+  note?: string
+  tags?: string[]
+}
+
+type CharacterMessageLocale = Record<string, CharacterMessage>
+
+function getCharacterMessage(locale: AppLocale, key: string) {
+  const match = /^characters\.([a-z0-9-]+)\.(title|note|tags\.(\d+))$/.exec(key)
+  if (!match) return undefined
+
+  const [, characterId, field, tagIndex] = match
+  const localeMessages = (characterMessages as Record<AppLocale, CharacterMessageLocale>)[locale]
+  const fallbackMessages = (characterMessages as Record<AppLocale, CharacterMessageLocale>)[DEFAULT_LOCALE]
+  const message = localeMessages?.[characterId] ?? fallbackMessages?.[characterId]
+
+  if (!message) return undefined
+  if (field === 'title') return message.title
+  if (field === 'note') return message.note
+
+  const index = Number(tagIndex)
+  return Number.isInteger(index) ? message.tags?.[index] : undefined
+}
+
 export function setLocale(locale: AppLocale) {
   currentLocale.value = locale
   applyDocumentLanguage(locale)
@@ -72,7 +98,9 @@ export function getLocale() {
 }
 
 export function t(key: string, params?: Record<string, string | number>, defaultVal?: string) {
-  const value = deepGet(messages[currentLocale.value], key) ?? deepGet(messages[DEFAULT_LOCALE], key)
+  const value = getCharacterMessage(currentLocale.value, key)
+    ?? deepGet(messages[currentLocale.value], key)
+    ?? deepGet(messages[DEFAULT_LOCALE], key)
   return interpolate(typeof value === 'string' ? value : (defaultVal ?? key), params)
 }
 
