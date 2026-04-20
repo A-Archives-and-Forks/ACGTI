@@ -53,6 +53,26 @@
       "zh-TW": "明日方舟",
       "en": "Arknights",
       "ja": "アークナイツ"
+    },
+    "en": {
+      "title": "Self-Proclaimed General — Energetic Girl From the Underground",
+      "note": "A vibrant Durin girl who calls herself the \"Great General\" commanding the First Avenue and three shopping streets. At just 131cm tall, her battlefield presence and command skills still blow everyone away. One of the few Durin who doesn't doze off, she's endlessly curious about the surface world. Loves collecting \"treasures\" but can't even keep track of her own ID badge.",
+      "tags": [
+        "131cm of Leadership",
+        "Durin's Sober Exception",
+        "Serial ID Badge Loser",
+        "Shopping Street Supreme General"
+      ]
+    },
+    "ja": {
+      "title": "大将軍（自称）・地下世界から来た元気少女",
+      "note": "活力みなぎるドゥリン族の女の子で、第一通りと三つの商店街を束ねる「大将軍」を自称している。身長は131cmしかないけど、戦場での感染力と指揮能力は誰もが見直すレベル。地下世界出身で、ドゥリン族では珍しく眠たがりじゃなく、地上世界に強い好奇心を持っている。「宝物」を集めるのが好きだけど、職員証すらなくす始末。",
+      "tags": ["131cmの統率力", "ドゥリン族の覚醒担当", "IDカード紛失事件の犯人", "商店街を束ねる大将軍"]
+    },
+    "zh-TW": {
+      "title": "大將軍(自稱)·來自地下世界的元氣少女",
+      "note": "充滿活力的杜林族女孩，自稱統率第一大道及三條商店街的「大將軍」。雖然身高只有131cm，但戰場上的感染力和指揮水準讓人刮目相看。來自地下世界的她，是少數不瞌睡的杜林族，對地上世界充滿好奇。喜歡收集「寶物」，但是卻連工牌都能弄丟。",
+      "tags": ["131cm的統率力", "杜林族清醒擔當", "工牌失蹤案當事人", "統領商店街的大將軍"]
     }
   }
 }

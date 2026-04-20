@@ -75,6 +75,36 @@
       "zh-TW": "超時空輝耀姬！",
       "en": "Cho-Kaguyahime!",
       "ja": "超かぐや姫！"
+    },
+    "zh-TW": {
+      "title": "神秘頂流AI·把整個創作宇宙當直播間在看",
+      "note": "你像那種存在感很高、卻不會把情緒直接攤在臉上的人。你看起來離大家有點遠，像懸在高處的虛擬偶像或神明 NPC，但實際上又一直在默默看著每個人怎麼創作、怎麼發光。屬於「表面像高位冷感設定怪，底層其實很在意整個世界運轉得夠不夠自由熱鬧」的類型。",
+      "tags": [
+        "虛擬空間管理人",
+        "頂流主播",
+        "高概念AI",
+        "神秘守望者"
+      ]
+    },
+    "en": {
+      "title": "Mysterious Top AI — Watching the Whole Creative Universe Like a Stream",
+      "note": "You have a strong presence, yet you do not place your emotions plainly on your face. You seem a little distant from everyone, like a virtual idol or divine NPC suspended above the crowd, but you are always quietly watching how people create and shine. You look like a high-concept, cool figure, while deep down you care whether the whole world is running freely and vividly enough.",
+      "tags": [
+        "Virtual Space Manager",
+        "Top Streamer",
+        "High-Concept AI",
+        "Mysterious Watcher"
+      ]
+    },
+    "ja": {
+      "title": "謎めいたトップAI・創作宇宙全体を配信のように見守る存在",
+      "note": "存在感は強いのに、感情をそのまま顔に出すことはないタイプ。みんなから少し離れた場所にいるようで、高い場所に浮かぶバーチャルアイドルや神様NPCのようにも見える。でも実際には、一人ひとりがどう創作し、どう輝くかを静かに見守っている。",
+      "tags": [
+        "仮想空間の管理人",
+        "トップ配信者",
+        "高概念AI",
+        "謎めいた見守り手"
+      ]
     }
   }
 }

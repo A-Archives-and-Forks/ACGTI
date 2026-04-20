@@ -52,6 +52,26 @@
       "zh-TW": "Re:從零開始的異世界生活",
       "en": "Re:Zero - Starting Life in Another World",
       "ja": "Re:ゼロから始める異世界生活"
+    },
+    "en": {
+      "title": "Oni Maid — The Ultimate Devotee",
+      "note": "Normally a picture-perfect maid who's incredible at everything domestic, but once you flip her trust switch, she'll throw away her life without hesitation. Friendly reminder though: before earning that trust, watch out for the barbed morning star she carries. The type who's \"an absolute angel as long as you don't do anything stupid\" — pure dedication personality.",
+      "tags": [
+        "Gets Rem'd",
+        "All-Round Housework Pro",
+        "Once She's In, No Turning Back",
+        "Morning Star Warning"
+      ]
+    },
+    "zh-TW": {
+      "title": "鬼族女僕·究極奉獻者",
+      "note": "平時是家務萬能、溫柔體貼的完美女僕，一旦你觸發了她的信任開關，她連命都可以不要。不過友情提示：在取得信任之前，請小心她手裡那把帶著倒刺的流星錘。屬於那種「只要你別作死，她就是人間天使」的奉獻型人格。",
+      "tags": ["丟你蕾姆", "全能家務", "一旦認準死不回頭", "流星錘警告"]
+    },
+    "ja": {
+      "title": "鬼族メイド・究極の奉仕者",
+      "note": "普段は家事万能で優しい完璧メイドだけど、信頼スイッチが入ったら命すら投げ出す。でも注意：信頼を得るまでは、あの棘付きのフレイルに気をつけて。「余計なことしなければ人間天使」な奉仕型人格。",
+      "tags": ["レムはレム", "万能家事スキル", "一度決めたら絶対譲らない", "フレイル注意報"]
     }
   }
 }

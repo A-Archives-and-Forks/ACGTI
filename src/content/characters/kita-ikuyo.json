@@ -53,6 +53,36 @@
       "zh-TW": "孤獨搖滾！",
       "en": "Bocchi the Rock!",
       "ja": "ぼっち・ざ・ろっく！"
+    },
+    "zh-TW": {
+      "title": "行走的閃光彈·社交刺客",
+      "note": "只要她站在那裡，周圍就會自動生成閃瞎眼的「陽角濾鏡」。交際能力點滿，能在三秒內和任何人稱兄道弟，堪稱社恐患者的天然天敵與救贖。雖然有過買錯貝斯就提桶跑路的黑歷史，但只要她一笑，你就只能原諒她了。",
+      "tags": [
+        "喜多光線",
+        "逃跑吉他手",
+        "社交恐怖分子",
+        "陽角濾鏡"
+      ]
+    },
+    "en": {
+      "title": "Walking Flashbang — Social Assassin",
+      "note": "As long as she stands there, the area automatically gains a blinding extrovert filter. Her social ability is maxed out; she can become friends with anyone in three seconds, making her both a natural enemy and a salvation for socially anxious people. She once bought the wrong bass and fled, but when she smiles, you have no choice but to forgive her.",
+      "tags": [
+        "Kita Beam",
+        "Runaway Guitarist",
+        "Social Terrorist",
+        "Extrovert Filter"
+      ]
+    },
+    "ja": {
+      "title": "歩く閃光弾・社交アサシン",
+      "note": "彼女がそこに立つだけで、周囲にはまぶしすぎる陽キャフィルターが自動生成される。コミュ力はカンスト、三秒で誰とでも友達になれる。社交不安持ちにとっては天敵であり救いでもある。ベースを間違えて買って逃げた黒歴史はあるが、笑われたら許すしかない。",
+      "tags": [
+        "喜多ビーム",
+        "逃げたギタリスト",
+        "社交テロリスト",
+        "陽キャフィルター"
+      ]
     }
   }
 }

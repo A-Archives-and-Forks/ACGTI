@@ -74,6 +74,36 @@
       "zh-TW": "Blanche Fleur",
       "en": "Blanche Fleur",
       "ja": "Blanche Fleur"
+    },
+    "zh-TW": {
+      "title": "抽象歌姬·設定像仙女落地像怪話發動機",
+      "note": "你給人的感覺像那種立繪一出來全場都以為會很仙、很穩、很像高空懸浮系角色，結果一開口就把頻道拐進奇怪笑點的人。你不是沒有美型濾鏡，只是那層濾鏡經常會被更強的怪話感、活人感和反差感搶鏡。屬於「設定寫得像月下貴族，實際演出像抽象發動機」的類型。",
+      "tags": [
+        "吸血鬼但暈血",
+        "設定華麗落地很怪",
+        "抽象歌姬",
+        "反差感發光體"
+      ]
+    },
+    "en": {
+      "title": "Abstract Diva · Fairy Design, Meme Engine Landing",
+      "note": "You give off the vibe of someone whose character art drops and everyone expects a graceful, composed, floating-in-midair type — then you open your mouth and immediately hijack the entire channel into bizarre comedy territory. It's not that you lack a beauty filter; it's just that your weirdness, raw personality, and absurd contrast keep stealing the spotlight. The type whose \"lore reads like moonlit aristocracy, but actual performance is a chaos engine.\"",
+      "tags": [
+        "Vampire Who Faints at Blood",
+        "Gorgeous Lore, Cursed Reality",
+        "Abstract Songstress",
+        "Walking Contrast Glow"
+      ]
+    },
+    "ja": {
+      "title": "抽象歌姫・仙女設定なのに着地が謎エンジン",
+      "note": "立絵が出た瞬間、みんな「仙女的で安定してる、空中浮遊系キャラだ」と思うのに、口を開いた瞬間にチャンネル全体を謎の笑いに誘導するタイプ。美形フィルターがないわけじゃない、ただそのフィルターより強い謎感と生身感とギャップ感が目立ってしまう。「設定は月下貴族なのに、実演は抽象エンジン」タイプ。",
+      "tags": [
+        "吸血鬼なのに血を見ると卒倒",
+        "設定華麗・着地が謎",
+        "抽象歌姫",
+        "ギャップ発光体"
+      ]
     }
   }
 }

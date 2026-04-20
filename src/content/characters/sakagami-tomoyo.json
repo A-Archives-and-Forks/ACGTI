@@ -46,6 +46,36 @@
       "zh-TW": "坂上智代",
       "en": "Tomoyo Sakagami",
       "ja": "坂上智代"
+    },
+    "en": {
+      "title": "War Empress — Student Council President for the Sakura Trees",
+      "note": "Once the undisputed brawler who dominated the entire town — capable of kicking people into the air and keeping them there — now a serious, responsible student council president who carries everything on her shoulders. Despite her god-tier combat skills, she always shows a clumsy and endearing side in front of the person she loves. A War Empress who shoulders both \"duty\" and \"love\" with iron determination.",
+      "tags": [
+        "Hundred-Hit Combo",
+        "Town's Strongest Legend",
+        "Clumsy Sense of Duty",
+        "Flying Kick Warning"
+      ]
+    },
+    "ja": {
+      "title": "武帝・桜の木のために生きる会長",
+      "note": "かつては町内無敵、人を空中で蹴り続けるほどの不良少女だったのに、今は真面目で責任感の塊な生徒会長。戦闘力は規格外だけど、好きな人の前では不器用で愛嬌のある一面を見せる。「責任」と「愛」を両方しっかり背負い込む武帝。",
+      "tags": [
+        "百連撃",
+        "町内最強伝説",
+        "不器用な責任感",
+        "飛び蹴り注意"
+      ]
+    },
+    "zh-TW": {
+      "title": "武帝·為了櫻花樹的會長",
+      "note": "曾經是打遍小鎮無敵手、能把人踢在半空中下不來的不良少女，現在卻是認真負責、背負一切的學生會長。戰鬥力雖然爆表，但在喜歡的人面前卻總是展現出笨拙又惹人憐愛的一面。是一個把「責任」和「愛」都死死扛在肩上的武帝。",
+      "tags": [
+        "連擊破百",
+        "小鎮最強傳說",
+        "笨拙的責任感",
+        "飛踢警告"
+      ]
     }
   }
 }

@@ -62,6 +62,21 @@
         "只要我開心就好",
         "宇宙法則修改器"
       ]
+    },
+    "en": {
+      "title": "SOS Brigade Chief — World-System Deity",
+      "note": "Ordinary humans are worthless in your eyes — your radar only picks up signals from aliens, time travelers, and espers. You're not looking for fun; you're forcing this boring world to run at full speed for your entertainment. This terrifying执行力 of \"as long as I'm happy, who cares if the world ends\" makes you the highest-tier troublemaker.",
+      "tags": [
+        "No Interest in Ordinary Humans",
+        "Walking Anomaly Generator",
+        "My Fun Comes First",
+        "Cosmic Law Overwriter"
+      ]
+    },
+    "ja": {
+      "title": "SOS団団長・世界系の神",
+      "note": "普通の人間なんて眼中にない。レーダーが反応するのは宇宙人と未来人と超能力者だけ。あなたは楽しみを探してるんじゃなくて、この退屈な世界を自分のために全力で稼働させてる。「自分が楽しければ世界が滅んでもいい」みたいな恐怖の実行力で、最高クラスのトラブルメーカー。",
+      "tags": ["普通の人間には興味ありません", "人型自走怪異", "自分が楽しければOK", "宇宙法則改変装置"]
     }
   }
 }

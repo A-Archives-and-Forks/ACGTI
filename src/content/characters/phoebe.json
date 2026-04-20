@@ -51,6 +51,36 @@
       "zh-TW": "鳴潮",
       "en": "Wuthering Waves",
       "ja": "鳴潮"
+    },
+    "en": {
+      "title": "Hidden Sea Order — Devout Cleric",
+      "note": "Lost both parents in a shipwreck and eventually became a devout cleric in the Hidden Sea Order. She transformed past trauma into gentleness and compassion for the world, embracing all suffering like a tranquil ocean. Just looking at her makes you feel like every bit of restlessness can be healed — your standard \"soul safe harbor.\"",
+      "tags": [
+        "Devout Prayers",
+        "Tragic Past",
+        "Healing Presence",
+        "Selfless Devotion"
+      ]
+    },
+    "ja": {
+      "title": "隠海修道会・敬虔な聖職者",
+      "note": "海難事故で両親を失い、最終的に隠海修道会で敬虔な聖職者になった。過去のトラウマを世界への優しさと思いやりに変え、穏やかな海のようにすべての苦難を包み込む。彼女を見ているだけで、あらゆる浮躁が癒やされる気がする。まさに「魂の避難所」。",
+      "tags": [
+        "敬虔な祈り",
+        "悲しい過去",
+        "癒やし系",
+        "無私の献身"
+      ]
+    },
+    "zh-TW": {
+      "title": "隱海修會·虔誠聖職者",
+      "note": "因為船難失去雙親，最終在隱海修會成為一名虔誠的聖職者。她將過去的創傷轉化為對世界的溫柔與悲憫，像靜謐的海洋一般包容著所有的苦難。你看著她，就會覺得一切浮躁都能被治癒——屬於標準的「靈魂避風港」。",
+      "tags": [
+        "虔誠祈禱",
+        "悲慘過去",
+        "治癒系",
+        "無私奉獻"
+      ]
     }
   }
 }

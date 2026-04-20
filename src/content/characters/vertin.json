@@ -60,6 +60,37 @@
       "zh-TW": "重返未來:1999",
       "en": "Reverse:1999",
       "ja": "リバース:1999"
+    },
+    "en": {
+      "title": "Timekeeper Patrolling Through the Storm",
+      "note": "A \"Timekeeper\" belonging to the St. Pavlov Foundation — not the strongest fighter, but the irreplaceable \"Key.\" A calm and composed young woman who doesn't have many people she can trust. As she's known since she first had memories: she has always been alone.",
+      "tags": [
+        "Time Management Master",
+        "Storm Immunity",
+        "Suitcase Mobile Fortress",
+        "Rational Rebel"
+      ]
+    },
+    "ja": {
+      "title": "暴雨の中を巡回する司辰",
+      "note": "活発な少女から静かな導き手へ――聖ロフ財団に属する「司辰」。最強の戦士ではないが、かけがえのない「鍵」。冷静で落ち着いた少女は、信じられる人があまりいない。なぜなら記憶を持ち始めた頃から、自分が一人であることをよく分かっていたから。",
+      "tags": [
+        "時間管理の達人",
+        "暴雨免疫体質",
+        "スーツケース移動要塞",
+        "理性の反逆者"
+      ]
+    },
+    "zh-TW": {
+      "title": "暴雨中梭巡的司辰",
+      "note": "從活潑少女到沉靜的引路人，隸屬於聖洛夫基金會的「司辰」。不是最強的戰士，卻是不可替代的「鑰匙」。冷靜沉穩的少女沒有多少可以相信的人，因為自有記憶起，她便很清楚自己是獨自一人。",
+      "tags": [
+        "時間管理大師",
+        "暴雨免疫體質",
+        "手提箱移動堡壘",
+        "萬雌王",
+        "理智的叛逆者"
+      ]
     }
   }
 }

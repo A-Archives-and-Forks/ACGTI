@@ -53,6 +53,36 @@
       "zh-TW": "間諜家家酒",
       "en": "SPY x FAMILY",
       "ja": "SPY×FAMILY"
+    },
+    "en": {
+      "title": "Thorn Princess — Assassin With Skipped Brain Wiring",
+      "note": "On the surface, a gentle housewife who can't even chop vegetables without cutting herself; secretly, a top-tier assassin codenamed \"Thorn Princess.\" Her thought process is as abnormal as her physical combat ability — when she can't figure out a social situation, her first instinct is usually \"maybe I should just quietly assassinate them.\"",
+      "tags": [
+        "Physics-Class Chef",
+        "Natural Airhead Housewife",
+        "Kicks Cars Into the Sky",
+        "When in Doubt, Assassinate"
+      ]
+    },
+    "ja": {
+      "title": "いばら姫・脳回路がバグった殺し屋",
+      "note": "表面上は優しくて可愛らしい、野菜を切るだけで自分の指も切っちゃう良妻賢母。裏では「いばら姫」のコードネームを持つトップクラスの殺し屋。思考回路は物理戦闘力と同じくらい常人離れしていて、人間関係で解決できない問題にぶつかると、第一反応が「こっそり暗殺した方がいいかな」になる。",
+      "tags": [
+        "物理系料理神",
+        "天然ボケ人妻",
+        "車を一蹴りで飛ばす",
+        "悩むより暗殺"
+      ]
+    },
+    "zh-TW": {
+      "title": "荊棘公主·腦迴路清奇的殺手",
+      "note": "表面上是溫婉可人、連切菜都能切到自己手的賢妻良母，背地裡卻是代號「荊棘公主」的頂尖殺手。她的腦迴路跟她的物理戰鬥力一樣異於常人，遇到解決不了的人際交往問題，第一反應往往是「是不是把他偷偷殺掉比較好」。",
+      "tags": [
+        "物理系廚神",
+        "天然呆人妻",
+        "一腳踢飛汽車",
+        "煩惱不如暗殺"
+      ]
     }
   }
 }

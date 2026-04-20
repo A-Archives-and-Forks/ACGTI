@@ -51,6 +51,36 @@
       "zh-TW": "玉子市場",
       "en": "Tamako Market",
       "ja": "たまこまーけっと"
+    },
+    "zh-TW": {
+      "title": "商店街團寵·打糕店招牌",
+      "note": "滿腦子都是年糕的商店街團寵，神經大條到連別人對自己的喜歡都察覺不到。她那種毫無防備的天然呆屬性，能輕易把任何緊張的氣氛化解成軟糯的日常。名言大概是：沒有什麼事情是吃一口年糕解決不了的！",
+      "tags": [
+        "年糕腦",
+        "天然呆滿級",
+        "肥鳥飼養員",
+        "日常系天花板"
+      ]
+    },
+    "en": {
+      "title": "Shopping Street Favorite — Mochi Shop Mascot",
+      "note": "The shopping street's favorite girl has mochi on the brain and is so carefree that she cannot even notice when someone likes her. Her completely unguarded airheadedness can easily turn any tense atmosphere into soft daily life. Her motto might be: there is nothing one bite of mochi cannot solve.",
+      "tags": [
+        "Mochi Brain",
+        "Max-Level Airhead",
+        "Fat Bird Keeper",
+        "Slice-of-Life Ceiling"
+      ]
+    },
+    "ja": {
+      "title": "商店街の愛されっ子・餅屋の看板娘",
+      "note": "頭の中は餅でいっぱいの商店街の人気者。大らかすぎて、誰かが自分を好きなことにすら気づかない。無防備な天然さで、どんな緊張した空気もやわらかな日常に変えてしまう。合言葉はたぶん、餅を一口食べればだいたい解決。",
+      "tags": [
+        "餅脳",
+        "天然ボケMAX",
+        "太った鳥の飼い主",
+        "日常系の天井"
+      ]
     }
   }
 }

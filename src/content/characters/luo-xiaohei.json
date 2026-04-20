@@ -75,6 +75,26 @@
       "zh-TW": "羅小黑戰記",
       "en": "The Legend of Hei",
       "ja": "ロシャオヘイセンキ"
+    },
+    "en": {
+      "title": "Trainee Enforcer Xiaohei",
+      "note": "Though still young, Xiaohei possesses combat abilities far beyond his age. He only shows his childish side to those he's close to; in front of others, he's quiet and reserved. His seriousness might make people want to back away, but that's never a signal of rejection — it's just him trying his hardest to look dependable for you.",
+      "tags": [
+        "Spatial Powerhouse",
+        "Innocent Yet Melancholy",
+        "Ice Cream Enthusiast",
+        "Quietly Strong, Silently Guarding"
+      ]
+    },
+    "ja": {
+      "title": "見習い執行者・ラ・シャオヘイ",
+      "note": "小黒はまだ幼いが、同年代を遥かに超える戦闘能力を持っている。親しい人の前でのみ子供らしい一面を見せ、他人の前では寡黙で感情を表に出さない。その笑わない態度に引いてしまう人もいるけど、それは拒絶のサインじゃなくて、あなたに「頼りがいがある姿」を見せたいだけなんだ。",
+      "tags": ["空間系の強者", "無邪気で切ない", "アイスクリーム好き", "静かに守る強さ"]
+    },
+    "zh-TW": {
+      "title": "見習執行者·羅小黑",
+      "note": "雖然小黑年紀尚幼，卻有著遠超同齡人水準的戰鬥能力；只有在親近的人面前，小黑才會表現出他稚氣的一面，而在眾人面前，他常是一副寡言少語的樣子。但他在相處過程中表現出的不苟言笑也讓不少人產生了退卻的心思，但那並非拒絕你的訊號，只是他刻意想要展現給你的可靠形象。",
+      "tags": ["空間系強者", "天真而憂傷", "冰淇淋愛好者", "隱性強大、默默守護"]
     }
   }
 }

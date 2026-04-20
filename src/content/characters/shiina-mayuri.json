@@ -75,6 +75,36 @@
       "zh-TW": "命運石之門",
       "en": "Steins;Gate",
       "ja": "シュタインズ・ゲート"
+    },
+    "en": {
+      "title": "Upa — The Pure, Translucent Star of Fate",
+      "note": "Her very existence is like a gentle anchor — no matter how the worldline shifts, no matter how much chaos the time machine stirs up, she'll smile and give you a \"Tuturu♪\". You're not the type to actively solve problems, but you have a magical ability: as long as you're around, everyone feels like \"maybe it's not so bad after all.\" The type who \"looks the weakest but is actually holding up the entire team's mental health.\"",
+      "tags": [
+        "Tuturu♪",
+        "Juicy Fried Chicken No.1",
+        "Mayuri's Watch Stopped Again",
+        "Everyone's Emotional Anchor"
+      ]
+    },
+    "ja": {
+      "title": "運命の天使・純潔透明な星屑",
+      "note": "彼女の存在自体が優しいアンカーみたい。世界線がどう変動しても、タイムマシンが全てをめちゃくちゃにしても、彼女は笑って「トゥットゥルー♪」って言ってくれる。自ら問題を解決するタイプじゃないけど、不思議な力がある：彼女がいさえすれば、周りの人は「まあ、そんなに悪くないかも」って思える。見た目は一番弱そうだけど、実はチーム全体の精神状態を支えているタイプ。",
+      "tags": [
+        "トゥットゥルー♪",
+        "ジューシーフライドチキンNO.1",
+        "まゆりの時計また止まってる",
+        "全員の精神的アンカー"
+      ]
+    },
+    "zh-TW": {
+      "title": "命運天使·純潔透明的星辰",
+      "note": "她的存在本身就像一個溫柔的錨點——不管世界線怎麼變動、不管時間機器把一切攪得多亂，她都會笑著對你說一句「嘟嘟嚕」。你不是那種會主動解決問題的人，但你有一種神奇的能力：只要你在，周圍的人就會覺得「好像也沒那麼糟」。屬於「看起來最柔弱，實際上撐住了整個團隊精神狀態」的類型。",
+      "tags": [
+        "嘟嘟嚕",
+        "多汁炸雞NO.1",
+        "真由理的懷錶怎麼停了",
+        "全員的精神錨點"
+      ]
     }
   }
 }

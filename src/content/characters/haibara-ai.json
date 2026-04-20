@@ -62,6 +62,26 @@
         "APTX4869發明家",
         "外冷內熱體質"
       ]
+    },
+    "en": {
+      "title": "Mother of Drug A · Science's Deadpan Roaster",
+      "note": "You'd think she's a cold-blooded scientist, but she's actually the show's most sharp-witted straight woman. Daily duties include researching the antidote and using icy language to hit the brakes on a certain Shinigami elementary schooler. Her dry humor is as lethal as the drug she invented — the textbook case of \"says nothing, then every word is a critical hit.\"",
+      "tags": [
+        "Shinigami Kid's Brakes",
+        "Poison-Tongued Queen",
+        "APTX4869 Inventor",
+        "Cold Outside, Warm Inside"
+      ]
+    },
+    "ja": {
+      "title": "A薬の母・科学界の冷面ツッコミ役",
+      "note": "冷血非情な科学者だと思ってたら、実は全編で一番冷静なツッコミ担当。日常業務は解毒薬の研究と、氷のような言葉で某死神小学生にブレーキをかけること。彼女のドライなユーモアは開発した薬と同じくらい致命的——「黙ってる時はともかく、口を開けば一刀両断」のお手本。",
+      "tags": [
+        "死神小学生のブレーキ",
+        "毒舌クイーン",
+        "APTX4869開発者",
+        "外冷内熱体質"
+      ]
     }
   }
 }

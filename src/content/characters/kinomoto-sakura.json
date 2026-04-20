@@ -69,6 +69,36 @@
       "zh-TW": "木之本櫻",
       "en": "Sakura Kinomoto",
       "ja": "木之本桜"
+    },
+    "zh-TW": {
+      "title": "初代萌王·治愈系魔法使",
+      "note": "初代萌王，她的那句「絕對、大丈夫だよ」堪稱能治癒一切精神內耗的終極咒語。你最大的優點不是單純開朗，而是總能帶著一點天然和真誠把複雜的事也往前推。別人覺得麻煩時，你會先上手；別人害怕時，你反而會用很輕的方式把氣氛托住。屬於「像春天一樣看著軟，實際非常能打」的類型。",
+      "tags": [
+        "絕對沒問題的",
+        "庫洛牌打工妹",
+        "無敵的溫柔",
+        "童年白月光"
+      ]
+    },
+    "en": {
+      "title": "Original Moe Queen — Healing Magical Girl",
+      "note": "The original moe queen, and her \"Everything will definitely be all right\" is the ultimate spell against mental exhaustion. Your greatest strength is not simple cheerfulness, but the way you carry complicated things forward with natural sincerity. When others think something is troublesome, you act first; when others are afraid, you gently hold up the atmosphere.",
+      "tags": [
+        "Definitely All Right",
+        "Clow Card Worker",
+        "Invincible Gentleness",
+        "Childhood First Love"
+      ]
+    },
+    "ja": {
+      "title": "初代萌え王・癒やし系魔法使い",
+      "note": "初代萌え王。「絶対、大丈夫だよ」という言葉は、あらゆる精神的な疲れを癒やす究極の呪文。あなたの強さは単なる明るさではなく、天然さと誠実さを少し混ぜながら複雑なことも前へ進められるところにある。",
+      "tags": [
+        "絶対大丈夫",
+        "クロウカードの働き手",
+        "無敵の優しさ",
+        "幼少期の白月光"
+      ]
     }
   }
 }

@@ -61,6 +61,21 @@
         "輕音部唯一的常識人",
         "口嫌體正直"
       ]
+    },
+    "ja": {
+      "title": "ツンデレ後輩・いじられ担当ギタリスト",
+      "note": "軽音部で唯一の常識人であり秩序の守護者。普段は「ちゃんと練習しなきゃ」を口癖にしているけど、先輩たちにケーキを差し出されたり猫耳を着けられたりすると、即座に顔を真っ赤にして陥落する。典型的な「口では嫌がるけど体は正直」な真面目系後輩で、いじられ耐性はゼロ。",
+      "tags": ["あずにゃん", "すぐ調子に乗る", "軽音部唯一の常識人", "口では嫌がる体は正直"]
+    },
+    "en": {
+      "title": "Tsundere Kouhai — The Toyed-With Guitarist",
+      "note": "The sole voice of reason and order in the Light Music Club. She's always going on about \"we need to practice properly,\" but the moment her seniors offer her cake or slap cat ears on her, she's blushing and completely conquered. The quintessential \"mouth says no, body says yes\" earnest underclassman — maximum bullyability score.",
+      "tags": [
+        "Azu-nyan",
+        "Easily Swayed",
+        "Club's Only Sane Person",
+        "Classic Tsundere"
+      ]
     }
   }
 }

@@ -53,6 +53,36 @@
       "zh-TW": "緣之空",
       "en": "Yosuga no Sora",
       "ja": "ヨスガノソラ"
+    },
+    "zh-TW": {
+      "title": "病弱宅女·極致的依賴",
+      "note": "平時是一副沉默寡言、帶著黑兔布偶的病弱宅女模樣，習慣用冷漠和帶刺的語言掩飾內心的極度不安。她對外界的社交毫無興趣，但在卸下所有心防後，那份不顧一切、幾乎令人窒息的依賴感足以打破所有世俗的常規。屬於「只要認定你，連世界都可以不要」的極端純粹型。",
+      "tags": [
+        "網路衝浪達人",
+        "黑兔布偶本體",
+        "防備心拉滿",
+        "終極羈絆"
+      ]
+    },
+    "en": {
+      "title": "Frail Shut-In — Extreme Dependence",
+      "note": "Usually she appears as a quiet, frail shut-in with a black rabbit plush, using coldness and thorny words to hide deep insecurity. She has no interest in ordinary social life, but once every defense is lowered, her desperate, almost suffocating dependence can break every worldly rule. An extremely pure type who can abandon the world once she chooses you.",
+      "tags": [
+        "Internet Drifter",
+        "Black Rabbit Plush Core",
+        "Maximum Guard",
+        "Ultimate Bond"
+      ]
+    },
+    "ja": {
+      "title": "病弱な引きこもり・極限の依存",
+      "note": "普段は黒うさぎのぬいぐるみを抱えた寡黙で病弱な引きこもりで、冷淡さと刺のある言葉で内面の強い不安を隠している。外の社交にはまったく興味がないが、すべての心の防壁を下ろしたあと、その一途で息苦しいほどの依存は世間の常識を壊すほど強い。",
+      "tags": [
+        "ネット徘徊の達人",
+        "黒うさぎぬいぐるみ本体",
+        "警戒心MAX",
+        "究極の絆"
+      ]
     }
   }
 }

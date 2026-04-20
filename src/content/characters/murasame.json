@@ -69,6 +69,26 @@
       "zh-TW": "千戀＊萬花",
       "en": "Senren * Banka",
       "ja": "千恋＊万花"
+    },
+    "en": {
+      "title": "Draws Sword, Immediately Loses — Legal Loli Deity",
+      "note": "You're the type who puts on a big elder act normally but blushes and crumbles faster than anyone when things get real. Always boasting about your vast life experience, but the second anything spooky shows up, you're retreating to your safe zone. The type who \"wants to be a guardian deity but actually needs way more protecting than anyone else.\"",
+      "tags": [
+        "Ghost-Phobic Sword Spirit",
+        "500-Year-Old Entity",
+        "One Tease and She Breaks",
+        "Bottom of the Food Chain Deity"
+      ]
+    },
+    "ja": {
+      "title": "抜刀白給・合法ロリ神様",
+      "note": "普段は年長者ぶって威厳を保ってるのに、肝心な時は誰よりも顔が赤くなって即座に崩壊するタイプ。口では「昔からいろいろ見てきた」と言うけど、お化けや驚かしコーナーに出くわすと瞬時に安全地帯に退散。「人を守る神様になりたいのに、実は自分が一番守ってもらいたい」タイプ。",
+      "tags": ["お化け嫌いな刀霊", "五百年の古霊", "ちょっとツッコむと即崩壊", "食物連鎖最下位の神様"]
+    },
+    "zh-TW": {
+      "title": "拔刀白給·合法蘿莉神明",
+      "note": "你像那種平時會把長輩架子端得很足、關鍵時刻卻比誰都容易臉紅破防的人。嘴上總說自己見多識廣，真碰上靈異和驚嚇環節又會瞬間縮回安全區。屬於「明明想當保護別人的神明，結果更需要別人護著」的類型。",
+      "tags": ["怕鬼的刀靈", "五百年老靈體", "一逗就破防", "食物鏈底端神明"]
     }
   }
 }

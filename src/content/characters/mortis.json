@@ -65,6 +65,26 @@
       "zh-TW": "BanG Dream! Ave Mujica",
       "en": "BanG Dream! Ave Mujica",
       "ja": "BanG Dream! Ave Mujica"
+    },
+    "en": {
+      "title": "Altar Ego — The Cold-Faced Stage Phantom",
+      "note": "This isn't mere quietness — it's like locking your real emotions inside another stage shell. You come across as a variable that could rewrite the entire atmosphere at any moment: restrained, unfamiliar, and carrying a distinctly aggressive silhouette.",
+      "tags": [
+        "Personality Switch Energy",
+        "Oppressive Entrances",
+        "Speaks in Non-Human Mode",
+        "Dangerous Stage Variable"
+      ]
+    },
+    "ja": {
+      "title": "異相人格・冷面ステージゴースト",
+      "note": "これは単なる静けさじゃなくて、本当の感情を別のステージの殻に閉じ込めている感じ。あなたは雰囲気をいつでも書き換える変数みたいで、自制が効いて、近寄りがたくて、明確な攻撃性の輪郭をまとっている。",
+      "tags": ["人格切り替え感", "圧迫感ある登場", "まともに喋らない表現", "危険なステージの変数"]
+    },
+    "zh-TW": {
+      "title": "異相人格·冷面舞台幽靈",
+      "note": "這不是單純的安靜，而是像把真實情緒鎖進另一個舞台殼裡。你給人的感覺更像一個隨時會改寫氛圍的變數，克制、陌生，而且帶著明確的攻擊性輪廓。",
+      "tags": ["人格切換感", "壓迫性登場", "不說人話式表達", "危險的舞台變數"]
     }
   }
 }

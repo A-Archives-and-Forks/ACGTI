@@ -75,6 +75,36 @@
       "zh-TW": "鏈鋸人",
       "en": "Chainsaw Man",
       "ja": "チェンソーマン"
+    },
+    "en": {
+      "title": "Dangerous Sweetheart — Tenderness Feels Real, So Does the Danger",
+      "note": "Your first impression makes it so easy for people to let their guard down: warm, breezy, great at banter, and skilled at manufacturing that \"finally someone truly sees me\" illusion. But your core isn't easily boxed into romance tropes. Behind much of that warmth lurk missions, tests, and risks — and the most complicated part is that the closeness isn't entirely fake. The type who \"approaches like a summer evening breeze, then flips like the last second of silence before an explosion.\"",
+      "tags": [
+        "Tender Disguise",
+        "Mission-Grade Danger",
+        "High-Charisma Approach",
+        "Real Feelings Mixed With Lies"
+      ]
+    },
+    "ja": {
+      "title": "デンジャラス・スイート・優しさも危険も本気",
+      "note": "第一印象は誰でも警戒を解いてしまうタイプ：親しみやすくて、リラックスして、話も合わせてくれて、「やっと自分を見てくれる人がいた」みたいな錯覚を起こさせる。でも核心は恋愛フィルターで簡単に分類できるものじゃない。多くの優しさの裏には任務と試探とリスクがついていて、一番複雑なのは、その近づき方が全部嘘じゃないところ。接近時は夏の晩風みたいに、裏返ったら爆発前の最後の静けさみたいなタイプ。",
+      "tags": [
+        "優しさの偽装",
+        "任務型の危険さ",
+        "高魅力アプローチ",
+        "真心が嘘に混ざってる"
+      ]
+    },
+    "zh-TW": {
+      "title": "危險甜心·溫柔像真的，危險也是真的",
+      "note": "你給人的第一感覺往往很容易讓人卸下防備：親近、輕鬆、會接話，也很會製造那種「終於有人認真看見我了」的錯覺。但你的內核並不適合被簡單歸類成戀愛向濾鏡，很多溫柔背後都帶著任務、試探與風險，而最複雜的地方在於那份靠近又不是全假。屬於「接近時像夏夜晚風，翻臉時像爆炸前最後一秒安靜」的類型。",
+      "tags": [
+        "溫柔偽裝",
+        "任務型危險感",
+        "高魅力接近",
+        "真心摻在謊裡"
+      ]
     }
   }
 }

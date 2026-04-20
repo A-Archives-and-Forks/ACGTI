@@ -69,6 +69,36 @@
       "zh-TW": "阿爾托莉雅",
       "en": "Artoria Pendragon",
       "ja": "アルトリア・ペンドラゴン"
+    },
+    "zh-TW": {
+      "title": "呆毛騎士王·誓約勝利之劍",
+      "note": "頭頂呆毛的騎士王，平時是嚴肅古板、恪守騎士精神的君主，到了飯點則是能把衛宮家吃破產的無底洞。你看起來很穩，很難被輕易撼動，像那種會把原則和責任感都執行到近乎苛刻的人。你不是冷漠，只是太習慣先把自己放到最後。屬於「哪怕心裡有波動，表面也還是會先站成一把劍」的類型。",
+      "tags": [
+        "衛宮家破產元兇",
+        "王不懂人心",
+        "吃貨屬性",
+        "凜然的劍士"
+      ]
+    },
+    "en": {
+      "title": "Ahoge Knight King · Excalibur of Vows",
+      "note": "The ahoge-topped King of Knights — normally a stern, strait-laced monarch who lives by chivalric code, but come mealtime transforms into a bottomless pit capable of bankrupting the Emiya household. You come across as rock-solid, nearly impossible to shake — the kind who holds principles and duty to near-unreasonable standards. It's not that you're cold; you're just too used to putting yourself last. The type who \"even when their heart is wavering, will still stand tall like a drawn sword.\"",
+      "tags": [
+        "Cause of Emiya Bankruptcy",
+        "The King Knows Not Human Hearts",
+        "Bottomless Food Pit",
+        "Majestic Swordsman"
+      ]
+    },
+    "ja": {
+      "title": " ahoge騎士王・約束された勝利の剣",
+      "note": " ahogeを乗せた騎士王。普段は厳格で真面目、騎士道を貫く君主、でも食事の時間になれば衛宮家を食い潰すブラックホール。とても安定していて簡単には揺るがない、原則と責任感をほぼ完璧に遂行するタイプ。冷たいんじゃなくて、自分を一番最後にする習慣があるだけ。「心が揺れても、まずは一本の剣として立つ」タイプ。",
+      "tags": [
+        "衛宮家破産の元凶",
+        "王は人の心を知らず",
+        "食いしん坊属性",
+        "凛然たる剣士"
+      ]
     }
   }
 }

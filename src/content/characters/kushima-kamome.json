@@ -70,6 +70,36 @@
       "zh-TW": "Summer Pockets",
       "en": "Summer Pockets",
       "ja": "サマーポケッツ"
+    },
+    "zh-TW": {
+      "title": "海盜船長·帶著行李箱的冒險少女",
+      "note": "拉著大行李箱在島上徘徊的神秘少女，手裡拿著一張陳舊的藏寶圖。性格自由奔放又帶著成熟的氣質，喜歡三角形的甜點。她說自己在尋找海盜船停泊的地方，但行李箱裡到底裝著什麼，她絕對不會告訴任何人。那句「出發吧，再一次，向著有海盜船的地方」背後，藏著一個關於友情與告別的夏日故事。",
+      "tags": [
+        "藏寶圖持有者",
+        "行李箱裡是秘密",
+        "再一次向海盜船出發",
+        "只是想交朋友"
+      ]
+    },
+    "en": {
+      "title": "Pirate Captain — Adventurous Girl With a Suitcase",
+      "note": "A mysterious girl wanders the island with a large suitcase and an old treasure map in hand. She is free-spirited yet mature, and she likes triangular sweets. She says she is looking for a place where a pirate ship can dock, but she will never tell anyone what is inside the suitcase. Behind \"Let's set out once more, toward the place with the pirate ship\" lies a summer story about friendship and farewell.",
+      "tags": [
+        "Treasure Map Holder",
+        "Suitcase Full of Secrets",
+        "Once More to the Pirate Ship",
+        "Just Wants Friends"
+      ]
+    },
+    "ja": {
+      "title": "海賊船長・スーツケースを引く冒険少女",
+      "note": "大きなスーツケースを引き、古い宝の地図を手に島を歩く謎の少女。自由奔放でありながら大人びた雰囲気もあり、三角形のお菓子が好き。海賊船が泊まる場所を探していると言うが、スーツケースの中身だけは絶対に誰にも教えない。",
+      "tags": [
+        "宝の地図の持ち主",
+        "スーツケースの中は秘密",
+        "もう一度、海賊船へ",
+        "友達がほしいだけ"
+      ]
     }
   }
 }

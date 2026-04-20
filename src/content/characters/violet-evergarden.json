@@ -80,6 +80,21 @@
         "信件是她的第二戰場",
         "克制到近乎發光"
       ]
+    },
+    "en": {
+      "title": "Auto Memory Doll — Turning \"I Love You\" Into a Lifelong Assignment",
+      "note": "Your first impression is like an overly neatly bound instruction manual: quiet, precise, with almost zero excess emotion. But what's truly rare is that you don't lack feelings — you learn the most important emotions bit by bit, memorize them thoroughly, and then earnestly give them back to others. The type whose \"surface looks like cold metal, but inside is slowly growing a body temperature.\"",
+      "tags": [
+        "Military-Manual-Level Serious",
+        "Emotion Recognition Patching...",
+        "Letters Are Her Second Battlefield",
+        "So Restrained She Practically Glows"
+      ]
+    },
+    "ja": {
+      "title": "自動手記人偶・「愛してる」を生涯の課題にした少女",
+      "note": "第一印象は製本されすぎた説明書みたい：静かで、正確で、余計な感情はほぼゼロ。でも本当に珍しいのは、感情がないんじゃなくて、一番大事な感情を少しずつ学んで、暗記して、真剣に相手に返していくこと。「表面は冷たい金属みたいだけど、内側はゆっくり体温を育てている」タイプ。",
+      "tags": ["軍用説明書レベルの真面目", "感情認識パッチ適用中", "手紙は第二の戦場", "抑制の果てに輝く"]
     }
   }
 }

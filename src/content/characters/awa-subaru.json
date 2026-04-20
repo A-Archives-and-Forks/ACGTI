@@ -62,6 +62,26 @@
         "表面乖巧內裡叛逆",
         "情緒價值ATM"
       ]
+    },
+    "en": {
+      "title": "Acting Drummer · The Team's Glue",
+      "note": "In a band full of prickly personalities ready to explode at any moment, you're the only one who knows how to use \"acting\" to hold the situation together — a cunning adult-in-training. You know exactly how to play along with grown-ups' expectations, so you smash all your rebellion and frustration into the drum beats instead. It's not that you don't have a temper — you just know exactly when to go wild and when to play nice.",
+      "tags": [
+        "Sane One Among Hedgehogs",
+        "Sly Compromiser",
+        "Sweet Outside, Rebel Inside",
+        "Emotional Support ATM"
+      ]
+    },
+    "ja": {
+      "title": "演技派ドラマー・バンドの接着剤",
+      "note": "全員がトゲトゲでいつも爆発しそうなバンドで、唯一「演技」で場をコントロールする狡猾な大人予備軍。大人の期待をどうやっつけるか知り尽くしてるから、すべての反骨心と悔しさをドラムに叩き込む。怒りがないわけじゃない、発狂する時と猫を被る時を心得ているだけ。",
+      "tags": [
+        "ハリネズミ群れの常識人",
+        "狡猾な妥協者",
+        "表面お利口・中身は反骨",
+        "エモーショナルATM"
+      ]
     }
   }
 }

@@ -75,6 +75,36 @@
       "zh-TW": "命運石之門",
       "en": "Steins;Gate",
       "ja": "シュタインズ・ゲート"
+    },
+    "zh-TW": {
+      "title": "打工戰士·從未來而來的少女",
+      "note": "從2036年騎著自行車穿越回來的人，比起「思考人生」更擅長直接動手改變它。你身上有一種很純粹的執行力——認準了目標就會衝上去，堅定地奮鬥到底。你不是那種會在意別人怎麼看自己的人，但你對重要的事和重要的人有著近乎執拗的追求。屬於「嘴上不說，但會用行動把整個世界扛起來」的類型。",
+      "tags": [
+        "Okey Donkey",
+        "約翰·提托",
+        "打工戰士",
+        "失敗了失敗了失敗了"
+      ]
+    },
+    "en": {
+      "title": "Part-Time Warrior · The Girl from the Future",
+      "note": "A time traveler who rode a bicycle back from 2036 — far better at diving in to change the world than sitting around pondering life. You have a kind of pure execution power: once you lock onto a target, you charge in and fight to the bitter end. You couldn't care less what others think of you, but when it comes to the things and people who matter, your persistence borders on obsession. The type who \"never says a word, but will shoulder the entire world through action.\"",
+      "tags": [
+        "Okey Donkey",
+        "John Titor",
+        "Part-Time Warrior",
+        "Failed Failed Failed"
+      ]
+    },
+    "ja": {
+      "title": "バイト戦士・未来から来た少女",
+      "note": "2036年から自転車でタイムトラベルしてきた人物。「人生について考える」より、さっさと手を動かして変えるのが得意。純粋な実行力の持ち主で、目標を決めたら一直線に突っ込む。他人の目なんて気にしないけど、大切なことと大切な人には執着する。「口には出さないけど、行動で世界全部を背負う」タイプ。",
+      "tags": [
+        "Okey Donkey",
+        "ジョン・タイター",
+        "バイト戦士",
+        "失敗した失敗した失敗した"
+      ]
     }
   }
 }

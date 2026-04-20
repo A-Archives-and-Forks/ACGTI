@@ -53,6 +53,36 @@
       "zh-TW": "崩壞：星穹鐵道",
       "en": "Honkai: Star Rail",
       "ja": "崩壊：スターレイル"
+    },
+    "zh-TW": {
+      "title": "螢火燃燒型·外表很輕，做決定時卻一點都不輕",
+      "note": "你表面像那種說話輕、動作輕、情緒也輕的人，彷彿風一吹就會散。但真正遇到必須做決定的時刻，你反而會非常堅定，甚至帶一點把自己也一起押上去的決絕。屬於「看起來最脆，實際最能扛」的類型。",
+      "tags": [
+        "溫柔外殼",
+        "宿命感",
+        "燃燒自己",
+        "克制執行者"
+      ]
+    },
+    "en": {
+      "title": "Firefly Burner · Light on the Outside, Heavy When It Counts",
+      "note": "You come across as someone who speaks softly, moves lightly, and keeps emotions barely there — like you'd scatter in the wind. But when it's time to make a real decision, you turn iron-willed, even ready to stake yourself on the outcome. The type who \"looks the most fragile, but can actually shoulder the most.\"",
+      "tags": [
+        "Gentle Shell",
+        "Destiny-Driven",
+        "Burning Oneself",
+        "Restrained Executor"
+      ]
+    },
+    "ja": {
+      "title": "蛍火燃焼型・外見は軽いのに決断は一切妥協しない",
+      "note": "話し方が軽く、動作が軽く、感情も軽い人に見える、まるで風で散ってしまいそう。でも本当に決断しなきゃいけない瞬間には、むしろ非常に芯が強くて、自分ごと賭けにいく覚悟がある。「一番脆そうに見えて、実は一番耐えられる」タイプ。",
+      "tags": [
+        "優しい殻",
+        "宿命感",
+        "自分を燃やす",
+        "自制の実行者"
+      ]
     }
   }
 }

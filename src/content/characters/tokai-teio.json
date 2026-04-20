@@ -51,6 +51,36 @@
       "zh-TW": "賽馬娘 Pretty Derby",
       "en": "Uma Musume Pretty Derby",
       "ja": "ウマ娘 プリティーダービー"
+    },
+    "en": {
+      "title": "Unyielding Miracle — The Teio Waltz",
+      "note": "Endlessly energetic, dreaming of becoming an undefeated Triple Crown horse girl like the \"Emperor.\" Even after suffering a career-ending comminuted fracture, she pulled off a miraculous comeback when everyone had written her off. The kind of radiant presence who makes you cheer at the top of your lungs just because she's still running on the track.",
+      "tags": [
+        "Honey Special Drink Fanatic",
+        "President's #1 Stan",
+        "Not Even Fractures Can Stop Her",
+        "Born to Shine"
+      ]
+    },
+    "ja": {
+      "title": "不屈の奇跡・帝王のワルツ",
+      "note": "いつも元気いっぱい、「皇帝」みたいな無敗の三冠ウマ娘になるのが夢。キャリアを終わらせるような粉砕骨折に遭っても、誰もが見放した絶望の中で奇跡の復活を果たす。彼女がコースを走っているだけで、その光に感染して思わず大声で応援したくなる輝く存在。",
+      "tags": [
+        "ハニースペシャルガチ勢",
+        "会長のガチ恋勢",
+        "骨折でも止まらない",
+        "天生の光りモノ"
+      ]
+    },
+    "zh-TW": {
+      "title": "不屈的奇蹟·帝皇舞步",
+      "note": "永遠充滿活力，做夢都想成為像「皇帝」一樣無敗的三冠賽馬娘。就算遭遇了足以終結職業生涯的粉碎性骨折，也能在所有人都不看好的絕境中奇蹟復活。屬於那種「只要她還在場上奔跑，你就會忍不住被她的光芒感染並大聲歡呼」的耀眼存在。",
+      "tags": [
+        "蜂蜜特飲狂熱粉",
+        "會長唯粉",
+        "骨折也攔不住",
+        "天生的發光體"
+      ]
     }
   }
 }

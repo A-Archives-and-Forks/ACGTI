@@ -53,6 +53,36 @@
       "zh-TW": "葬送的芙莉蓮",
       "en": "Frieren: Beyond Journey\\",
       "ja": "葬送のフリーレン"
+    },
+    "zh-TW": {
+      "title": "千年的長壽精靈·民間戲法收集者",
+      "note": "你像那種對外總是顯得情緒很淡、反應很慢的人，不是因為你真的漠不關心，而是你習慣先站得更遠一點再看清一切。你擅長把判斷和力量都留到最關鍵的時刻，卻也會把那些別人看來毫無意義的小事默默珍藏起來。屬於「日常像在發呆，關鍵時刻卻重得驚人」的類型。",
+      "tags": [
+        "寶箱怪誘捕器",
+        "奶奶級賴床選手",
+        "戰力天花板",
+        "不到最後不出手"
+      ]
+    },
+    "en": {
+      "title": "Millennium-Old Elf · Hobby Spell Collector",
+      "note": "You come across as someone whose emotions always seem muted and reactions feel slow — not because you truly don't care, but because you habitually stand farther back to see the full picture before acting. You're great at saving your judgment and power for the most critical moments, yet you also quietly treasure the little things everyone else finds meaningless. The type who \"looks like they're spacing out every day, but delivers staggering weight when it matters.\"",
+      "tags": [
+        "Mimic Bait",
+        "Grandma-Level Oversleeper",
+        "Power Ceiling",
+        "Last-Resort Finisher"
+      ]
+    },
+    "ja": {
+      "title": "千年の長寿エルフ・民生魔法コレクター",
+      "note": "外に対してはいつも感情が薄くて反応が遅い人に見える。本当に無関心なわけじゃなくて、もっと遠くに立ってから全体を把握する習慣があるだけ。判断も力も一番の关键時に温存するのが得意だけど、他人には無意味に見える小さなことも静かに大切にしている。「日常はボケーっとしてるのに、关键時には驚くほど重い」タイプ。",
+      "tags": [
+        "ミミック誘惑装置",
+        "おばあちゃん級寝坊助",
+        "戦力の天井",
+        "最後まで手を出さない"
+      ]
     }
   }
 }

@@ -51,6 +51,36 @@
       "zh-TW": "明日方舟",
       "en": "Arknights",
       "ja": "アークナイツ"
+    },
+    "zh-TW": {
+      "title": "溫柔核彈·盲目的火山學者",
+      "note": "柔弱乖巧的學妹外表下，藏著能瞬間融化整個戰場的毀滅性火山魔法。儘管身體正被礦石病一點點奪走聽力與視力，她依然執著於探尋父母留下的火山研究。每次戰鬥結束後那聲甜甜的「前輩」，是對抗這片廢土殘酷世界最好的止痛藥。",
+      "tags": [
+        "前輩！",
+        "聽力受損",
+        "最強法系輸出",
+        "文獻狂魔"
+      ]
+    },
+    "en": {
+      "title": "Gentle Nuke · the Blind Volcanologist",
+      "note": "Beneath the frail, obedient underclassman exterior lies volcanic magic powerful enough to melt an entire battlefield in an instant. Oripathy is slowly stealing her hearing and sight, yet she remains devoted to pursuing her parents' volcanic research. That sweet \"Senpai!\" after every battle is the best painkiller against this wasteland's cruel world.",
+      "tags": [
+        "Senpai!",
+        "Losing Her Hearing",
+        "Strongest Caster DPS",
+        "Research Paper Maniac"
+      ]
+    },
+    "ja": {
+      "title": "優しい核弾頭・盲目の火山学者",
+      "note": "弱々しくてお利口な後輩の外見の下に、戦場全体を一瞬で溶かす壊滅的な火山魔法が隠されている。鉱石病に少しずつ聴力と視力を奪われながらも、両親が遺した火山研究を追い続けている。戦闘が終わるたびに響く甘い「先輩」は、この荒廃した世界に立ち向かう最高の鎮痛剤。",
+      "tags": [
+        "先輩！",
+        "聴力低下",
+        "最強の術師火力",
+        "論文オタク"
+      ]
     }
   }
 }

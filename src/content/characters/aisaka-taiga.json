@@ -53,6 +53,36 @@
       "zh-TW": "龍與虎",
       "en": "Toradora!",
       "ja": "とらドラ！"
+    },
+    "zh-TW": {
+      "title": "掌中老虎·木刀純愛戰神",
+      "note": "身高一米四出頭，脾氣卻能掀翻屋頂的「掌中老虎」。隨身攜帶木刀，具有強烈的攻擊性，但生活自理能力基本為零。剝開那一層帶刺且暴力的外殼，裡面藏著的其實是一個極度渴望被愛、笨拙到連自己心意都搞不清楚的小女孩。",
+      "tags": [
+        "極度傲嬌",
+        "生活九級傷殘",
+        "一言不合就開幹",
+        "笨拙的溫柔"
+      ]
+    },
+    "en": {
+      "title": "Palm-Size Tiger · Wooden-Sword Pure-Love Crusader",
+      "note": "Barely over 140 cm tall, yet her temper could blow the roof off — the \"Palm-Size Tiger.\" Always armed with a wooden sword, aggressively hostile, but with self-care skills stuck at absolute zero. Peel back that prickly, violent shell and you'll find a girl who craves love so desperately she can't even figure out her own feelings.",
+      "tags": [
+        "Maximum Tsundere",
+        "Legally Incapable of Self-Care",
+        "Fights First, Asks Never",
+        "Clumsy Tenderness"
+      ]
+    },
+    "ja": {
+      "title": "手乗りタイガー・木刀の純愛戦士",
+      "note": "身長140センチそこそこなのに、気迫は屋根を吹き飛ばす「手乗りタイガー」。常に木刀を携帯し、攻撃性はMAX、でも生活力はゼロ。そのトゲトゲした暴力の殻をむけば、中身は愛に飢えた、自分の気持ちすらわかっていない不器用な女の子。",
+      "tags": [
+        "超絶ツンデレ",
+        "生活力壊滅的",
+        "キレたら手がつけられない",
+        "不器用な優しさ"
+      ]
     }
   }
 }

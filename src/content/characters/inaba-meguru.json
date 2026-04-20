@@ -70,6 +70,36 @@
       "zh-TW": "魔女的夜宴",
       "en": "Sabbat of the Witch",
       "ja": "サノバウィッチ"
+    },
+    "zh-TW": {
+      "title": "偽現充學妹·熱鬧外殼下的獨處玩家",
+      "note": "你看起來像那種一出場就能把氣氛拉起來的現充學妹，笑得很自然，接話也很快，好像天生就知道怎麼和所有人打成一片。但熟一點才會發現，你的外向更像一層練出來的殼：會活躍氣氛，懂得裝沒事，也懂得把真正的孤獨藏好。屬於「第一眼像社交王者，第二眼發現其實是高攻低防獨處玩家」的類型。",
+      "tags": [
+        "表面社牛內裡宅",
+        "高攻低防",
+        "熱場快但交心慢",
+        "看著很會其實也會怕"
+      ]
+    },
+    "ja": {
+      "title": "偽リア充後輩・賑やかな殻の下の一人プレイヤー",
+      "note": "登場するだけで空気を盛り上げるリア充後輩みたい。笑顔が自然で、話もテンポよく返せるし、生まれつきみんなと打ち解けるコツを知ってるように見える。でも少し親しくなると分かる——外向性は訓練して身につけた殻みたいなもの。場を盛り上げるし、平気なふりもできるし、本当の孤独も上手に隠せる。「一目見ると社交王者、二目で高攻撃低防御の一人プレイヤー」タイプ。",
+      "tags": [
+        "表面社牛・中身はオタク",
+        "高攻撃低防御",
+        "場は早く暖める・心を開くのは遅い",
+        "できそうに見えて実はビビリ"
+      ]
+    },
+    "en": {
+      "title": "Pseudo-Normie Junior — Solo Player Under a Lively Shell",
+      "note": "You look like the kind of lively junior who can lift the mood the moment you arrive: natural smile, quick replies, and an apparent instinct for getting along with everyone. Once people know you better, they find that your extroversion is more like a trained shell. You can warm up a room, act fine, and hide real loneliness well.",
+      "tags": [
+        "Social Outside, Homebody Inside",
+        "High Attack Low Defense",
+        "Fast Warm-Up, Slow Trust",
+        "Looks Skilled, Still Afraid"
+      ]
     }
   }
 }

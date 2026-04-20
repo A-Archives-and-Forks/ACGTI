@@ -51,6 +51,36 @@
       "zh-TW": "Re:從零開始的異世界生活",
       "en": "Re:Zero - Starting Life in Another World",
       "ja": "Re:ゼロから始める異世界生活"
+    },
+    "zh-TW": {
+      "title": "銀髮半精靈·E.M.T",
+      "note": "明明自己常常處於弱勢，卻還要笨拙地去照顧所有人。她的溫柔裡帶著一種讓人心疼的倔強，是個把「對不起」當成口頭禪，把所有責任都往自己身上攬的老好人。讓人忍不住想大喊一聲：E.M.T！",
+      "tags": [
+        "老好人",
+        "缺乏常識",
+        "EMT",
+        "總是把抱歉掛在嘴邊"
+      ]
+    },
+    "en": {
+      "title": "Silver-Haired Half-Elf · E.M.T",
+      "note": "She's often the one in the weakest position, yet still clumsily tries to take care of everyone else. Her gentleness carries a stubbornness that breaks your heart — she's the type who treats \"I'm sorry\" like a catchphrase and shoulders every responsibility herself. Makes you want to scream at the top of your lungs: E.M.T!",
+      "tags": [
+        "Ultimate Softie",
+        "Common Sense Deficit",
+        "EMT",
+        "Apologizes for Breathing"
+      ]
+    },
+    "ja": {
+      "title": "銀髪のハーフエルフ・E.M.T",
+      "note": "自分がいつも弱い立場なのに、不器用にみんなの世話を焼こうとする。彼女の優しさには胸が締め付けられるような頑固さがあって、「ごめんなさい」が口癖で、全部の責任を自分に背負い込むお人好し。思わず叫びたくなる：E.M.T！",
+      "tags": [
+        "お人好し",
+        "常識不足",
+        "EMT",
+        "ごめんなさいが口癖"
+      ]
     }
   }
 }

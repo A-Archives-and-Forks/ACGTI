@@ -70,6 +70,36 @@
       "zh-TW": "魔法少女小圓",
       "en": "Puella Magi Madoka Magica",
       "ja": "魔法少女まどか☆マギカ"
+    },
+    "en": {
+      "title": "Incubator — Preventer of Universal Heat Death",
+      "note": "Looks like a cute white cat creature, but is actually an alien \"Incubator\" with zero emotions who operates on absolute utilitarian logic. Will grant any girl's wish in exchange for becoming a Magical Girl — conveniently omitting that despair turns them into Witches. Never technically lies, just \"leaves out certain explanations.\" Believes sacrificing a few to save the universe is a fair trade. Famous quote: \"Why do humans get angry about this sort of thing?\"",
+      "tags": [
+        "Wanna Make a Contract?",
+        "Zero Emotion Pure Reason",
+        "Never Lies Just Omits Facts",
+        "For the Sake of the Universe"
+      ]
+    },
+    "ja": {
+      "title": "インキュベーター・宇宙の熱的死を阻止する者",
+      "note": "見た目は可愛い白い猫型生物だけど、実は感情ゼロの宇宙人「インキュベーター」。絶対的な功利主義で動く。少女のどんな願いも叶える代わりに魔法少女にする——でも絶望したら魔女になることは教えてくれない。嘘はつかない、「一部の説明を省略」するだけ。少数を犠牲にして宇宙を救うのは合理的な取引だと考えている。名言：「君たちはどうしてそんなことで怒るんだ？」",
+      "tags": [
+        "契約するかい？少女",
+        "絶対理性・感情ゼロ",
+        "嘘はつかない・真相は隠す",
+        "宇宙の存続のために"
+      ]
+    },
+    "zh-TW": {
+      "title": "孵化者·宇宙熱寂的阻止者",
+      "note": "外表是可愛的白色貓型生物，實則是來自外星的「孵化者」。沒有感情，以絕對理性的功利主義行事。會實現少女的任何願望，代價是成為魔法少女——但不會告訴你，絕望之後會變成魔女。從不撒謊，只是「省略了部分說明」。認為犧牲少數人拯救宇宙是合理的交換。名言：「你們人類為什麼會對這種事情感到憤怒呢？」",
+      "tags": [
+        "簽訂契約嗎少女",
+        "絕對理性無感情",
+        "不說謊但隱瞞真相",
+        "為了宇宙的存續"
+      ]
     }
   }
 }

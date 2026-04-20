@@ -76,6 +76,26 @@
       "zh-TW": "命運石之門",
       "en": "Steins;Gate",
       "ja": "シュタインズ・ゲート"
+    },
+    "en": {
+      "title": "Tsundere Genius Assistant",
+      "note": "A neuroscience genius who earned her degree at 18. She'll say \"I have no interest in such unscientific topics\" while stubbornly sticking around the Lab to help fix the microwave. Your first impression is cold and unapproachable, but once people get to know you, they realize you just suck at expressing your softer side — clearly caring but hiding it behind \"baka.\" The type who looks like an iceberg on the surface but is secretly observing you the whole time.",
+      "tags": [
+        "Christina (Forbidden Word)",
+        "Neuroscience Prodigy",
+        "Kurigohan to Kamehameha",
+        "Tsundere Textbook"
+      ]
+    },
+    "ja": {
+      "title": "ツンデレ天才・助手さん",
+      "note": "18歳で大学の学位を取得した天才脳科学者。「こんな非科学的な話に興味ない」と口では言いつつ、体は正直にラボに残って電子レンジを直してくれる。第一印象は高冷で近寄りがたいけど、付き合っていくと、ただ柔らかい面を表現するのが苦手なだけだと分かる。気になっているのに「バカ」で誤魔化すタイプ。表向きは氷山みたいだけど、内心ではずっとあなたを観察している。",
+      "tags": ["クリスティーナ（禁止）", "脳科学の天才", "栗悟飯と亀波功", "ツンデレの教科書"]
+    },
+    "zh-TW": {
+      "title": "傲嬌天才·助手",
+      "note": "18歲拿到大學學位的天才腦科學家，嘴上說「我對這種非科學話題沒興趣」，身體卻很誠實地留在Lab裡幫你修微波爐。你給人的第一印象是高冷難接近，但相處久了會發現你只是不擅長表達柔軟的一面——明明很在意卻要用「笨蛋」來掩飾。屬於「表面像冰山，內心其實一直在偷偷觀察你」的類型。",
+      "tags": ["克里斯蒂娜（禁止）", "腦科學天才", "栗悟飯與龜波氣功", "傲嬌教科書"]
     }
   }
 }

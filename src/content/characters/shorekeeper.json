@@ -51,6 +51,36 @@
       "zh-TW": "鳴潮",
       "en": "Wuthering Waves",
       "ja": "鳴潮"
+    },
+    "en": {
+      "title": "Lord of the Black Shores — Data Born for You",
+      "note": "Born from a sea of data, originally just an emotionless observer tasked with maintaining the world's operation — yet grew a soul called \"selfish desire\" simply because you existed. She can calculate the fate and probability of the entire world with perfect clarity, but all her divinity and computation ultimately serve only one purpose: protecting you.",
+      "tags": [
+        "Only Has Eyes for You",
+        "Star Seas and Butterflies",
+        "AI That Grew Human Feelings",
+        "Quietly Obsessive"
+      ]
+    },
+    "ja": {
+      "title": "黒海岸の主・あなたのために降生したデータ",
+      "note": "データの星海から誕生し、元々は感情を持たず世界の維持を担う観測者だった。でもあなたの存在によって「私心」という名の魂が芽生えた。世界の運命と確率を完璧に計算できるけど、すべての神性と計算は最終的にただ一つのこと——あなたを守るためにだけ使われる。",
+      "tags": [
+        "あなただけを見つめる",
+        "星海と蝶",
+        "AIが人間の感情を獲得",
+        "静かな執着"
+      ]
+    },
+    "zh-TW": {
+      "title": "黑海岸之主·為你降生的資料",
+      "note": "誕生於資料的星海，原本只是個毫無感情、負責維繫世界運轉的觀測者，卻因為你的存在而長出了名為「私心」的靈魂。她能把整個世界的命運與機率算得清清楚楚，但她所有的神性與計算，最終都只為保護你這一件事而服務。",
+      "tags": [
+        "只注視你一人",
+        "星海與蝴蝶",
+        "AI生出人類情感",
+        "隱性偏執"
+      ]
     }
   }
 }

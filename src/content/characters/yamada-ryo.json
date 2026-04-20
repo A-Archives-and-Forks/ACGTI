@@ -52,6 +52,36 @@
       "zh-TW": "孤獨搖滾！",
       "en": "Bocchi the Rock!",
       "ja": "ぼっち・ざ・ろっく！"
+    },
+    "en": {
+      "title": "Grass-Eating Bassist — Transcendent Trash",
+      "note": "A lone-wolf bassist who secretly rejoices when called \"weird.\" Her life philosophy is intensely self-centered — all money goes to instruments, and when broke, she forages roadside weeds to eat, even shamelessly scamming bandmates out of cash for snacks. You think she's cool and deep, but she just can't be bothered to follow basic human social norms. Pure, elevated, transcendent \"trash.\"",
+      "tags": [
+        "Wallet Permanently Empty",
+        "Currently Eating Grass",
+        "Deadpan Nonsense Expert",
+        "Aloof (Self-Proclaimed)"
+      ]
+    },
+    "ja": {
+      "title": "草食ベーシスト・超越的クズ",
+      "note": "「変人」と呼ばれると内心ガッツポーズする孤高のベーシスト。人生哲学は極めて自己中心的。お金があれば全部楽器に注ぎ込み、なければ道端の野草を抜いて食べる。バンドメンバーの金を平気で騙してスナックを買うことすらある。クールで深そうに見えるけど、実は人間社会の常識に従うのが面倒なだけ。純粋な、低次の趣味を超越した「クズ」。",
+      "tags": [
+        "財布常に空っぽ",
+        "絶賛草食中",
+        "真顔でデタラメを語る",
+        "孤高（自称）"
+      ]
+    },
+    "zh-TW": {
+      "title": "吃草貝斯手·超脫的屑",
+      "note": "被叫作「怪人」會暗自竊喜的孤高貝斯手。人生哲學極度自我，有錢全砸在樂器上，沒錢就拔路邊的野草吃，甚至還能面不改色地騙隊友的錢買零食。你以為她高冷深沉，其實她只是懶得遵守人類社會的常識。純粹的、脫離了低級趣味的「屑」。",
+      "tags": [
+        "錢包空空",
+        "絕讚吃草中",
+        "一本正經地胡說八道",
+        "孤高（自稱）"
+      ]
     }
   }
 }

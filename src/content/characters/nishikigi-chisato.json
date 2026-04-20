@@ -62,6 +62,21 @@
         "陽光開朗大女孩",
         "生命倒數中的狂歡"
       ]
+    },
+    "ja": {
+      "title": "人型自走チート・殺さないLycoris",
+      "note": "いつもニコニコしててベタベタ貼りたがるカフェの看板娘だと思ったら、実際は銃弾の雨の中でダンスできるトップエージェント。最大の魅力は、過酷な運命を背負いながらも、一番明るい笑顔とゴム弾で世界を抱きしめる選択をしていること。一緒にいれば退屈なんて言葉は存在しない、脱線と暴走だけの毎日が待っている。",
+      "tags": ["生身で弾回避", "非殺傷ベタベタ", "陽気な明るいお姉さん", "命のカウントダウン中の狂宴"]
+    },
+    "en": {
+      "title": "Walking Cheat Code — The Non-Lethal Lycoris",
+      "note": "You think she's just a perpetually cheerful café girl who loves getting cozy with everyone, but she's actually a top-tier agent who can dance through a hail of bullets. Her greatest charm is that even while carrying a crushing fate, she still chooses to embrace the world with her brightest smile and rubber bullets. With her, your life will never have a dull moment — only derailments and high-speed chaos.",
+      "tags": [
+        "Dodges Bullets With Her Body",
+        "Non-Lethal Cuddles",
+        "Sunshine Big Girl Energy",
+        "Countdown Carnival"
+      ]
     }
   }
 }

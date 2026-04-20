@@ -65,6 +65,36 @@
       "zh-TW": "明日方舟",
       "en": "Arknights",
       "ja": "アークナイツ"
+    },
+    "zh-TW": {
+      "title": "羅德島基石·Mon3tr牌外置執行力",
+      "note": "你不是單純高冷，你只是已經把局勢、風險、傷亡和後手全算過一遍了。表面像醫務室裡最不好惹的那位主任，開口不是命令就是醫囑，情緒穩定得像根本不會波動；但真到殘局，她又會把責任、承諾和所有人的命一起扛起來。屬於「嘴上像在給你下最後通牒，實際上已經把你從滅團線拽回來了」的類型。",
+      "tags": [
+        "冷面醫生",
+        "高壓醫囑系領導",
+        "Mon3tr發射器",
+        "全局推演型保護欲"
+      ]
+    },
+    "en": {
+      "title": "Rhodes Island Cornerstone — Mon3tr-Branded External Execution",
+      "note": "You are not simply cold. You have already calculated the situation, risks, casualties, and backup plans. On the surface, you are the most intimidating doctor in the medical room, speaking in orders or prescriptions with emotions as steady as stone. But when the endgame arrives, you shoulder responsibility, promises, and everyone's lives at once.",
+      "tags": [
+        "Cold-Faced Doctor",
+        "High-Pressure Medical Leader",
+        "Mon3tr Launcher",
+        "Global-Simulation Protectiveness"
+      ]
+    },
+    "ja": {
+      "title": "ロドスの礎・Mon3tr印の外付け実行力",
+      "note": "あなたは単に冷たいわけではない。状況、リスク、犠牲、次の手まで全部計算し終えているだけ。表面上は医務室で一番近寄りがたい主任で、口を開けば命令か医嘱、感情はまるで揺れない。でも終盤になると、責任も約束も全員の命もまとめて背負う。",
+      "tags": [
+        "冷面の医師",
+        "高圧医嘱系リーダー",
+        "Mon3tr発射器",
+        "全局推演型の保護欲"
+      ]
     }
   }
 }

@@ -51,6 +51,36 @@
       "zh-TW": "明日方舟",
       "en": "Arknights",
       "ja": "アークナイツ"
+    },
+    "zh-TW": {
+      "title": "羅德島領袖·貼心魔王",
+      "note": "表面上是乖巧可愛、隨時提醒你不要休息的貼心小助理，實際上是背負著整個羅德島命運的年輕領袖。她有著與年齡不符的沉穩與決斷力，但只要你在身邊，她又會露出少女那般依賴的笑容。",
+      "tags": [
+        "羅德島CEO",
+        "是兔子還是驢",
+        "刀客塔的監護人",
+        "魔王武裝"
+      ]
+    },
+    "en": {
+      "title": "Rhodes Island Leader · the Sweet Overlord",
+      "note": "On the surface, a sweet, adorable assistant who's always reminding you not to slack off; in reality, a young leader carrying the entire fate of Rhodes Island on her shoulders. She possesses a composure and decisiveness far beyond her years, yet the moment you're by her side, she breaks into the dependent smile of an ordinary girl.",
+      "tags": [
+        "Rhodes Island CEO",
+        "Rabbit or Donut?",
+        "Doctor's Guardian",
+        "Demon King Armament"
+      ]
+    },
+    "ja": {
+      "title": "ロドスの指導者・優しき魔王",
+      "note": "表向きは素直で可愛い、休憩を許さないお世話好きアシスタント。でも実際は、ロドス島の運命を背負う若きリーダー。年齢不相応の落ち着きと決断力を持つけど、ドクターが側にいると少女みたいな笑顔を見せる。",
+      "tags": [
+        "ロドスCEO",
+        "ウサギ？ロバ？",
+        "ドクターの保護者",
+        "魔王アームズ"
+      ]
     }
   }
 }

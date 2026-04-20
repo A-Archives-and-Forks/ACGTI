@@ -51,6 +51,36 @@
       "zh-TW": "我的妹妹哪有這麼可愛！",
       "en": "Oreimo",
       "ja": "俺の妹がこんなに可愛いわけがない"
+    },
+    "zh-TW": {
+      "title": "人生贏家·硬核隱性宅",
+      "note": "在外面是成績運動全能的完美模特，在家裡是會逼著老哥玩妹系遊戲的究極宅女。她的傲嬌不是加分項，而是本體——嘴上罵著「噁心」，實際心裡可能已經在瘋狂動搖。屬於那種需要極大耐心才能攻略的「雷區舞者」。",
+      "tags": [
+        "妹系鼻祖",
+        "教科書級傲嬌",
+        "梅露露狂熱粉",
+        "在外現充在家打遊戲"
+      ]
+    },
+    "en": {
+      "title": "Life Winner — Hardcore Hidden Otaku",
+      "note": "Outside, she is a perfect model with top grades and athletic ability. At home, she is the ultimate otaku who forces her brother to play little-sister games. Her tsundere side is not a bonus trait; it is the core. She may say \"gross,\" while her heart is already shaking violently. A danger-zone dancer who takes enormous patience to route.",
+      "tags": [
+        "Little-Sister Archetype",
+        "Textbook Tsundere",
+        "Meruru Fanatic",
+        "Normie Outside, Gamer at Home"
+      ]
+    },
+    "ja": {
+      "title": "人生勝ち組・ハードコア隠れオタク",
+      "note": "外では成績も運動も完璧なモデル、家では兄に妹系ゲームをやらせる究極のオタク。ツンデレは加点要素ではなく本体で、口では「キモい」と言いながら心の中では激しく揺れているかもしれない。攻略には莫大な忍耐が必要な地雷原のダンサー。",
+      "tags": [
+        "妹系の始祖",
+        "教科書級ツンデレ",
+        "メルル狂信者",
+        "外ではリア充、家ではゲーム"
+      ]
     }
   }
 }

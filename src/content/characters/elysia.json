@@ -52,6 +52,36 @@
       "zh-TW": "崩壞3rd",
       "en": "Honkai Impact 3rd",
       "ja": "崩壊3rd"
+    },
+    "zh-TW": {
+      "title": "無瑕的粉色妖精小姐♪",
+      "note": "表面上是個喜歡貼貼、滿嘴甜言蜜語的粉色社牛，實際上把「愛所有人」當成了一生貫徹的信仰。她不是沒有悲傷，只是選擇把最絢麗無瑕的笑容留給世界——屬於那種「一出場就自帶粉色聚光燈」的神。建議備好紙巾，笑著笑著就讓人破防了。",
+      "tags": [
+        "社交悍匪天花板",
+        "粉色濾鏡本體",
+        "如飛花般絢麗",
+        "愛門"
+      ]
+    },
+    "en": {
+      "title": "The Flawless Pink Fairy Miss♪",
+      "note": "On the surface, a pink social butterfly who loves cuddles and spouts honeyed words; in truth, she turned \"loving everyone\" into a lifelong creed. She's not without sorrow — she simply chooses to leave her most radiant, flawless smile for the world. The kind of goddess who \"brings her own pink spotlight the moment she enters.\" Keep tissues handy: you'll be smiling one moment and emotionally devastated the next.",
+      "tags": [
+        "Social Terrorist Supreme",
+        "Pink Filter Incarnate",
+        "Radiant as Falling Petals",
+        "Elysia Always Wins"
+      ]
+    },
+    "ja": {
+      "title": "無瑕のピンクの妖精さん♪",
+      "note": "表面上はベタベタ甘えるのが好きで口が蜂蜜のピンク社牛だけど、実は「みんなを愛する」ことを一生貫く信仰にしている。悲しみがないわけじゃなくて、一番絢爛で無瑕の笑顔を世界に選んで残しているだけ。登場するだけでピンクのスポットライトがついてくる神。ティッシュ準備推奨、笑ってたら泣いちゃう。",
+      "tags": [
+        "社交狂の天井",
+        "ピンクフィルター本体",
+        "飛花のように絢爛",
+        "エリ門"
+      ]
     }
   }
 }

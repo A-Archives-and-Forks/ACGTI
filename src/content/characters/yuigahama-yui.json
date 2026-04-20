@@ -62,6 +62,26 @@
         "迎合型生存法",
         "經典敗犬"
       ]
+    },
+    "en": {
+      "title": "Gentle Buffer — Master of Reading the Room",
+      "note": "You habitually go along with everyone around you, terrified of disrupting even the slightest bit of group harmony. People think you're a naturally airheaded optimist, but really you've just leveled up \"reading the atmosphere\" into a passive skill. Among this crowd of awkward weirdos, your somewhat clumsy kindness is the only lubricant — though the cost is usually swallowing your own grievances.",
+      "tags": [
+        "Dango Hair",
+        "Vibe Guardian",
+        "Accommodation Survival Strategy",
+        "Classic Best Girl Who Doesn't Win"
+      ]
+    },
+    "ja": {
+      "title": "優しい緩衝材・空気を読む達人",
+      "note": "あなたはいつも周囲に合わせ、集団の均衡を少しでも壊さないようにしている。周りは生まれつきの明るい楽観主義者だと思うかもしれないが、実際には「空気を読む」を受動スキルにまで鍛え上げただけ。このこじれた人間関係の中で、あなたの少し不器用な優しさは唯一の潤滑油だが、その代償として委屈を自分の中に残しがち。",
+      "tags": [
+        "団子ヘア",
+        "空気の守護者",
+        "迎合型サバイバル",
+        "定番負けヒロイン"
+      ]
     }
   }
 }

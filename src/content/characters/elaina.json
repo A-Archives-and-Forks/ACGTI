@@ -70,6 +70,36 @@
       "zh-TW": "魔女之旅",
       "en": "Wandering Witch",
       "ja": "魔女の旅々"
+    },
+    "zh-TW": {
+      "title": "灰之魔女·冷靜旁觀型旅行博主",
+      "note": "你不是那種會強行把自己塞進所有劇情裡的人，更像一路路過、一路觀察、一路記錄的高配旅人。外表禮貌克制，判斷也很清醒，遇事不會輕易道德過載；但只要世界足夠有趣，你的好奇心又會立刻上線。屬於「看起來淡淡的，實際上對新鮮故事最沒抵抗力」的類型。",
+      "tags": [
+        "高機動旅人",
+        "禮貌但不聖母",
+        "天才魔女",
+        "嘴上平靜心裡吐槽"
+      ]
+    },
+    "en": {
+      "title": "The Ashen Witch · Chill Observer Travel Blogger",
+      "note": "You're not the type to force yourself into every storyline — more like a premium traveler who passes through, observes, and records along the way. Polite and restrained on the outside, clear-headed in judgment, never one to morally overload. But the moment the world gets interesting enough, your curiosity instantly kicks into gear. The type who \"seems totally unfazed, but actually has zero resistance to a good story.\"",
+      "tags": [
+        "High-Mobility Traveler",
+        "Polite but Not a Saint",
+        "Genius Witch",
+        "Calm Outside, Roasting Inside"
+      ]
+    },
+    "ja": {
+      "title": "灰の魔女・冷静観察系旅ブロガー",
+      "note": "無理にすべてのストーリーに自分をねじ込むタイプじゃなくて、通り過ぎがけに観察して記録するハイスペック旅人。外面は礼儀正しくて冷静、判断も冴えてて、すぐ道徳オーバーロードしない。でも世界が十分面白ければ、好奇心が即座にオンラインになる。「淡々と見えるけど、新しい物語に一番弱い」タイプ。",
+      "tags": [
+        "高機動旅人",
+        "礼儀正しいが聖人ではない",
+        "天才魔女",
+        "口は平静・心はツッコミ"
+      ]
     }
   }
 }

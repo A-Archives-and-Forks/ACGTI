@@ -62,6 +62,21 @@
         "淚目製造機",
         "只此一次的春天"
       ]
+    },
+    "en": {
+      "title": "Free Spirit — The Unruly Performer",
+      "note": "You're like an uncatchable spring breeze, barging into someone's black-and-white world and forcibly painting it in color. You never play by the rules, treating every performance as if it's the last carnival of your life. You left everyone with the most unforgettable spring, yet chose to remain nothing more than a willful \"liar.\"",
+      "tags": [
+        "Friend A's Calamity",
+        "Score-Tearing Maniac",
+        "Tearjerker Machine",
+        "A Once-in-a-Lifetime Spring"
+      ]
+    },
+    "ja": {
+      "title": "自由なる魂・気ままな演奏者",
+      "note": "あなたは捕まえられない春の風みたいに、他人のモノクロームな世界に暴力的に飛び込んで勝手に色を塗っていく。ルールなんて無視して、毎回のステージを人生最後の狂宴として弾ける。すべての人に最も心に刻まれる春を残したのに、自分はただのわがままな「嘘つき」でいたいんだ。",
+      "tags": ["友人Aの災難", "楽譜を破る狂人", "涙腺崩壊製造機", "一度きりの春"]
     }
   }
 }

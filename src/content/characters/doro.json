@@ -52,6 +52,36 @@
       "zh-TW": "勝利女神：妮姬",
       "en": "GODDESS OF VICTORY: NIKKE",
       "ja": "勝利の女神：NIKKE"
+    },
+    "zh-TW": {
+      "title": "粉色惡魔·精神污染源",
+      "note": "明明本體是高貴的朝聖者桃樂絲，卻被網友抽象成了這隻眼神呆滯、極具精神污染的四足生物。你永遠不知道她那空洞的微笑背後在盤算什麼，但只要她一出現，整個頻道的智商都會被拉低。建議不要直視她的眼睛。",
+      "tags": [
+        "眼神清澈但愚蠢",
+        "背對著你",
+        "妮姬精神圖騰",
+        "萬物皆可doro"
+      ]
+    },
+    "en": {
+      "title": "The Pink Demon · Psychic Hazard",
+      "note": "Her original form is the noble Pilgrim Dorothy, yet the internet abstracted her into this blank-staring, psychologically corrosive four-legged creature. You'll never know what's brewing behind that vacant smile, but the moment she appears, the entire channel's collective IQ takes a nosedive. Recommended: do not make eye contact.",
+      "tags": [
+        "Innocent Eyes, Empty Brain",
+        "Always Facing Away",
+        "NIKKE Spirit Animal",
+        "Everything Is doro"
+      ]
+    },
+    "ja": {
+      "title": "ピンクの悪魔・精神汚染源",
+      "note": "本体は高貴なピルグリムのドロシーなのに、ネット民に抽象化されてこの目が虚ろな精神汚染系四足歩行生物になってしまった。あの空洞の笑顔の裏で何を企んでるのか永遠にわからないけど、現れるだけでチャンネル全体のIQが下がる。目を合わせないことをおすすめする。",
+      "tags": [
+        "目は澄んでるけどバカ",
+        "背中を向けてる",
+        "NIKKEの精神トーテム",
+        "何でもdoro化可能"
+      ]
     }
   }
 }

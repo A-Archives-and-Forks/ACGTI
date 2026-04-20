@@ -61,6 +61,26 @@
         "舞台永動機",
         "謊言與愛的結晶"
       ]
+    },
+    "ja": {
+      "title": "天性の発光体・執念のバケモノ",
+      "note": "前世からの重い執念とカンストした才能を持って生まれてきた、生粋のスポットライト食い。表面上は脳天気なバカだけど、内面では人を怖がらせるほどの勝負欲が燃えている。あのキラキラした夢のためなら、人生全部を一番華麗な嘘に包んで、ステージ上では命すら張れる。",
+      "tags": [
+        "転生系アイドル",
+        "究極のブラコン",
+        "ステージの永久機関",
+        "嘘と愛の結晶"
+      ]
+    },
+    "en": {
+      "title": "Born Spotlight — Obsession Incarnate",
+      "note": "With the heavy obsession of a past life and natural talent already maxed out, you were born to live under the spotlight. On the surface, you look like a bright and brainless bundle of energy, but inside burns a frightening will to win. For that sparkling dream, you would package your whole life as the most dazzling lie and spend everything on stage.",
+      "tags": [
+        "Reincarnated Idol",
+        "Ultimate Brother Complex",
+        "Stage Perpetual Motion",
+        "Crystal of Lies and Love"
+      ]
     }
   }
 }

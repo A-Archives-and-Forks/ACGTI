@@ -75,6 +75,36 @@
       "zh-TW": "幸運星",
       "en": "Lucky Star",
       "ja": "らき☆すた"
+    },
+    "zh-TW": {
+      "title": "高濃度宅神·梗比行動力高但腦子轉得飛快",
+      "note": "你像那種在現實裡未必最勤快，但在自己熟悉的梗區、番區和遊戲區裡會瞬間切到高速模式的人。你不是傳統社牛，更像熟人局裡的高機動吐槽役，反應快、梗密度高、還很會把任何話題三步之內拐進二次元。屬於「看著有點擺，其實只是把性能全點在喜歡的地方」的類型。",
+      "tags": [
+        "二次元濃度超標",
+        "熟人圈吐槽役",
+        "腦子轉得快",
+        "興趣驅動型宅"
+      ]
+    },
+    "en": {
+      "title": "High-Density Otaku Deity — More Memes Than Momentum, Fast Brain",
+      "note": "You may not be the most diligent person in real life, but in your favorite meme zones, anime zones, and game zones, you instantly shift into high-speed mode. You are not a classic social butterfly; you are the agile commentator of a familiar friend group, fast-reacting, meme-dense, and able to redirect any topic into anime within three steps.",
+      "tags": [
+        "Anime Density Over Limit",
+        "Friend-Group Commentator",
+        "Fast Brain",
+        "Interest-Driven Otaku"
+      ]
+    },
+    "ja": {
+      "title": "高濃度オタク神・行動力よりネタ密度、でも頭の回転は速い",
+      "note": "現実では一番勤勉とは限らないけれど、自分の得意なネタ圏、アニメ圏、ゲーム圏では一瞬で高速モードに入るタイプ。伝統的な社交派というより、身内の場で高機動にツッコミを入れる存在で、反応が速く、ネタ密度が高く、どんな話題も三手以内に二次元へ曲げられる。",
+      "tags": [
+        "二次元濃度オーバー",
+        "身内ノリのツッコミ役",
+        "頭の回転が速い",
+        "興味駆動型オタク"
+      ]
     }
   }
 }

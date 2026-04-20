@@ -69,6 +69,36 @@
       "zh-TW": "02",
       "en": "Zero Two",
       "ja": "ゼロツー"
+    },
+    "en": {
+      "title": "Klaxosaur Princess — Dangerous Sweetness",
+      "note": "A dangerously alluring pink-haired mecha pilot whose \"Darling\" reverberates straight to your bones. You radiate a powerful \"don't get too close... but you can't help yourself\" danger energy. You're not the approachable warm type — you're the kind who, once she's locked onto a target or a person, will burn through every last emotion. The \"fatal temptation you know is dangerous but can't stay away from.\"",
+      "tags": [
+        "Call Me Darling",
+        "Berserk Mecha",
+        "Pink-Haired Devil",
+        "Moth-to-Flame Romance"
+      ]
+    },
+    "zh-TW": {
+      "title": "叫龍少女·危險的甜味",
+      "note": "帶著危險氣息的粉髮機甲駕駛員，一句「Darling」直接喊到人骨頭裡發酥。你身上有一種很強的「別靠太近但又讓人忍不住想靠近」的危險感。你不是好接近的溫柔掛，而是那種一旦認定一個目標或一個人，就會把所有情緒都燒過去的類型。屬於「明知危險，但也想靠近的致命誘惑」。",
+      "tags": [
+        "叫我Darling",
+        "暴走機甲",
+        "粉毛惡魔",
+        "飛蛾撲火的浪漫"
+      ]
+    },
+    "ja": {
+      "title": "叫竜の少女・危険な甘さ",
+      "note": "危険な気配をまとったピンク髪の機体パイロット。「ダーリン」の一言だけで骨までしびれる。あなたには「近づくな」と言いながらも、どうしても近づきたくなる強い危険性がある。簡単に近づける優しさではなく、一度目標や相手を定めると、すべての感情をそこへ燃やし尽くすタイプ。",
+      "tags": [
+        "ダーリンと呼んで",
+        "暴走機体",
+        "ピンク髪の悪魔",
+        "飛んで火に入るロマンス"
+      ]
     }
   }
 }

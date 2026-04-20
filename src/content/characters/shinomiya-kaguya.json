@@ -53,6 +53,36 @@
       "zh-TW": "輝夜姬想讓人告白",
       "en": "Kaguya-sama: Love Is War",
       "ja": "かぐや様は告らせたい"
+    },
+    "en": {
+      "title": "Pure-Hearted Heiress — Delusion Queen of Romance",
+      "note": "On the surface, a flawless zaibatsu princess and ruthless strategist; underneath, a hopelessly innocent romantic who doesn't even know how to use a smartphone. Her life motto is \"the one who confesses first loses at love,\" and to make the other person speak first, she'll mobilize the entire family conglomerate's resources for a single grand scheme. The textbook case of \"trading IQ for EQ.\"",
+      "tags": [
+        "Delusion Genius",
+        "Tsundere Textbook",
+        "Pride Over Pain",
+        "How to Make Them Confess First"
+      ]
+    },
+    "ja": {
+      "title": "純情財閥令嬢・恋愛脳内帝国",
+      "note": "表面上は完璧無欠の財閥お嬢様で冷酷な策略家、実はスマホの使い方も分からない純情恋愛脳。人生の信条は「先に告白した方が恋愛の負け」で、相手に先に言わせるために財閥の全リソースを動員して一大イベントを演出する。「IQをEQに換金」した典型例。",
+      "tags": [
+        "脳内補完天才",
+        "ツンデレの教科書",
+        "見栄っ張りの自業自得",
+        "どうやって相手に先に告白させるか"
+      ]
+    },
+    "zh-TW": {
+      "title": "純情財閥·戀愛腦補帝",
+      "note": "表面上是完美無瑕的財閥大小姐、冷酷無情的計謀家，實際上是個連智慧型手機都不會用的純情戀愛腦。她的人生格言是「先告白的人在戀愛中是輸家」，然後為了讓對方先開口，可以調動整個財閥的資源演一齣大戲。屬於「智商換情商」的典型。",
+      "tags": [
+        "天才腦補狂",
+        "傲嬌教科書",
+        "死要面子活受罪",
+        "如何讓對方先告白"
+      ]
     }
   }
 }

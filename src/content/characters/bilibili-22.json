@@ -75,6 +75,36 @@
       "zh-TW": "bilibili",
       "en": "bilibili",
       "ja": "bilibili"
+    },
+    "zh-TW": {
+      "title": "元氣站娘·修播放器會修出新bug的熱心姐姐",
+      "note": "你屬於那種會先衝上去幫忙、幫到一半再發現自己可能把場面搞得更熱鬧的人。你有很強的感染力，氣氛低了會想拉起來，朋友出事了會先站出來，可執行過程有時又會拐進奇怪的方向。屬於「雖然不一定最穩，但一定是全場最有活人感的那個」的類型。",
+      "tags": [
+        "陽光元氣",
+        "熱心冒失",
+        "審核員",
+        "姐姐位"
+      ]
+    },
+    "en": {
+      "title": "Energetic Site Mascot · Fixes the Player, Creates New Bugs",
+      "note": "You're the type who rushes in to help first, only to realize halfway through that you might have made things even more chaotic. Your infectious energy is off the charts — when the mood dips, you'll try to pull it up; when a friend's in trouble, you'll step up first. The execution sometimes veers off into weird directions, though. The type who \"may not be the most reliable, but is absolutely the most alive person in the room.\"",
+      "tags": [
+        "Sunshine Energy",
+        "Enthusiastic but Clumsy",
+        "Content Reviewer",
+        "Big Sister Role"
+      ]
+    },
+    "ja": {
+      "title": "元気看板娘・プレイヤー修理したら新バグ生むおせっかい姉",
+      "note": "真っ先に助けに走って、途中で自分が状況をさらにカオスにしてることに気づくタイプ。感染力が強くて、空気が沈むと盛り上げたいし、友達に何かあったらすぐ立ち上がる。でも実行過程が時々変な方向に逸れる。「一番安定してるとは限らないけど、間違いなく会場で一番生身感がある」タイプ。",
+      "tags": [
+        "陽光元気",
+        "おせっかいドジっ子",
+        "審査員",
+        "お姉さんポジ"
+      ]
     }
   }
 }

@@ -61,6 +61,26 @@
         "線下唯唯諾諾",
         "歌姬"
       ]
+    },
+    "en": {
+      "title": "Socially Anxious Snarker — Genius Gamer Girl",
+      "note": "In real life, she is severely socially anxious and wants to disappear into a crack in the ground whenever she sees strangers. Give her a controller or keyboard, though, and she instantly becomes a sharp-tongued output machine that leaves opponents lost. When she stands on the stage she truly loves, her piercing singing voice shines so brightly that people cannot look away.",
+      "tags": [
+        "Gloomy Corner Earthbound Spirit",
+        "Online Heavy Hitter",
+        "Offline Timid Mode",
+        "Songstress"
+      ]
+    },
+    "ja": {
+      "title": "社恐毒舌・天才ゲーム少女",
+      "note": "現実では重度の人見知りで、知らない人を見ると地面の割れ目に入りたくなる少女。でもコントローラーやキーボードを渡すと、すぐに毒舌出力マシンへ変身し、相手を言い負かす。本当に愛するステージに立つと、その突き抜ける歌声は目を離せないほど輝く。",
+      "tags": [
+        "陰キャ角の地縛霊",
+        "オンラインでは強気",
+        "オフラインではおどおど",
+        "歌姫"
+      ]
     }
   }
 }

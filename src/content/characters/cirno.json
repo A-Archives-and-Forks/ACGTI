@@ -41,6 +41,36 @@
       "zh-TW": "東方Project",
       "en": "Touhou Project",
       "ja": "東方Project"
+    },
+    "zh-TW": {
+      "title": "⑨·最強笨蛋妖精",
+      "note": "算術題沒對過，但打架沒慫過。她最大的魅力是：明明每次都被秒，但永遠保持「本小姐最強」的自信笑容——屬於笨蛋界的天花板，萌就完事了。東方圈唯一指定「⑨」表情包供應商。",
+      "tags": [
+        "冰之妖精（自稱最強）",
+        "智商換戰力",
+        "數學鬼才",
+        "笨蛋界天花板"
+      ]
+    },
+    "en": {
+      "title": "⑨ · The Strongest Idiot Fairy",
+      "note": "Never got a math problem right, but never backed down from a fight either. Her greatest charm: she gets one-shot every time, yet always keeps that \"I'm the strongest\" confident grin — the absolute ceiling of the idiot world. Just being cute is enough. The Touhou fandom's officially designated \"⑨\" meme supplier.",
+      "tags": [
+        "Ice Fairy (Self-Proclaimed Strongest)",
+        "IQ Traded for Combat Power",
+        "Math Genius (Not)",
+        "Peak Idiot Energy"
+      ]
+    },
+    "ja": {
+      "title": "⑨・最強のバカ妖精",
+      "note": "算数問題は一度も正解したことないけど、ケンカは一度もビビったことない。最大の魅力は、毎回やられるのに永遠に「あたいったら最強ね」の自信満々スマイルをキープしていること。バカ界の天井、とにかく可愛い。東方界隈唯一公認「⑨」スタンプ供給元。",
+      "tags": [
+        "氷の妖精（自称最強）",
+        "知能を戦力に変換",
+        "数学の天才（※逆）",
+        "バカ界の天井"
+      ]
     }
   }
 }

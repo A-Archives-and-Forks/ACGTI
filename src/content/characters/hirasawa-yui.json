@@ -51,6 +51,36 @@
       "zh-TW": "輕音少女",
       "en": "K-ON!",
       "ja": "けいおん!"
+    },
+    "zh-TW": {
+      "title": "絕對音感·點心終結者",
+      "note": "你以為她是來組樂隊的，其實她是來喝下午茶的。擁有滿級音樂天賦卻全點在了吃零食和給吉他穿衣服上。如果人生是一場考試，她連準考證都能忘帶，但最後總能用莫名其妙的運氣和感染力奇蹟般地及格。",
+      "tags": [
+        "除了吉他什麼都不懂",
+        "滑音天才",
+        "喝茶部團寵",
+        "天然呆天花板"
+      ]
+    },
+    "ja": {
+      "title": "絶対音感・おやつターミネーター",
+      "note": "バンド組みに来たと思ってたら、実はお茶しに来てた。満点の音楽才能を持ってるのに、全部おやつを食べることとギターに服を着せることに注いでる。もし人生が試験なら、受験票すら忘れるけど、最後は謎の運と感染力で奇跡的に合格する。",
+      "tags": [
+        "ギター以外は何も知らない",
+        "グリッサンドの天才",
+        "お茶部のアイドル",
+        "天然ボケの天井"
+      ]
+    },
+    "en": {
+      "title": "Perfect Pitch — Snack Terminator",
+      "note": "You thought she came to start a band, but she actually came for afternoon tea. She has maxed-out musical talent and somehow spent all of it on eating snacks and dressing up her guitar. If life were an exam, she would forget her admission ticket, then miraculously pass through baffling luck and contagious charm.",
+      "tags": [
+        "Knows Nothing But Guitar",
+        "Slide Genius",
+        "Tea Club Favorite",
+        "Peak Airhead"
+      ]
     }
   }
 }

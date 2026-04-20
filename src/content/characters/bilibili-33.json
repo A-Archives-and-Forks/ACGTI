@@ -76,6 +76,36 @@
       "zh-TW": "bilibili",
       "en": "bilibili",
       "ja": "bilibili"
+    },
+    "zh-TW": {
+      "title": "冷靜技術位·表情省電但後台全靠她撐著",
+      "note": "你看起來像那種不會主動製造熱鬧、甚至還有點懶得解釋的人，但系統一出問題就會有人下意識找你。你不一定最會安慰人，卻經常是最能把事情真正修好的人。屬於「表面低功耗三無，實則後台核心線程」的類型。",
+      "tags": [
+        "沉默寡言",
+        "輕微腹黑",
+        "程序員機娘",
+        "冷靜吐槽役"
+      ]
+    },
+    "en": {
+      "title": "Calm Tech Support · Battery-Saving Expression, Backend on Life Support",
+      "note": "You seem like the type who never starts the party and can barely be bothered to explain yourself — but the moment something breaks, everyone instinctively turns to you. You might not be the best at comforting people, but you're often the one who actually gets things fixed. The type who \"looks like a low-power, emotionless shell on the surface, but is actually running the core backend thread.\"",
+      "tags": [
+        "Woman of Few Words",
+        "Quietly Scheming",
+        "Programmer Android Girl",
+        "Deadpan Commentator"
+      ]
+    },
+    "ja": {
+      "title": "冷静技術担当・表情省エネだけど裏側は全部彼女任せ",
+      "note": "自ら盛り上げたり、説明すら面倒臭がるタイプに見えるけど、システムが壊れると無意識に頼られる。慰めるのは一番じゃないかもしれないけど、本当に直せるのはいつも彼女。「表面は省エネ無表情、裏側はコアスレッド」タイプ。",
+      "tags": [
+        "無口",
+        "小悪魔気質",
+        "プログラマーガール",
+        "冷静ツッコミ役"
+      ]
     }
   }
 }

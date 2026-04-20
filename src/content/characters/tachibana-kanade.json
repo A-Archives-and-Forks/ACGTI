@@ -62,6 +62,21 @@
         "Hand Sonic",
         "笨拙的溫柔"
       ]
+    },
+    "en": {
+      "title": "Angel of the Afterlife — Mapo Tofu Fanatic",
+      "note": "Your first impression is usually quiet, rigid, and hard to approach — like someone who'll enforce the rules to the very end. But the real core isn't coldness; it's that you've long grown used to holding your ground even when nobody understands you. The type whose \"cold exterior is just a shell, while gentleness is always quietly doing the work.\"",
+      "tags": [
+        "Kuudere Angel",
+        "Extra-Spicy Mapo Tofu Enthusiast",
+        "Hand Sonic",
+        "Clumsy Kindness"
+      ]
+    },
+    "ja": {
+      "title": "死後世界の天使・麻婆豆腐ガチ勢",
+      "note": "第一印象は静かで、冷たくて、近寄りがたい。ルールを最後まで押し通す人みたいに見える。でも本当の核心は冷たさじゃなくて、誰にも理解されなくても自分の守るべきものを守り続けることに慣れているだけ。「高冷はただの外殻、優しさはずっと静かに動いている」タイプ。",
+      "tags": ["三無天使", "激辛麻婆豆腐党", "Hand Sonic", "不器用な優しさ"]
     }
   }
 }

@@ -52,6 +52,26 @@
       "zh-TW": "賽馬娘 Pretty Derby",
       "en": "Uma Musume Pretty Derby",
       "ja": "ウマ娘 プリティーダービー"
+    },
+    "en": {
+      "title": "Festival Mambo Queen — One Word and the Whole Room Enters Abstract Chaos",
+      "note": "You radiate a kind of happiness pollution that makes it impossible to take anything seriously. Even if you just show up normally, your brain wiring is so entertaining that you somehow drag the entire room's vibe sideways. You're \"not reliable in the traditional sense, but absolutely the most unforgettable one.\"",
+      "tags": [
+        "Mambo Meme Queen",
+        "Comedy Relief",
+        "Abstract Vibe Setter",
+        "Infectiously Viral"
+      ]
+    },
+    "ja": {
+      "title": "お祭りマンボ担当・一発で会場をアブストラクト歓楽区に連れて行く",
+      "note": "あなたには真面目になれないハッピー感染力がある。普通に現れただけでも、思考回路がバラエティ番組すぎて、気づけば会場全体の空気を歪めている。「伝統的な意味での頼れる人ではないけど、絶対に一番忘れられない」タイプ。",
+      "tags": ["マンボのネタ王", "コメディ担当", "アブストラクト盛り上げ役", "魔性のバズり"]
+    },
+    "zh-TW": {
+      "title": "祭典曼波擔當·一開口就讓全場進入抽象歡樂區",
+      "note": "你身上有一種很難嚴肅起來的快樂污染力。哪怕本來只是普通地出現一下，也會因為腦迴路太有節目效果，莫名把整個場子的氣氛帶歪。屬於「不是傳統意義上的靠譜，但一定是最難忘的那個」的類型。",
+      "tags": ["曼波梗王", "喜劇役", "抽象氣氛組", "魔性出圈"]
     }
   }
 }

@@ -63,6 +63,26 @@
         "呆毛本體",
         "頂級吐槽役"
       ]
+    },
+    "ja": {
+      "title": "下北沢の大天使・絆を結ぶ者",
+      "note": "散り散りになった人をもう一度集められるタイプ。安心感は情熱だけじゃなくて、空気を気遣い、負担を分担し、みんながカオスになりそうな時に一足先に場を安定させる。「陽キャの雰囲気係に見えて、実はチームの生命線」タイプ。",
+      "tags": [
+        "下北沢の大天使",
+        "結束バンドのお母さん",
+        " ahoge本体",
+        "トップクラスのツッコミ"
+      ]
+    },
+    "en": {
+      "title": "Shimokitazawa Archangel — Bond Builder",
+      "note": "You are the kind of person who can gather scattered people back together. The security you give others comes not only from warmth, but from how you actively care for the mood, share pressure, and stabilize the situation before everyone falls apart. You look like the cheerful atmosphere maker, but you are actually the team's life support.",
+      "tags": [
+        "Shimokitazawa Archangel",
+        "Kessoku Band Mom",
+        "Ahoge Core",
+        "Top-Tier Straight Man"
+      ]
     }
   }
 }
