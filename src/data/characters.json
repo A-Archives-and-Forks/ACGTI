@@ -4785,5 +4785,64 @@
       "summary": "主要依据《命运石之门》中来自未来的反抗军战士、高行动力与使命感并存的设定映射。"
     },
     "matchWeight": 1.0599
+  },
+  {
+    "id": "luo-xiaohei",
+    "name": "罗小黑",
+    "series": "罗小黑战记",
+    "addedAt": "ENFP",
+    "image": "/images/characters/罗小黑.webp",
+    "matchCode": "ENFP",
+    "matchCodeFlex": [
+      "ENFP"
+    ],
+    "code": "LXHE",
+    "title": "见习执行者·罗小黑",
+    "archetypeId": "moonlit-guardian",
+    "tags": [
+      "空间系强者",
+      "天真而忧伤",
+      "冰淇淋爱好者",
+      "隐性强大、默默守护"
+    ],
+    "note": "虽然小黑年纪尚幼，却有着远超同龄人水平的战斗能力；只有在亲近的人面前，小黑才会表现出他稚气的一面，而在众人面前，他常是一副寡言少语的样子。但他在相处过程中表现出的不苟言笑也让不少人产生了退却的心思，但那并非拒绝你的讯号，只是他刻意想要展现给你的可靠形象。",
+    "vector": {
+      "expression": -2,
+      "temperature": 3,
+      "judgement": -1,
+      "order": -3,
+      "agency": -1,
+      "aura": -2
+    },
+    "signature": {
+      "uniqueAxes": {
+      "temperature": 3,
+      "order": -3,
+      "expression": -2
+      },
+    "questionAffinity": [
+    {
+      "questionId": "q11",
+      "expected": "agree",
+      "weight": 1.4
+    },
+    {
+      "questionId": "q28",
+      "expected": "agree",
+      "weight": 1.3
+    },
+    {
+      "questionId": "q35",
+      "expected": "disagree",
+      "weight": 1.2
+    }
+  ]
+},
+    "personaBasis": {
+      "type": "canon",
+      "label": "官方设定映射",
+      "confidence": "high",
+      "summary": "主要依据罗小黑战记TV版、大电影2以及明日方舟联动的相关官方设定中参考"
+    }
   }
 ]

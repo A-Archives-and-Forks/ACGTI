@@ -548,5 +548,10 @@
     "image": "/images/characters/阿万音铃羽.webp",
     "thumb": "/images/characters/thumbs/阿万音铃羽.webp",
     "accent": "#8B4513"
+  },
+  "luo-xiaohei": {
+    "image":"/images/characters/罗小黑.webp",
+    "thumb": "/images/characters/thumbs/罗小黑.webp",
+    "accent": "#d5dd59"
   }
 }

@@ -640,6 +640,12 @@ const characterNameI18n: Record<string, LocalizedText> = {
     en: 'Suzuha Amane',
     ja: '阿万音鈴羽',
   },
+  'luo-xiaohei': {
+    'zh-CN': '罗小黑',
+    'zh-TW': '羅小黑',
+    en: 'Luo Xiaohei',
+    ja: 'ラ・シャオヘイ',
+  }
 }
 
 const seriesI18n: Record<string, LocalizedText> = {
@@ -1003,6 +1009,12 @@ const seriesI18n: Record<string, LocalizedText> = {
     en: 'Steins;Gate',
     ja: 'シュタインズ・ゲート',
   },
+  '罗小黑战记': {
+    'zh-CN': '罗小黑战记',
+    'zh-TW': '羅小黑戰記',
+    en: 'The Legend of Hei',
+    ja: 'ロシャオヘイセンキ',
+  }
 }
 
 function resolveLocalizedText(
