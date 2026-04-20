@@ -117,11 +117,13 @@ src/
 ├── composables/          # Vue 组合式函数
 │   ├── useQuiz.ts       # 测试状态与逻辑
 │   └── useShare.ts      # 分享与导出功能
-├── data/                # 静态数据
+├── content/               # 角色源数据（每角色一个文件）
+│   └── characters/        # 角色配置（meta + visual + i18n）
+├── data/                # 静态数据（部分由脚本生成）
 │   ├── questions.json   # 39 道情境式题目
 │   ├── archetypes.json  # 8 个角色原型定义
-│   ├── characters.json  # 角色资料库
-│   ├── characterVisuals.json       # 角色视觉配置
+│   ├── characters.json  # 角色资料库（自动生成）
+│   ├── characterVisuals.json       # 角色视觉配置（自动生成）
 │   └── characterProbabilities.json # 角色命中概率
 ├── i18n/                # 国际化
 │   └── messages.ts      # 多语言文案（简中/繁中/英/日）
@@ -181,8 +183,8 @@ migrations/               # Cloudflare D1 数据库迁移
 |:-----|:-----|
 | `src/data/questions.json` | 39 道情境式题目 — 维度、原型权重、场景标签 |
 | `src/data/archetypes.json` | 8 个角色原型 — 名称、描述、亮点、短板 |
-| `src/data/characters.json` | 110 个角色条目（含隐藏角色） — 角色代码、MBTI 映射、标签、六维向量 |
-| `src/data/characterVisuals.json` | 角色视觉配置 — 立绘、色彩、主题 |
+| `src/data/characters.json` | 111 个角色条目（含隐藏角色） — 角色代码、MBTI 映射、标签、六维向量（构建时自动生成） |
+| `src/data/characterVisuals.json` | 角色视觉配置 — 立绘、色彩、主题（构建时自动生成） |
 | `src/data/characterProbabilities.json` | 角色命中概率 — 基于人群统计的先验分布 |
 
 </details>
@@ -305,7 +307,7 @@ python analysis\train_dimension_models.py --db analysis\acgti_feedback.db
 
 当前项目仍处于早期阶段，题目数量和角色库都还不够丰富。如果你有好的情境题目想法或想补充更多作品的角色，非常期待你的参与：
 
-- 补充新角色 → 编辑 `src/data/characters.json`（详见 [新增角色流程](docs/新增角色流程.md)）
+- 补充新角色 → 在 `src/content/characters/` 下新增 `<id>.json`（详见 [新增角色流程](docs/新增角色流程.md)）
 - 添加新题目 → 编辑 `src/data/questions.json`
 - 希望新增某个角色 / 某部作品 → 欢迎先提 Issue，附上角色名、作品名和推荐理由
 - 对题目表述、题目维度、现有角色设定或结果解析有改进意见 → 欢迎提 Issue 讨论
