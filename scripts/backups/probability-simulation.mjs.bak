@@ -4,11 +4,10 @@ import { fileURLToPath } from 'node:url'
 import { Worker } from 'node:worker_threads'
 import os from 'node:os'
 
-import { createFastProbabilitySimulator } from './probability-simulation-fast-engine.mjs'
+import { calculateCharacterProbabilityWeights, calculateQuizResult } from '../src/utils/quizEngine.ts'
 import questions from '../src/data/questions.json' with { type: 'json' }
 import archetypes from '../src/data/archetypes.json' with { type: 'json' }
 import characters from '../src/data/characters.json' with { type: 'json' }
-import questionDimensionWeights from '../src/data/questionDimensionWeights.json' with { type: 'json' }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
@@ -16,24 +15,22 @@ const outputPath = path.join(root, 'src/data/characterProbabilities.json')
 const cliArgs = process.argv.slice(2)
 const positionalArgs = cliArgs.filter((arg) => !arg.startsWith('--'))
 
+function createRng(seed) {
+  let state = seed >>> 0
+
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0
+    return state / 0x100000000
+  }
+}
+
 const answerScale = [-3, -2, -1, 0, 1, 2, 3]
 const seed = Number(positionalArgs[0] ?? 20260411)
 const runs = Number(positionalArgs[1] ?? 200000)
 const shouldWrite = cliArgs.includes('--write')
-const singleThread = cliArgs.includes('--single-thread')
-const threadsArg = cliArgs.find((arg) => arg.startsWith('--threads='))
-const requestedWorkers = threadsArg ? Number(threadsArg.split('=')[1]) : null
-const defaultWorkers = Math.min(os.availableParallelism?.() ?? os.cpus().length, 8, runs)
-const numWorkers = singleThread ? 1 : Math.max(1, Math.min(requestedWorkers ?? defaultWorkers, runs))
-const useMultithread = numWorkers > 1
+const useMultithread = cliArgs.includes('--threads')
+const numWorkers = useMultithread ? Math.min(os.cpus().length, 8) : 1
 const questionsPerRun = questions.length
-const simulator = createFastProbabilitySimulator({
-  questions,
-  archetypes,
-  characters,
-  questionDimensionWeights,
-})
-const characterIds = simulator.characterIds
 
 function roundProbability(value) {
   if (value >= 0.01) {
@@ -66,44 +63,40 @@ function buildRoundedProbabilities(weightEntries, runCount) {
   return Object.fromEntries(roundedEntries)
 }
 
-function createEmptyTotals() {
-  return new Array(characterIds.length).fill(0)
-}
-
-function accumulateSimulationResult(result, winnerCounts, probabilityWeights) {
-  if (result.winnerIndex >= 0) {
-    winnerCounts[result.winnerIndex] += 1
-  }
-
-  for (let index = 0; index < characterIds.length; index += 1) {
-    probabilityWeights[index] += result.weights[index]
-  }
-}
-
-function totalsToMap(totals) {
-  return new Map(characterIds.map((id, index) => [id, totals[index]]))
-}
-
 function runSingleThread() {
-  const winnerCounts = createEmptyTotals()
-  const probabilityWeights = createEmptyTotals()
-  const answers = new Array(questionsPerRun)
-  let rngState = seed >>> 0
+  const rng = createRng(seed)
+  const winnerCounts = new Map(characters.map((character) => [character.id, 0]))
+  const probabilityWeights = new Map(characters.map((character) => [character.id, 0]))
 
   for (let index = 0; index < runs; index += 1) {
-    for (let q = 0; q < questionsPerRun; q += 1) {
-      rngState = (rngState * 1664525 + 1013904223) >>> 0
-      answers[q] = answerScale[Math.floor((rngState / 0x100000000) * answerScale.length)]
+    const answers = questions.map(() => answerScale[Math.floor(rng() * answerScale.length)])
+    const result = calculateQuizResult({
+      answers,
+      questions,
+      archetypes,
+      characters,
+    })
+    const winnerId = result.featuredCharacter?.id
+    if (winnerId) {
+      winnerCounts.set(winnerId, (winnerCounts.get(winnerId) ?? 0) + 1)
     }
 
-    const result = simulator.run(answers)
-    accumulateSimulationResult(result, winnerCounts, probabilityWeights)
+    const weights = calculateCharacterProbabilityWeights({
+      answers,
+      questions,
+      archetypes,
+      characters,
+    })
+
+    for (const item of weights) {
+      probabilityWeights.set(
+        item.characterId,
+        (probabilityWeights.get(item.characterId) ?? 0) + item.weight,
+      )
+    }
   }
 
-  return {
-    winnerCounts: totalsToMap(winnerCounts),
-    probabilityWeights: totalsToMap(probabilityWeights),
-  }
+  return { winnerCounts, probabilityWeights }
 }
 
 async function runSimulation() {
@@ -141,20 +134,19 @@ async function runSimulation() {
 
     const results = await Promise.all(workers)
 
-    const totalWinnerCounts = createEmptyTotals()
-    const totalProbabilityWeights = createEmptyTotals()
+    const totalWinnerCounts = new Map(characters.map((character) => [character.id, 0]))
+    const totalProbabilityWeights = new Map(characters.map((character) => [character.id, 0]))
 
     for (const res of results) {
-      for (let index = 0; index < characterIds.length; index += 1) {
-        totalWinnerCounts[index] += res.winnerCounts[index] ?? 0
-        totalProbabilityWeights[index] += res.probabilityWeights[index] ?? 0
+      for (const [id, count] of res.winnerCounts) {
+        totalWinnerCounts.set(id, (totalWinnerCounts.get(id) ?? 0) + count)
+      }
+      for (const [id, weight] of res.probabilityWeights) {
+        totalProbabilityWeights.set(id, (totalProbabilityWeights.get(id) ?? 0) + weight)
       }
     }
 
-    result = {
-      winnerCounts: totalsToMap(totalWinnerCounts),
-      probabilityWeights: totalsToMap(totalProbabilityWeights),
-    }
+    result = { winnerCounts: totalWinnerCounts, probabilityWeights: totalProbabilityWeights }
   } else {
     console.log(`Running ${runs} simulations (single thread, deterministic)...`)
     result = runSingleThread()
