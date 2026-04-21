@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#33a474" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="https://acgti.tianxingleo.top/" />
     <title>ACGTI 官网 - ACG Type Indicator | 二次元角色原型测试</title>
     <meta name="description" content="ACGTI 官网，ACG Type Indicator 二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，查看 MBTI 维度倾向与二次元角色原型解析。" />
 
@@ -13,9 +14,76 @@
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1224030144383381"
       crossorigin="anonymous"
     ></script>
+
+    <style>
+      /* ---------- Loading screen (pure CSS, no JS dependency) ---------- */
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s ease;
+      }
+      #loading-screen.loaded {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .ls-logo {
+        position: relative;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #eef2f4;
+      }
+      .ls-dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: ls-pulse 1.4s ease-in-out infinite;
+      }
+      .ls-dot:nth-child(1) { top: 6px;  left: 20px; background: #e5b540; animation-delay: 0s; }
+      .ls-dot:nth-child(2) { bottom: 6px; left: 20px; background: #4298b4; animation-delay: 0.2s; }
+      .ls-dot:nth-child(3) { left: 6px;  top: 20px;  background: #8a609d; animation-delay: 0.4s; }
+      .ls-dot:nth-child(4) { right: 6px; top: 20px;  background: #3ba17c; animation-delay: 0.6s; }
+      .ls-brand {
+        margin-top: 18px;
+        font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        letter-spacing: 0.08em;
+      }
+      @keyframes ls-pulse {
+        0%, 100% { transform: scale(1);   opacity: 1; }
+        50%      { transform: scale(0.5); opacity: 0.3; }
+      }
+    </style>
   </head>
   <body>
+    <div id="loading-screen">
+      <div class="ls-logo">
+        <span class="ls-dot"></span>
+        <span class="ls-dot"></span>
+        <span class="ls-dot"></span>
+        <span class="ls-dot"></span>
+      </div>
+      <p class="ls-brand">ACGTI</p>
+    </div>
+
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+
+    <!-- Safety: force-dismiss loading screen after 5 s -->
+    <script>
+      setTimeout(function () {
+        var el = document.getElementById('loading-screen');
+        if (el && !el.classList.contains('loaded')) el.classList.add('loaded');
+      }, 5000);
+    </script>
   </body>
 </html>

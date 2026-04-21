@@ -1,12 +1,33 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useI18n } from './i18n'
 import { socialIcons } from './data/socialIcons'
 
 const route = useRoute()
+const router = useRouter()
 const { locale, localeOptions, setLocale, t } = useI18n()
+
+const isFirstLoad = ref(true)
+
+const dismissLoading = () => {
+  const el = document.getElementById('loading-screen')
+  if (el && !el.classList.contains('loaded')) {
+    el.classList.add('loaded')
+    const remove = () => el.remove()
+    el.addEventListener('transitionend', remove, { once: true })
+    setTimeout(remove, 600)
+  }
+}
+
+router.isReady().then(() => {
+  requestAnimationFrame(dismissLoading)
+})
+
+const onAfterEnter = () => {
+  isFirstLoad.value = false
+}
 
 type AuthorSocialLink = {
   label: string
@@ -73,7 +94,10 @@ watch(() => route.path, () => {
 })
 
 const showFooter = computed(() => route.path !== '/quiz')
-const routeTransitionName = computed(() => (route.path === '/quiz' ? 'page-fade-static' : 'page-fade'))
+const routeTransitionName = computed(() => {
+  if (isFirstLoad.value) return ''
+  return route.path === '/quiz' ? 'page-fade-static' : 'page-fade'
+})
 
 const authorSocialLinks: AuthorSocialLink[] = [
   {
@@ -168,10 +192,10 @@ const authorSocialLinks: AuthorSocialLink[] = [
 
     <main class="site-main">
       <router-view v-slot="{ Component }">
-          <transition :name="routeTransitionName" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </router-view>
+        <transition :name="routeTransitionName" mode="out-in" @after-enter="onAfterEnter">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
 
     <footer v-if="showFooter" class="site-footer">
