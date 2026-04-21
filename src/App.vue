@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useI18n } from './i18n'
 import { socialIcons } from './data/socialIcons'
 
 const route = useRoute()
+const router = useRouter()
 const { locale, localeOptions, setLocale, t } = useI18n()
+
+const appReady = ref(false)
+const isFirstLoad = ref(true)
+
+router.isReady().then(() => {
+  nextTick(() => {
+    appReady.value = true
+  })
+})
+
+const onAfterEnter = () => {
+  isFirstLoad.value = false
+}
 
 type AuthorSocialLink = {
   label: string
@@ -73,7 +87,10 @@ watch(() => route.path, () => {
 })
 
 const showFooter = computed(() => route.path !== '/quiz')
-const routeTransitionName = computed(() => (route.path === '/quiz' ? 'page-fade-static' : 'page-fade'))
+const routeTransitionName = computed(() => {
+  if (isFirstLoad.value) return ''
+  return route.path === '/quiz' ? 'page-fade-static' : 'page-fade'
+})
 
 const authorSocialLinks: AuthorSocialLink[] = [
   {
@@ -167,14 +184,23 @@ const authorSocialLinks: AuthorSocialLink[] = [
     </header>
 
     <main class="site-main">
-      <router-view v-slot="{ Component }">
-          <transition :name="routeTransitionName" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </router-view>
+      <div v-if="!appReady" class="app-splash">
+        <div class="brand-logo" aria-hidden="true">
+          <span class="dot dot-1"></span>
+          <span class="dot dot-2"></span>
+          <span class="dot dot-3"></span>
+          <span class="dot dot-4"></span>
+        </div>
+        <span class="brand-name">ACGTI</span>
+      </div>
+      <router-view v-else v-slot="{ Component }">
+        <transition :name="routeTransitionName" mode="out-in" @after-enter="onAfterEnter">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
 
-    <footer v-if="showFooter" class="site-footer">
+    <footer v-if="showFooter && appReady" class="site-footer">
       <div class="footer-content">
         <div class="footer-section">
           <h3 class="footer-title">{{ t('app.footer.sections.test') }}</h3>

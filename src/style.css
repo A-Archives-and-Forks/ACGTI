@@ -95,6 +95,14 @@ select {
   min-height: 100vh;
 }
 
+.app-splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: calc(100vh - 72px);
+}
+
 /* ============================================
    Site Shell & Layout
    ============================================ */

@@ -4,9 +4,9 @@
   <strong>ACG Type Indicator — 一个以 MBTI 为基础的二次元角色原型测试站点</strong>
 </p>
 
-<h5 align="center">
+<p align="center">
   <a href="https://acgti.tianxingleo.top/">🌐 acgti.tianxingleo.top — ACGTI官网</a>
-</h5>
+</p>
 
 <p align="center">
   回答情境式问题 · 获得唯一命中的角色代码 · 解锁你的二次元人格原型
