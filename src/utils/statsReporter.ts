@@ -31,7 +31,7 @@ export async function fetchResultStats(
 }
 // 使用 sendBeacon 优先，fallback 到 fetch keepalive
 
-const APP_VERSION = '0.3.9-tf-q13-restore'
+const APP_VERSION = '0.3.10-tf-q29-tune'
 
 export interface SubmitPayload {
   submissionId: string
