@@ -3290,6 +3290,55 @@
     "image": "/images/characters/温水佳树.webp"
   },
   {
+    "id": "okabe-rintaro",
+    "name": "冈部伦太郎",
+    "series": "命运石之门",
+    "addedAt": "2026-04-26",
+    "matchCode": "ENTP",
+    "matchCodeFlex": [
+      "INTP"
+    ],
+    "code": "OKBR",
+    "title": "狂気のマッドサイエンティスト・鳳凰院凶真",
+    "archetypeId": "chaos-spark",
+    "tags": [
+      "中二病",
+      "狂气科学家",
+      "Reading Steiner",
+      "Labmem No.001"
+    ],
+    "note": "Labmem No.001，凤凰院凶真，狂气的科学家。所谓疯狂，是无数次重复同样的事情，期待着不同结果。为抵达命运石之门，在无数世界线中往复跳跃。看似中二病发作，实则白大褂是战袍，承载了那些只有自己能记住的死亡与离别。",
+    "vector": {
+      "expression": 0.64,
+      "temperature": 0.31,
+      "judgement": -0.42,
+      "order": -0.56,
+      "agency": 0.75,
+      "aura": 0.68
+    },
+    "signature": {
+      "uniqueAxes": {
+        "agency": 2,
+        "aura": 1
+      },
+      "questionAffinity": [
+        {
+          "questionId": "q23",
+          "expected": "agree",
+          "weight": 1.2
+        }
+      ]
+    },
+    "personaBasis": {
+      "type": "canon",
+      "label": "作品剧情映射",
+      "confidence": "high",
+      "summary": "主要依据《命运石之门》中疯狂科学家凤凰院凶真的中二外壳与冈部伦太郎孤独内核的双重形象映射，以及其无数次时间跳跃拯救同伴的执念。"
+    },
+    "matchWeight": 0.931048596,
+    "image": "/images/characters/冈部伦太郎.webp"
+  },
+  {
     "id": "oyama-mahiro",
     "name": "绪山真寻",
     "series": "别当哥哥了！",

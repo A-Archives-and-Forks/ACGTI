@@ -699,7 +699,13 @@ const characterNameI18n: Record<string, LocalizedText> = {
     'zh-TW': '02',
     en: 'Zero Two',
     ja: 'ゼロツー',
-  }
+  },
+  'okabe-rintaro': {
+    'zh-CN': '冈部伦太郎',
+    'zh-TW': '岡部倫太郎',
+    en: 'Rintaro Okabe',
+    ja: '岡部倫太郎',
+  },
 }
 
 const seriesI18n: Record<string, LocalizedText> = {
