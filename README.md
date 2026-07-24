@@ -188,7 +188,7 @@ migrations/               # Cloudflare D1 数据库迁移
 - **2026.4.11 12:00:** 在校内 100 人 BanG Dream 群测试，首次公开
 - **2026.4.10:** 创建仓库
 
-![](https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_3c08ace01a3cd872ecf541636c6f8bbd.webp)
+![](https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_cd104ba6bdd4ba3053fcbd82fa1513f7.webp)
 
 ## 🚀 本地开发
 

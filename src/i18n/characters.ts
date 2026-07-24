@@ -706,6 +706,12 @@ const characterNameI18n: Record<string, LocalizedText> = {
     en: 'Rintaro Okabe',
     ja: '岡部倫太郎',
   },
+  'kochiya-sanae': {
+    'zh-CN': '东风谷早苗',
+    'zh-TW': '東風谷早苗',
+    en: 'Sanae Kochiya',
+    ja: '東風谷早苗',
+  },
 }
 
 const seriesI18n: Record<string, LocalizedText> = {
