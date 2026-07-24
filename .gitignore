@@ -33,6 +33,7 @@ out/
 
 # Wrangler local state
 .wrangler/
+.wrangler-pages-func-build/
 
 # Environment files
 .env
@@ -79,3 +80,9 @@ repomix-output.xml
 DEBUG_SUBMIT_400.md
 docs/排行榜优化方案.md
 docs/internal-ops.md
+
+# Legacy root scripts / data dumps (early prototypes, superseded by scripts/)
+/generateData.ts
+/generateQuestions.ts
+/questions_dump.json
+/fix.ps1
