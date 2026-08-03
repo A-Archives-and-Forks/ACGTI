@@ -69,6 +69,9 @@ analysis/*.sqlite3
 analysis/*.csv
 analysis/calibration-round*.md
 
+# D1 database backups (full exports, do not commit)
+d1-backups/
+
 # Misc assets / archives
 *.png
 *.zip
@@ -80,6 +83,7 @@ repomix-output.xml
 DEBUG_SUBMIT_400.md
 docs/排行榜优化方案.md
 docs/internal-ops.md
+docs/d1-backup.md
 
 # Legacy root scripts / data dumps (early prototypes, superseded by scripts/)
 /generateData.ts
