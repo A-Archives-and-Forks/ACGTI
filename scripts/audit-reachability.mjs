@@ -28,10 +28,11 @@ const DIMENSION_LETTERS = {
 }
 
 const VECTOR_AXES = ['expression', 'temperature', 'judgement', 'order', 'agency', 'aura']
+// 与 src/utils/quizEngine.ts 保持一致（校验脚本会强制比对，改引擎时同步更新这里）
 const MBTI_WEIGHT = 0.25
-const ARCHETYPE_WEIGHT = 0.35
-const VECTOR_WEIGHT = 0.3
-const CHARACTER_SPECIFIC_WEIGHT = 0.1
+const ARCHETYPE_WEIGHT = 0.28
+const VECTOR_WEIGHT = 0.27
+const CHARACTER_SPECIFIC_WEIGHT = 0.2
 
 function createRng(seed) {
   let state = seed >>> 0
