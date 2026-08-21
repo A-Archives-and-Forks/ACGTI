@@ -36,6 +36,12 @@
       "en": "Taki Shiina",
       "ja": "椎名立希"
     },
+    "series": {
+      "zh-CN": "BanG Dream! It's MyGO!!!!!",
+      "zh-TW": "BanG Dream! It's MyGO!!!!!",
+      "en": "BanG Dream! It's MyGO!!!!!",
+      "ja": "BanG Dream! It's MyGO!!!!!"
+    },
     "zh-TW": {
       "title": "暴躁鼓手·嘴硬護短",
       "note": "你的人設關鍵詞叫「別惹我，但我其實會管你」。外表是攻擊性，內核是責任感，只是表達方式比較像炸藥包——炸完還幫你收拾殘局。建議常備滅火器。",
@@ -48,7 +54,7 @@
     },
     "en": {
       "title": "Hot-Tempered Drummer · Tough But Secretly All-In",
-      "note": "Your character keyword is \"don\\'t push me, but I\\'ll handle it anyway.\" Aggressive exterior, core of pure responsibility — just expressed like a stick of dynamite. Explodes, then helps clean up the aftermath. Keep a fire extinguisher nearby.",
+      "note": "Your character keyword is \"don't push me, but I'll handle it anyway.\" Aggressive exterior, core of pure responsibility — just expressed like a stick of dynamite. Explodes, then helps clean up the aftermath. Keep a fire extinguisher nearby.",
       "tags": [
         "Walking Powder Keg",
         "Workaholic Demon",

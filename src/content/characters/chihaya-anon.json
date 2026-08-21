@@ -43,6 +43,12 @@
       "en": "Anon Chihaya",
       "ja": "千早愛音"
     },
+    "series": {
+      "zh-CN": "BanG Dream! It's MyGO!!!!!",
+      "zh-TW": "BanG Dream! It's MyGO!!!!!",
+      "en": "BanG Dream! It's MyGO!!!!!",
+      "ja": "BanG Dream! It's MyGO!!!!!"
+    },
     "zh-TW": {
       "title": "輕社牛·場面人",
       "note": "你的人生策略是「先混進去再說」。表面上圓滑，實際上經常因為衝太快把自己衝進修羅場——但沒關係，你會用新的社牛把舊坑填上。屬於「社牛但容易翻車」的典型。",
@@ -55,7 +61,7 @@
     },
     "en": {
       "title": "Light Social Butterfly · Scene Player",
-      "note": "Your life strategy is \"blend in first, figure it out later.\" Smooth on the surface, but you often charge in too fast and land in the drama yourself — no worries, you\\'ll use new social skills to cover the old mess.",
+      "note": "Your life strategy is \"blend in first, figure it out later.\" Smooth on the surface, but you often charge in too fast and land in the drama yourself — no worries, you'll use new social skills to cover the old mess.",
       "tags": [
         "Board First Ask Questions Later",
         "Social Ignition Switch",

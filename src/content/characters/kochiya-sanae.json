@@ -22,10 +22,10 @@
     "vector": {
       "expression": 0.72,
       "temperature": 0.65,
-      "judgement": 0.40,
+      "judgement": 0.4,
       "order": 0.55,
       "agency": 0.68,
-      "aura": 0.60
+      "aura": 0.6
     },
     "signature": {
       "uniqueAxes": {
