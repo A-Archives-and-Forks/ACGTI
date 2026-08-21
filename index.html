@@ -5,9 +5,21 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#33a474" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="canonical" href="https://acgti.tianxingleo.top/" />
     <title>ACGTI 官网 - ACG Type Indicator | 二次元角色原型测试</title>
     <meta name="description" content="ACGTI 官网，ACG Type Indicator 二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，查看 MBTI 维度倾向与二次元角色原型解析。" />
+
+    <!-- 静态 OG/Twitter 基础标签：多数社交爬虫不执行 JS，客户端 useSeo 只能覆盖会执行 JS 的场景 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ACGTI" />
+    <meta property="og:title" content="ACGTI - ACG Type Indicator | 二次元角色原型测试" />
+    <meta property="og:description" content="回答 39 道情境式问题，获得唯一命中的角色代码与二次元角色原型解析。免费、无需注册、纯前端运行。" />
+    <meta property="og:url" content="https://acgti.tianxingleo.top/" />
+    <meta property="og:image" content="https://acgti.tianxingleo.top/og-image.png" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ACGTI - ACG Type Indicator" />
+    <meta name="twitter:description" content="二次元角色原型测试：39 道题，命中你的专属角色代码。" />
+    <meta name="twitter:image" content="https://acgti.tianxingleo.top/og-image.png" />
 
     <script
       async
@@ -82,7 +94,11 @@
     <script>
       setTimeout(function () {
         var el = document.getElementById('loading-screen');
-        if (el && !el.classList.contains('loaded')) el.classList.add('loaded');
+        if (el && !el.classList.contains('loaded')) {
+          el.classList.add('loaded');
+          // 同步移除节点，避免读屏器继续朗读 loading 文案
+          setTimeout(function () { if (el && el.parentNode) el.parentNode.removeChild(el); }, 600);
+        }
       }, 5000);
     </script>
   </body>

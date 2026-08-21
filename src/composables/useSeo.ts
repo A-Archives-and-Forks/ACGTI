@@ -28,6 +28,14 @@ export function useSeo(options: SeoOptions) {
     return unref(options.image) ?? `${SITE_URL}/og-image.png`
   })
 
+  // jsonLd 以 getter 传入，保持对 ref 的响应（语言切换后结构化数据同步更新）
+  const jsonLdScript = options.jsonLd
+    ? computed(() => [{
+        type: 'application/ld+json' as const,
+        innerHTML: JSON.stringify(unref(options.jsonLd)),
+      }])
+    : undefined
+
   useHead({
     title: fullTitle,
     meta: [
@@ -46,8 +54,6 @@ export function useSeo(options: SeoOptions) {
     link: [
       { rel: 'canonical', href: url },
     ],
-    script: options.jsonLd
-      ? [{ type: 'application/ld+json', innerHTML: JSON.stringify(unref(options.jsonLd)) }]
-      : undefined,
+    script: jsonLdScript,
   })
 }

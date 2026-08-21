@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 import { useI18n } from '../../i18n'
 
 const { t } = useI18n()
 const isPopupReady = ref(false)
 const showUpdatePopup = ref(false)
+const closeBtnRef = ref<HTMLButtonElement | null>(null)
 
 const HOME_UPDATE_DISMISS_KEY = 'acgti:home-update-2026-04-18-popup-v4-dismissed'
 const UPDATE_POPUP_DELAY_MS = 3000
@@ -27,10 +28,14 @@ onMounted(() => {
 
   popupShowTimer = window.setTimeout(() => {
     showUpdatePopup.value = true
+    // 弹出后把焦点移入弹窗，保证键盘与读屏用户能立即感知并 Escape 关闭
+    void nextTick(() => closeBtnRef.value?.focus())
     popupHideTimer = window.setTimeout(() => {
       dismissUpdatePopup(false)
     }, UPDATE_POPUP_AUTO_HIDE_MS)
   }, UPDATE_POPUP_DELAY_MS)
+
+  window.addEventListener('keydown', handleKeydown)
 })
 
 onBeforeUnmount(() => {
@@ -41,7 +46,15 @@ onBeforeUnmount(() => {
   if (popupHideTimer) {
     clearTimeout(popupHideTimer)
   }
+
+  window.removeEventListener('keydown', handleKeydown)
 })
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && showUpdatePopup.value) {
+    dismissUpdatePopup(true)
+  }
+}
 
 function dismissUpdatePopup(rememberDismissal = true) {
   showUpdatePopup.value = false
@@ -67,7 +80,7 @@ function dismissUpdatePopup(rememberDismissal = true) {
     <div v-if="isPopupReady && showUpdatePopup" class="update-popup-shell" role="presentation">
       <button class="update-popup-backdrop" type="button" tabindex="-1" aria-hidden="true" @click="dismissUpdatePopup(true)"></button>
       <aside class="update-popup" role="dialog" aria-modal="true" :aria-label="t('home.updateBadge.tag')">
-        <button class="update-popup-close" type="button" :aria-label="t('home.updateBadge.dismiss')" @click="dismissUpdatePopup(true)">
+        <button ref="closeBtnRef" class="update-popup-close" type="button" :aria-label="t('home.updateBadge.dismiss')" @click="dismissUpdatePopup(true)">
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
@@ -203,8 +216,8 @@ function dismissUpdatePopup(rememberDismissal = true) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 0;
   border-radius: 999px;

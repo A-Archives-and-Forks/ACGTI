@@ -42,8 +42,8 @@ const faqJsonLd = computed(() => [
 ])
 
 useSeo({
-  title: '关于 ACGTI - ACG Type Indicator 二次元人格测试 | 项目说明与常见问题',
-  description: 'ACGTI（ACG Type Indicator）是以 MBTI 为基础的二次元角色原型测试工具。39 道情境题、8 大原型、110 位角色，支持中英日多语言。了解项目定位、当前功能、技术边界与常见问题。',
+  title: computed(() => t('seo.aboutTitle')),
+  description: computed(() => t('seo.aboutDesc')),
   path: '/about',
   jsonLd: faqJsonLd,
 })

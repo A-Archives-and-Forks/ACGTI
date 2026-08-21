@@ -302,8 +302,17 @@ select {
 }
 
 .lang-dropdown-menu li {
-  padding: 8px 12px;
   border-radius: 8px;
+}
+
+.lang-option-btn {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-muted);
@@ -312,12 +321,12 @@ select {
   text-align: center;
 }
 
-.lang-dropdown-menu li:hover {
+.lang-option-btn:hover {
   background: #f4f6f8;
   color: var(--text);
 }
 
-.lang-dropdown-menu li.active {
+.lang-dropdown-menu li.active .lang-option-btn {
   background: #ebf6f1;
   color: #3ba17c;
 }
@@ -345,20 +354,20 @@ select {
 
 .site-nav .nav-cta {
   margin-left: 8px;
-  min-height: 42px;
+  min-height: 44px;
   padding: 0 20px;
-  background: #9474a4;
+  background: var(--primary);
   color: #fff;
   border-radius: 999px;
 }
 
 .site-nav .nav-cta:hover {
-  background: #7d5f91;
+  background: var(--primary-hover);
   color: #fff;
 }
 
 .site-nav .nav-cta.router-link-active {
-  background: #7d5f91;
+  background: var(--primary-hover);
   color: #fff;
 }
 
@@ -826,8 +835,8 @@ select {
 }
 
 .footer-social a {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;

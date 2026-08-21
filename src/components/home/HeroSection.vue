@@ -117,11 +117,11 @@ async function copyQuizLink() {
 }
 
 .hero-button {
-  --hero-btn-bg: #9474a4;
-  --hero-btn-bg-hover: #836592;
+  --hero-btn-bg: #33a474;
+  --hero-btn-bg-hover: #2d9168;
   --hero-btn-fg: #fff;
-  --hero-btn-border: #9474a4;
-  --hero-btn-shadow: rgba(89, 58, 104, 0.28);
+  --hero-btn-border: #33a474;
+  --hero-btn-shadow: rgba(38, 122, 87, 0.28);
   display: inline-flex;
   align-items: center;
   justify-content: center;

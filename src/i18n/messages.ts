@@ -14,6 +14,21 @@ export const localeLabels: Record<AppLocale, string> = {
 
 export const messages = {
   'zh-CN': {
+    seo: {
+      homeTitle: 'ACGTI 官网 - ACG Type Indicator | 二次元角色原型测试',
+      homeDesc: 'ACGTI 官网，ACG Type Indicator 二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，查看 MBTI 维度倾向与二次元角色原型解析。',
+      quizTitle: '开始 ACGTI 测试',
+      quizDesc: '进入 ACGTI 官网的测试页，回答 39 道情境式问题，获得唯一命中的角色代码、MBTI 维度倾向与二次元角色原型解析。免费、无需注册、纯前端运行。',
+      resultTitle: '测试结果 {code}',
+      resultDesc: '查看你的 ACGTI 二次元角色原型测试结果，了解你的角色代码、MBTI 维度倾向和对应二次元角色原型解析。',
+      charactersTitle: 'ACGTI 角色库 - 110+ 二次元角色原型',
+      charactersDesc: '浏览 ACGTI 官网角色库，包含 110+ 位二次元角色原型。每角色均基于 MBTI 十六型人格映射，展示性格维度、稀有度和角色来源。',
+      statsTitle: 'ACGTI 全局统计 - 测试数据概览',
+      statsDesc: '查看 ACGTI 官网的全局测试统计数据，包括各人格类型分布、热门角色命中排行和测试参与趋势。',
+      aboutTitle: '关于 ACGTI - 项目说明',
+      aboutDesc: '了解 ACGTI 的定位、测试原理、技术实现与项目边界：一个以 MBTI 为底座的二次元角色原型测试。',
+      previewBadge: '角色预览',
+    },
     app: {
       nav: {
         githubTitle: '去 GitHub 给本仓库点亮 Star ✨',
@@ -132,6 +147,7 @@ export const messages = {
       ctaTitle: '想知道你会命中哪一个角色代码？',
       ctaButton: '开始测试 / 重新测试 →',
       statsLink: '查看全网人格分布 →',
+      statsLinkIntro: '想看看全网玩家的性格分布和热门角色排行？',
       communityTitle: '社区互动',
       communityCards: [
         { title: '角色提名', desc: '告诉我们你想加入谁', icon: 'nominate' },
@@ -514,6 +530,7 @@ export const messages = {
     stats: {
     title: '全网人格分布',
     subtitle: '基于所有匿名测试结果的实时统计',
+    retry: '重试',
     overview: {
       total: '总测试次数',
       today: '今日测试',
@@ -547,6 +564,21 @@ export const messages = {
   },
 
   'zh-TW': {
+    seo: {
+      homeTitle: 'ACGTI 官網 - ACG Type Indicator | 二次元角色原型測試',
+      homeDesc: 'ACGTI 官網，ACG Type Indicator 二次元角色原型測試。回答 39 道情境式問題，獲得唯一命中的角色代碼，查看 MBTI 維度傾向與二次元角色原型解析。',
+      quizTitle: '開始 ACGTI 測試',
+      quizDesc: '進入 ACGTI 官網的測試頁，回答 39 道情境式問題，獲得唯一命中的角色代碼、MBTI 維度傾向與二次元角色原型解析。免費、無需註冊、純前端運行。',
+      resultTitle: '測試結果 {code}',
+      resultDesc: '查看你的 ACGTI 二次元角色原型測試結果，了解你的角色代碼、MBTI 維度傾向和對應二次元角色原型解析。',
+      charactersTitle: 'ACGTI 角色庫 - 110+ 二次元角色原型',
+      charactersDesc: '瀏覽 ACGTI 官網角色庫，包含 110+ 位二次元角色原型。每角色均基於 MBTI 十六型人格映射，展示性格維度、稀有度和角色來源。',
+      statsTitle: 'ACGTI 全域統計 - 測試數據概覽',
+      statsDesc: '查看 ACGTI 官網的全域測試統計數據，包括各人格類型分佈、熱門角色命中排行和測試參與趨勢。',
+      aboutTitle: '關於 ACGTI - 專案說明',
+      aboutDesc: '了解 ACGTI 的定位、測試原理、技術實現與專案邊界：一個以 MBTI 為底座的二次元角色原型測試。',
+      previewBadge: '角色預覽',
+    },
     app: {
       nav: {
         githubTitle: '去 GitHub 給本倉庫點亮 Star ✨',
@@ -664,6 +696,7 @@ export const messages = {
       ctaTitle: '想知道你會命中哪一個角色代碼？',
       ctaButton: '開始測試 / 重新測試 →',
       statsLink: '查看全網人格分佈 →',
+      statsLinkIntro: '想看看全網玩家的性格分佈和熱門角色排行？',
       communityTitle: '社群互動',
       communityCards: [
         { title: '角色提名', desc: '告訴我們你想加入誰', icon: 'nominate' },
@@ -1346,6 +1379,7 @@ export const messages = {
     stats: {
     title: '全網人格分佈',
     subtitle: '基於所有匿名測試結果的即時統計',
+    retry: '重試',
     overview: {
       total: '總測試次數',
       today: '今日測試',
@@ -1379,6 +1413,21 @@ export const messages = {
   },
 
   en: {
+    seo: {
+      homeTitle: 'ACGTI - ACG Type Indicator | Anime Personality Test',
+      homeDesc: 'ACGTI official site, the ACG Type Indicator anime personality test. Answer 39 situational questions to get your unique character code, MBTI dimension scores, and anime archetype analysis.',
+      quizTitle: 'Take the ACGTI Test',
+      quizDesc: 'Answer 39 situational questions and get your unique character code, MBTI dimension scores, and anime archetype analysis. Free, no sign-up, runs entirely in your browser.',
+      resultTitle: 'Your Result {code}',
+      resultDesc: 'See your ACGTI anime archetype test result: character code, MBTI dimension scores, and the matched anime character analysis.',
+      charactersTitle: 'ACGTI Character Library - 110+ Anime Archetypes',
+      charactersDesc: 'Browse the ACGTI character library with 110+ anime archetypes. Each character maps to one of the 16 MBTI types, with traits, rarity, and source series.',
+      statsTitle: 'ACGTI Global Stats - Test Data Overview',
+      statsDesc: 'Explore ACGTI global test statistics: personality type distribution, top character rankings, and participation trends.',
+      aboutTitle: 'About ACGTI - Project Overview',
+      aboutDesc: 'Learn about ACGTI: an MBTI-based anime archetype test — how it works, how it is built, and its boundaries.',
+      previewBadge: 'Character Preview',
+    },
     app: {
       nav: {
         githubTitle: 'Give this repo a Star on GitHub ✨',
@@ -1495,6 +1544,7 @@ export const messages = {
       ctaTitle: 'Want to know which character code you hit?',
       ctaButton: 'Start / Retake the quiz →',
       statsLink: 'View global personality distribution →',
+      statsLinkIntro: 'Curious about the global personality mix and top characters?',
       communityTitle: 'Community',
       communityCards: [
         { title: 'Nominate a Character', desc: 'Tell us who you want added', icon: 'nominate' },
@@ -2055,6 +2105,7 @@ export const messages = {
     stats: {
     title: 'Global Personality Distribution',
     subtitle: 'Real-time statistics based on all anonymous test results',
+    retry: 'Retry',
     overview: {
       total: 'Total Tests',
       today: 'Today',
@@ -2088,6 +2139,21 @@ export const messages = {
   },
 
   ja: {
+    seo: {
+      homeTitle: 'ACGTI - ACG Type Indicator | 二次元キャラ原型テスト',
+      homeDesc: 'ACGTI 公式サイト、ACG Type Indicator の二次元キャラ原型テスト。39 問のシチュエーション質問に答えて、あなた専用のキャラコードと MBTI の 4 軸傾向、キャラ原型の分析を入手しよう。',
+      quizTitle: 'ACGTI テストを始める',
+      quizDesc: '39 問のシチュエーション質問に答えて、専用キャラコード・MBTI 4 軸傾向・キャラ原型分析を入手。無料・登録不要・ブラウザ内で完結。',
+      resultTitle: 'テスト結果 {code}',
+      resultDesc: 'ACGTI の二次元キャラ原型テスト結果：キャラコード、MBTI 4 軸の傾向、対応キャラの分析を確認できます。',
+      charactersTitle: 'ACGTI キャラライブラリ - 110+ の二次元キャラ原型',
+      charactersDesc: '110+ の二次元キャラ原型を閲覧。各キャラは MBTI 16 型のいずれかに対応し、性格軸・レア度・出演作品を紹介します。',
+      statsTitle: 'ACGTI 全体統計 - テストデータ概要',
+      statsDesc: 'ACGTI の全体統計：性格タイプの分布、人気キャラのランキング、参加トレンドを確認できます。',
+      aboutTitle: 'ACGTI について - プロジェクト概要',
+      aboutDesc: 'ACGTI の位置づけ、テストの仕組み、技術構成、プロジェクトの境界を紹介します。',
+      previewBadge: 'キャラプレビュー',
+    },
     app: {
       nav: {
         githubTitle: 'GitHub でこのリポジトリに Star を付ける ✨',
@@ -2196,6 +2262,7 @@ export const messages = {
       ctaTitle: '自分がどのキャラコードに当たるか知りたい？',
       ctaButton: 'テスト開始 / 再診断 →',
       statsLink: '全世界の性格分布を見る →',
+      statsLinkIntro: '全世界の性格分布と人気キャラのランキングを見てみる？',
       communityTitle: 'コミュニティ',
       communityCards: [
         { title: 'キャラ提名', desc: '追加してほしいキャラを教えて', icon: 'nominate' },
@@ -2756,6 +2823,7 @@ export const messages = {
     stats: {
     title: '全世界の性格分佈',
     subtitle: 'すべての匿名テスト結果に基づくリアルタイム統計',
+    retry: '再試行',
     overview: {
       total: '総テスト数',
       today: '今日のテスト',

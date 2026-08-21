@@ -35,17 +35,17 @@ const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
 const liveStats = ref<ResultStats | null>(null)
 
-// 动态 SEO：根据测试结果更新页面标题
+// 动态 SEO：根据测试结果更新页面标题（跟随语言切换）
 const seoTitle = computed(() => {
   if (result.value) {
     const name = result.value.code || result.value.mbtiCode || ''
-    return `测试结果 ${name} - ACGTI`
+    return t('seo.resultTitle', { code: name })
   }
-  return '你的测试结果 - ACGTI | 二次元角色原型测试'
+  return t('seo.resultTitle', { code: '' })
 })
 useSeo({
   title: seoTitle,
-  description: '查看你的 ACGTI 二次元角色原型测试结果，了解你的角色代码、MBTI 维度倾向和对应二次元角色原型解析。',
+  description: computed(() => t('seo.resultDesc')),
   path: '/result',
 })
 

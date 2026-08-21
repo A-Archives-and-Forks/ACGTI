@@ -53,7 +53,7 @@
     <section class="feature feature-light text-center" style="padding-top: 4rem; padding-bottom: 4rem;" v-reveal>
       <div class="container">
         <p class="feature-copy" style="max-width: 500px; margin: 0 auto 1.5rem; color: #666;">
-          {{ t('home.statsLink').replace(' →', '') }}
+          {{ t('home.statsLinkIntro') }}
         </p>
         <RouterLink to="/stats" class="btn btn-green" style="display: inline-flex; align-items: center; gap: 0.5rem;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.1rem; height: 1.1rem;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
@@ -133,9 +133,10 @@ import { computed } from 'vue'
 import { useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 
+const { t: homeT } = useI18n()
 useSeo({
-  title: 'ACGTI 官网 - ACG Type Indicator | 二次元角色原型测试',
-  description: 'ACGTI 官网，ACG Type Indicator 二次元角色原型测试。回答 39 道情境式问题，获得唯一命中的角色代码，查看 MBTI 维度倾向与二次元角色原型解析。',
+  title: computed(() => homeT('seo.homeTitle')),
+  description: computed(() => homeT('seo.homeDesc')),
   path: '/',
   jsonLd: {
     '@context': 'https://schema.org',
@@ -354,20 +355,20 @@ const communityCards = computed(() => {
   min-width: 196px;
   padding: 0 2.15rem;
   border-radius: 999px;
-  background: #9474a4;
+  background: #33a474;
   color: #fff;
   font-weight: 700;
   letter-spacing: 0.01em;
   text-decoration: none;
-  border: 1.5px solid #9474a4;
-  box-shadow: 0 10px 24px rgba(89, 58, 104, 0.28);
+  border: 1.5px solid #33a474;
+  box-shadow: 0 10px 24px rgba(38, 122, 87, 0.28);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .hero-button:hover {
-  background: #836592;
+  background: #2d9168;
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(89, 58, 104, 0.28);
+  box-shadow: 0 14px 30px rgba(38, 122, 87, 0.28);
 }
 
 .cta {

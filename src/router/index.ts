@@ -20,8 +20,12 @@ const router = createRouter({
     { path: '/sponsor', name: 'sponsor', component: () => import('../pages/SponsorPage.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
-  scrollBehavior() {
-    return { top: 0 }
+  scrollBehavior(to, _from, savedPosition) {
+    // 前进时优先处理锚点；浏览器返回/前进恢复上次滚动位置
+    if (to.hash) {
+      return { el: to.hash, top: 80, behavior: 'smooth' }
+    }
+    return savedPosition ?? { top: 0 }
   },
 })
 

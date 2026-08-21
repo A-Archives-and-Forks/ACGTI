@@ -39,7 +39,7 @@ const { t } = useI18n()
             width="380"
             height="420"
             decoding="async"
-            fetchpriority="high"
+            loading="lazy"
           />
         </div>
       </aside>

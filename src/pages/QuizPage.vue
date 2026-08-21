@@ -121,9 +121,10 @@ import { useQuiz } from '../composables/useQuiz'
 import { useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 
+const { t: seoQuizT } = useI18n()
 useSeo({
-  title: '开始 ACGTI 测试 - ACG Type Indicator | 二次元角色原型测试',
-  description: '进入 ACGTI 官网的测试页，回答 39 道情境式问题，获得唯一命中的角色代码、MBTI 维度倾向与二次元角色原型解析。免费、无需注册、纯前端运行。',
+  title: computed(() => seoQuizT('seo.quizTitle')),
+  description: computed(() => seoQuizT('seo.quizDesc')),
   path: '/quiz',
 })
 
@@ -635,9 +636,13 @@ async function submitQuiz() {
   border-radius: 999px;
   padding: 12px 28px;
   color: #ffffff;
-  background: #88619a;
+  background: #33a474;
   font-weight: 700;
   cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #2d9168;
 }
 
 .quiz-footer {

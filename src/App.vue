@@ -2,7 +2,7 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useI18n } from './i18n'
+import { useI18n, type AppLocale } from './i18n'
 import { socialIcons } from './data/socialIcons'
 
 const route = useRoute()
@@ -39,6 +39,7 @@ type AuthorSocialLink = {
 const isLangOpen = ref(false)
 const isNavOpen = ref(false)
 const langDropdownRef = ref<HTMLElement | null>(null)
+const langTriggerRef = ref<HTMLButtonElement | null>(null)
 
 const currentLabel = computed(() => {
   return localeOptions.find(o => o.code === locale.value)?.label || 'Language'
@@ -66,8 +67,8 @@ const handleNavClick = (e: MouseEvent) => {
   }
 }
 
-const selectLanguage = (code: string) => {
-  setLocale(code as never)
+const selectLanguage = (code: AppLocale) => {
+  setLocale(code)
   isLangOpen.value = false
   isNavOpen.value = false
 }
@@ -75,6 +76,14 @@ const selectLanguage = (code: string) => {
 const closeLangDropdown = (e: MouseEvent) => {
   if (langDropdownRef.value && !langDropdownRef.value.contains(e.target as Node)) {
     isLangOpen.value = false
+  }
+}
+
+// Escape 关闭语言菜单并把焦点还给触发按钮，保证键盘可达
+const handleLangKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && isLangOpen.value) {
+    isLangOpen.value = false
+    langTriggerRef.value?.focus()
   }
 }
 
@@ -158,24 +167,26 @@ const authorSocialLinks: AuthorSocialLink[] = [
       <nav class="site-nav" :class="{ 'is-open': isNavOpen }" @click="handleNavClick">
         <a href="https://github.com/tianxingleo/ACGTI" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px; color: #333e49; font-weight: 600; text-decoration: none;" :title="t('app.nav.githubTitle')">
           <svg style="width: 18px; height: 18px; color: #3ba17c;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          <span class="nav-star-text" style="font-size: 15px;">{{ t('app.nav.star') }} 🌟</span>
+          <span class="nav-star-text" style="font-size: 15px;">{{ t('app.nav.star') }}</span>
         </a>
-        <div class="lang-dropdown" :class="{ 'is-open': isLangOpen }" ref="langDropdownRef">
-          <button class="lang-dropdown-trigger" type="button" @click.prevent="toggleLangDropdown" :aria-label="t('app.language.label')" :aria-expanded="isLangOpen">
+        <div class="lang-dropdown" :class="{ 'is-open': isLangOpen }" ref="langDropdownRef" @keydown="handleLangKeydown">
+          <button class="lang-dropdown-trigger" ref="langTriggerRef" type="button" @click.prevent="toggleLangDropdown" :aria-label="t('app.language.label')" :aria-expanded="isLangOpen">
             {{ currentLabel }}
             <span class="arrow"></span>
           </button>
           <transition name="dropdown">
-            <ul class="lang-dropdown-menu" v-show="isLangOpen" role="listbox">
-              <li 
-                v-for="option in localeOptions" 
+            <ul class="lang-dropdown-menu" v-show="isLangOpen" role="listbox" :aria-label="t('app.language.label')">
+              <li
+                v-for="option in localeOptions"
                 :key="option.code"
                 role="option"
                 :aria-selected="option.code === locale"
                 :class="{ active: option.code === locale }"
-                @click.stop="selectLanguage(option.code)"
+                tabindex="-1"
               >
-                {{ option.label }}
+                <button type="button" class="lang-option-btn" @click="selectLanguage(option.code)">
+                  {{ option.label }}
+                </button>
               </li>
             </ul>
           </transition>

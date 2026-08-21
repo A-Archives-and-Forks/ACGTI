@@ -9,9 +9,10 @@ import { getLocalizedCharacterName, getLocalizedCharacterSeries } from '../i18n/
 import { resolvePublicAsset } from '../utils/characterVisuals'
 import { useSeo } from '../composables/useSeo'
 
+const { t: seoStatsT } = useI18n()
 useSeo({
-  title: 'ACGTI 全局统计 - 测试数据概览',
-  description: '查看 ACGTI 官网的全局测试统计数据，包括各人格类型分布、热门角色命中排行和测试参与趋势。',
+  title: computed(() => seoStatsT('seo.statsTitle')),
+  description: computed(() => seoStatsT('seo.statsDesc')),
   path: '/stats',
 })
 
@@ -72,16 +73,48 @@ const updatedAt = ref<string | null>(null)
 const loadError = ref<string | null>(null)
 
 function getLocaleLoadErrorMessage(): string {
+  // 生产环境只给用户一句可理解的提示 + 重试；开发提示仅本地可见
+  const devHint = import.meta.env.DEV
+    ? '（本地开发请使用 wrangler pages dev 启动，才能访问 /api/stats/*。）'
+    : ''
   if (locale.value === 'zh-TW') {
-    return '統計資料目前無法載入。若在本機開發，請使用 wrangler pages dev 啟動，才能訪問 /api/stats/*。'
+    return `統計資料目前無法載入，請稍後重試。${devHint}`
   }
   if (locale.value === 'en') {
-    return 'Stats data is currently unavailable. In local development, please run with wrangler pages dev so /api/stats/* works.'
+    return `Stats are temporarily unavailable. Please try again later. ${devHint}`
   }
   if (locale.value === 'ja') {
-    return '統計データを読み込めません。ローカル開発では wrangler pages dev で起動して /api/stats/* にアクセスしてください。'
+    return `統計データを読み込めません。しばらくしてからもう一度お試しください。${devHint}`
   }
-  return '统计数据暂时无法加载。本地开发请使用 wrangler pages dev 启动，才能访问 /api/stats/*。'
+  return `统计数据暂时无法加载，请稍后重试。${devHint}`
+}
+
+async function retryLoad() {
+  loadError.value = null
+  loading.value = true
+  try {
+    await loadStats()
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadStats() {
+  try {
+    const [overviewRes, archetypesRes, charactersRes] = await Promise.all([
+      fetchStatsJson('/api/stats/overview'),
+      fetchStatsJson('/api/stats/archetypes'),
+      fetchStatsJson('/api/stats/characters'),
+    ])
+
+    if (overviewRes.data) overview.value = overviewRes.data
+    if (archetypesRes.data?.items) archetypes.value = archetypesRes.data.items
+    if (charactersRes.data?.items) characters.value = charactersRes.data.items
+    updatedAt.value = overviewRes.updatedAt ?? archetypesRes.updatedAt ?? charactersRes.updatedAt ?? null
+  } catch (err) {
+    console.error('Failed to load stats:', err)
+    loadError.value = getLocaleLoadErrorMessage()
+  }
 }
 
 async function fetchStatsJson(url: string) {
@@ -140,32 +173,27 @@ const characterDisplayCount = ref(20)
 const topCharacters = computed(() => characters.value.slice(0, characterDisplayCount.value))
 const hasMoreCharacters = computed(() => characterDisplayCount.value < characters.value.length)
 
+// 预映射每行的展示字段，避免模板里每行重复 5 次 Map 查找与 i18n 解析
+const topCharacterRows = computed(() => topCharacters.value.map((item) => {
+  const character = getCharacterFromCode(item.code)
+  return {
+    item,
+    isLink: !!character,
+    characterId: character?.id ?? '',
+    thumb: character ? getCharacterThumb(item.code) : null,
+    name: getCharacterName(item.code),
+    series: getCharacterSeries(item.code),
+    accent: getCharacterAccent(item.code),
+  }
+}))
+
 function loadMoreCharacters() {
   characterDisplayCount.value = Math.min(characterDisplayCount.value + 20, characters.value.length)
 }
 
 onMounted(async () => {
-  try {
-    const [overviewRes, archetypesRes, charactersRes] = await Promise.all([
-      fetchStatsJson('/api/stats/overview'),
-      fetchStatsJson('/api/stats/archetypes'),
-      fetchStatsJson('/api/stats/characters'),
-    ])
-
-    const overviewJson = overviewRes
-    const archetypesJson = archetypesRes
-    const charactersJson = charactersRes
-
-    if (overviewJson.data) overview.value = overviewJson.data
-    if (archetypesJson.data?.items) archetypes.value = archetypesJson.data.items
-    if (charactersJson.data?.items) characters.value = charactersJson.data.items
-    updatedAt.value = overviewJson.updatedAt ?? archetypesJson.updatedAt ?? charactersJson.updatedAt ?? null
-  } catch (err) {
-    console.error('Failed to load stats:', err)
-    loadError.value = getLocaleLoadErrorMessage()
-  } finally {
-    loading.value = false
-  }
+  await loadStats()
+  loading.value = false
 })
 </script>
 
@@ -200,7 +228,10 @@ onMounted(async () => {
     <template v-else>
       <section v-if="loadError" class="stats-section" v-reveal>
         <div class="container">
-          <div class="error-card">{{ loadError }}</div>
+          <div class="error-card">
+            {{ loadError }}
+            <button type="button" class="error-retry" @click="retryLoad">{{ t('stats.retry', undefined, '重试') }}</button>
+          </div>
         </div>
       </section>
 
@@ -232,37 +263,37 @@ onMounted(async () => {
 
           <div class="ranking-list">
             <component
-              :is="getCharacterFromCode(item.code) ? 'RouterLink' : 'div'"
-              v-for="(item, index) in topCharacters"
-              :key="item.code"
+              :is="row.isLink ? 'RouterLink' : 'div'"
+              v-for="(row, index) in topCharacterRows"
+              :key="row.item.code"
               class="ranking-row character-row"
-              :to="getCharacterFromCode(item.code) ? { path: '/result', query: { character: getCharacterFromCode(item.code)?.id } } : undefined"
+              :to="row.isLink ? { path: '/result', query: { character: row.characterId } } : undefined"
               style="text-decoration: none; color: inherit; display: flex;"
             >
               <span class="ranking-index">{{ index + 1 }}</span>
               <img
-                v-if="getCharacterThumb(item.code)"
-                :src="getCharacterThumb(item.code) ?? undefined"
-                :alt="getCharacterName(item.code)"
+                v-if="row.thumb"
+                :src="row.thumb"
+                :alt="row.name"
                 class="ranking-avatar"
               />
               <div v-else class="ranking-avatar placeholder"></div>
               <div class="ranking-info">
                 <div class="ranking-header">
-                  <span class="ranking-name">{{ getCharacterName(item.code) }}</span>
-                  <span class="ranking-percent">{{ item.percent.toFixed(1) }}%</span>
+                  <span class="ranking-name">{{ row.name }}</span>
+                  <span class="ranking-percent">{{ row.item.percent.toFixed(1) }}%</span>
                 </div>
-                <span class="ranking-subtitle">{{ getCharacterSeries(item.code) || item.code }}</span>
+                <span class="ranking-subtitle">{{ row.series || row.item.code }}</span>
                 <div class="ranking-bar-track">
                   <div
                     class="ranking-bar-fill"
                     :style="{
-                      width: `${Math.max(item.percent, 1)}%`,
-                      backgroundColor: getCharacterAccent(item.code),
+                      width: `${Math.max(row.item.percent, 1)}%`,
+                      backgroundColor: row.accent,
                     }"
                   ></div>
                 </div>
-                <span class="ranking-count">{{ formatNumber(item.count) }}</span>
+                <span class="ranking-count">{{ formatNumber(row.item.count) }}</span>
               </div>
             </component>
           </div>
@@ -443,7 +474,7 @@ onMounted(async () => {
   text-align: center;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #d1d8df;
+  color: #8a97a5;
 }
 .ranking-row:nth-child(1) .ranking-index { color: #e5b540; font-size: 1.4rem; } 
 .ranking-row:nth-child(2) .ranking-index { color: #aab0b3; font-size: 1.3rem; } 
@@ -511,7 +542,7 @@ onMounted(async () => {
 .ranking-count {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #aeb6bf;
+  color: #6b7680;
   margin-top: 0.4rem;
   display: flex;
   justify-content: flex-end;
@@ -604,6 +635,23 @@ onMounted(async () => {
   text-align: center;
   max-width: 800px;
   margin: 0 auto;
+}
+
+.error-retry {
+  display: inline-block;
+  margin-left: 12px;
+  border: 1px solid #33a474;
+  background: transparent;
+  color: #33a474;
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.error-retry:hover {
+  background: #33a474;
+  color: #fff;
 }
 .skeleton-line {
   border-radius: 4px;

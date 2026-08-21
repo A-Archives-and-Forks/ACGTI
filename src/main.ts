@@ -30,6 +30,11 @@ const getRevealObserver = () => {
 app.directive('reveal', {
   mounted(el: HTMLElement) {
     el.classList.add('reveal-init')
+    // 旧浏览器无 IntersectionObserver 时直接展示，避免内容永久隐藏
+    if (!('IntersectionObserver' in window)) {
+      el.classList.add('reveal-active')
+      return
+    }
     getRevealObserver().observe(el)
   },
   unmounted(el: HTMLElement) {
