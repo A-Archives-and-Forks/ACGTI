@@ -1,8 +1,10 @@
 import { readonly, ref } from 'vue'
 
-import characterMessages from '../data/characterMessages.json'
+import { ensureCharacterMessages, getCharacterMessage } from './characterMessages'
 import { localeLabels, messages } from './messages'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type AppLocale } from './types'
+
+export { ensureCharacterMessages }
 
 const STORAGE_KEY = 'acgti:locale'
 const currentLocale = ref<AppLocale>(DEFAULT_LOCALE)
@@ -39,7 +41,7 @@ function detectSystemLocale(): AppLocale {
     const matched = normalizeLocale(item)
     if (matched) return matched
   }
-  return DEFAULT_LOCALE
+  return DEFAULT_LOCALE // detectSystemLocale 的返回值不可空，此行仅为可读性兜底
 }
 
 export function initI18n() {
@@ -47,41 +49,16 @@ export function initI18n() {
   applyDocumentLanguage(currentLocale.value)
 }
 
-function deepGet(target: unknown, path: string) {
-  return path.split('.').reduce<unknown>((value, key) => {
-    if (!value || typeof value !== 'object') return undefined
-    return (value as Record<string, unknown>)[key]
-  }, target)
-}
-
 function interpolate(template: string, params?: Record<string, string | number>) {
   if (!params) return template
   return template.replace(/\{(\w+)\}/g, (_, key) => String(params[key] ?? ''))
 }
 
-type CharacterMessage = {
-  title?: string
-  note?: string
-  tags?: string[]
-}
-
-type CharacterMessageLocale = Record<string, CharacterMessage>
-
-function getCharacterMessage(locale: AppLocale, key: string) {
-  const match = /^characters\.([a-z0-9-]+)\.(title|note|tags\.(\d+))$/.exec(key)
-  if (!match) return undefined
-
-  const [, characterId, field, tagIndex] = match
-  const localeMessages = (characterMessages as Record<AppLocale, CharacterMessageLocale>)[locale]
-  const fallbackMessages = (characterMessages as Record<AppLocale, CharacterMessageLocale>)[DEFAULT_LOCALE]
-  const message = localeMessages?.[characterId] ?? fallbackMessages?.[characterId]
-
-  if (!message) return undefined
-  if (field === 'title') return message.title
-  if (field === 'note') return message.note
-
-  const index = Number(tagIndex)
-  return Number.isInteger(index) ? message.tags?.[index] : undefined
+function deepGet(target: unknown, path: string) {
+  return path.split('.').reduce<unknown>((value, key) => {
+    if (!value || typeof value !== 'object') return undefined
+    return (value as Record<string, unknown>)[key]
+  }, target)
 }
 
 export function setLocale(locale: AppLocale) {

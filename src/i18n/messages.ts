@@ -1,9 +1,9 @@
 import type { AppLocale } from './types'
-import questions from '../data/questions.json'
-import characters from '../data/characters.json'
 
-const QUESTION_COUNT = String(questions.length)
-const CHARACTER_COUNT = String(characters.length)
+// 这两个数字与 src/data/questions.json、characters.json 保持同步，
+// 由 scripts/validate-character-data.mjs 强制校验，避免静态导入把大 JSON 拖进首屏。
+const QUESTION_COUNT = '39'
+const CHARACTER_COUNT = '113'
 
 export const localeLabels: Record<AppLocale, string> = {
   'zh-CN': '简体中文',
@@ -161,7 +161,7 @@ export const messages = {
       dimensions: ['外向 / 内向', '实感 / 直觉', '理性 / 情感', '判断 / 感知'],
     },
     quiz: {
-        questions: questions.map((q) => q.text),
+        // zh-CN 题面不在翻译表里维护：QuizPage 的 t() 回退直接使用 questions.json 的 text
       heroTitle: '免费性格测试',
       steps: [
         ['STEP 1', '完成测试', '做真实的自己并诚实回答，以发现你的性格类型。'],

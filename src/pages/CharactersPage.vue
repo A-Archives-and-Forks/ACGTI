@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import { useQuiz } from '../composables/useQuiz'
-import { useI18n } from '../i18n'
+import { ensureCharacterMessages, useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 import {
   getHiddenCharacterOrder,
@@ -15,8 +15,8 @@ import { getCharacterRarityMeta } from '../utils/characterRarity'
 import type { CharacterMatch } from '../types/quiz'
 
 useSeo({
-  title: 'ACGTI 角色库 - 105+ 二次元角色原型',
-  description: '浏览 ACGTI 官网角色库，包含 105+ 位二次元角色原型。每角色均基于 MBTI 十六型人格映射，展示性格维度、稀有度和角色来源。',
+  title: 'ACGTI 角色库 - 110+ 二次元角色原型',
+  description: '浏览 ACGTI 官网角色库，包含 110+ 位二次元角色原型。每角色均基于 MBTI 十六型人格映射，展示性格维度、稀有度和角色来源。',
   path: '/characters',
 })
 
@@ -30,9 +30,9 @@ const sortDirection = ref<SortDirection>('asc')
 const isSortMenuOpen = ref(false)
 const sortDropdownRef = ref<HTMLElement | null>(null)
 
-// 进入图鉴页时才加载角色数据
+// 进入图鉴页时才加载角色数据与角色多语言文案
 onMounted(() => {
-  void ensureData()
+  void Promise.all([ensureData(), ensureCharacterMessages()])
   document.addEventListener('click', closeSortMenu)
 })
 

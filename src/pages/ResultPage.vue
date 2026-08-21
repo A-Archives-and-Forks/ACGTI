@@ -9,7 +9,7 @@ import { useShare } from '../composables/useShare'
 import { useSeo } from '../composables/useSeo'
 import { useQuiz } from '../composables/useQuiz'
 import { socialIcons, type SocialIconBrand } from '../data/socialIcons'
-import { useI18n } from '../i18n'
+import { ensureCharacterMessages, useI18n } from '../i18n'
 import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
 import { hexToRgb, readableTextColorOn, relativeLuminance } from '../utils/color'
 import { normalizeCharacterImagePath } from '../utils/characterVisuals'
@@ -78,7 +78,7 @@ const heroQuote = computed(() => {
 
 // 结果页需要数据来处理 debug 查询和角色匹配
 onMounted(async () => {
-  await quiz.ensureData()
+  await Promise.all([quiz.ensureData(), ensureCharacterMessages()])
   quiz.resumeLastResult()
   applyDebugResultFromRoute()
 
