@@ -149,19 +149,28 @@ src/
 │   ├── characterVisuals.ts     # 角色视觉注水与图片路径归一
 │   ├── characterProbability.ts # 角色命中概率
 │   ├── statsReporter.ts        # 结果/反馈匿名上报
+│   ├── insight.ts              # AI 解读请求（只上传维度倾向）
 │   ├── color.ts                # 主题色工具（对比度/混色）
 │   ├── adsense.ts              # Google AdSense 配置
 │   └── storage.ts              # localStorage 工具（结果 + 答题进度）
-├── router/index.ts        # 路由配置
+├── router/index.ts        # 路由配置（含 View Transitions 包装）
 ├── App.vue                # 根组件（导航/页脚/语言切换）
 ├── main.ts                # 入口文件（含 v-reveal 指令）
 └── style.css              # 全局样式
 
 functions/                 # Cloudflare Pages Functions（后端 API + 全局中间件）
+├── api/insight.ts         # AI 结果解读（Workers AI + D1 分桶缓存）
+└── api/_data/             # 构建期生成的角色精简档案（AI 提示词素材）
 cron-worker/               # 独立 Cron Worker（统计快照重算与限流表清理）
 migrations/                # Cloudflare D1 数据库迁移（CI 会在全新库上干跑校验）
-scripts/                   # 数据校验 / 聚合构建 / 可达性审计脚本
+scripts/                   # 数据校验 / 聚合构建 / E2E 冒烟等脚本
+tests/                     # Vitest 单元测试（评分引擎/颜色/存储）
 analysis/                  # 反馈数据分析与权重校准流水线（本地）
+docs/
+├── adr/                   # 架构决策记录（MADR 格式，8 篇）
+├── architecture.md        # 系统架构总览（数据流图 + 扩展指南）
+├── backend.md             # 后端接口与数据库说明
+└── api.md                 # API 调用说明（规范文件见 public/api/openapi.yaml）
 ```
 
 后端 API、数据库迁移与 cron-worker 的详细说明见 [`docs/backend.md`](docs/backend.md)。

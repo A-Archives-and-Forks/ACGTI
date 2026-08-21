@@ -48,7 +48,7 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 结果页的「AI 解读」卡片由 Workers AI 生成个性化文案，遵循三条硬约束：
 
 1. **隐私**：请求只包含角色代码、四维倾向分（-1~1）与语言，绝不包含逐题答案；提示词素材来自构建期生成的 `functions/api/_data/characterBrief.json`（角色名/系列/标签，随 `npm run generate:data` 自动同步）。
-2. **成本**：以「角色 + 四维倾向分桶（强/中/轻微，3⁴=81 桶）+ 语言」为缓存键写入 `ai_insight_cache`（迁移 0009），相同画像全站共享一次生成结果；免费额度（每日 10000 Neurons）下消耗与桶数同阶而非与流量同阶。前端「换一种说法」走 `fresh=1` 重生成并覆盖缓存，同一结果限 3 次（sessionStorage 计数）。
+2. **成本**：以「角色 + 四维倾向分桶（强/中/轻微，3⁴=81 桶）+ 语言」为缓存键写入 `ai_insight_cache`（迁移 0009），相同画像全站共享一次生成结果；免费额度（每日 10000 Neurons）下消耗与桶数同阶而非与流量同阶。前端「换一种说法」走 `fresh: true` 重新生成并覆盖缓存，同一结果限 3 次（sessionStorage 计数）。
 3. **降级**：未绑定 AI、额度耗尽或生成失败一律返回 `{text:null, available:false}`，前端隐藏整卡，结果页静态解析不受影响。
 
 配置：`wrangler.jsonc` 已声明 `"ai": {"binding": "AI"}`，部署到 Cloudflare Pages 即自动生效，无需任何密钥。本地 `wrangler pages dev` 的 AI binding 走远程调用，需要网络可达；不可达时建议直接验证降级路径（E2E 冒烟已内置拦截）。模型为 `@cf/meta/llama-3.2-3b-instruct`（温度 0.2），升级模型时需同步清空 `ai_insight_cache`（缓存行记录了 `model` 字段可按需清理）。

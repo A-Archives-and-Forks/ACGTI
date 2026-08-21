@@ -1,9 +1,15 @@
 // 端到端冒烟测试：用本机 Edge 无头模式模拟真实用户走完核心流程。
-// 用法：先启动 npm run dev:pages（127.0.0.1:8788），再 node scripts/e2e-smoke.mjs
+// 用法：直接 node scripts/e2e-smoke.mjs —— 脚本会自管本地 Pages 服务器
+// （启动前临时剥离 wrangler.jsonc 的 ai binding：本地网络到 Workers AI
+//  远程网关不可达时该 binding 会拖垮 workerd；测试结束自动恢复配置）。
+import { execSync, spawn } from 'node:child_process'
+import { readFileSync, writeFileSync } from 'node:fs'
+
 import puppeteer from 'puppeteer-core'
 
 const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
 const BASE = 'http://127.0.0.1:8788'
+const WRANGLER_CONFIG = 'wrangler.jsonc'
 
 const results = []
 const consoleErrors = []
@@ -11,6 +17,56 @@ function pass(name) { results.push(['PASS', name]); console.log('  ✅', name) }
 function fail(name, detail) { results.push(['FAIL', name]); console.error('  ❌', name, detail ?? '') }
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms))
+
+async function pingServer(timeoutMs) {
+  try {
+    const resp = await fetch(BASE + '/api/ping', { signal: AbortSignal.timeout(timeoutMs) })
+    return resp.ok
+  } catch {
+    return false
+  }
+}
+
+// ── 服务器生命周期 ──
+// 已有服务器在跑（用户手动开的 dev:pages）则直接复用；否则临时去掉
+// ai binding 后自启一个，测试完恢复配置并结束进程树。
+const originalConfig = readFileSync(WRANGLER_CONFIG, 'utf-8')
+let serverProcess = null
+
+function cleanupServer() {
+  if (serverProcess?.pid) {
+    try {
+      // Windows 下需要按进程树结束，否则 workerd 子进程残留占住端口
+      execSync(`taskkill /pid ${serverProcess.pid} /T /F`, { stdio: 'ignore' })
+    } catch {}
+    serverProcess = null
+  }
+  writeFileSync(WRANGLER_CONFIG, originalConfig, 'utf-8')
+}
+
+if (!(await pingServer(1500))) {
+  const stripped = originalConfig.replace(/,?\s*\/\/[^\n]*\n\s*"ai":\s*\{[^}]*\}/, '')
+  writeFileSync(WRANGLER_CONFIG, stripped, 'utf-8')
+  serverProcess = spawn('npx', ['wrangler', 'pages', 'dev', 'dist', '--port', '8788'], {
+    shell: true,
+    stdio: 'ignore',
+  })
+  let ready = false
+  for (let i = 0; i < 40; i++) {
+    if (await pingServer(1000)) { ready = true; break }
+    await sleep(1000)
+  }
+  if (!ready) {
+    cleanupServer()
+    console.error('本地 Pages 服务器启动失败（先跑 npm run build 生成 dist/）')
+    process.exit(1)
+  }
+  console.log('已启动本地 Pages 服务器（无 ai binding）')
+}
+
+// Ctrl+C / 终止信号下 finally 不会执行，这里显式恢复配置并清理进程
+process.on('SIGINT', () => { cleanupServer(); process.exit(130) })
+process.on('SIGTERM', () => { cleanupServer(); process.exit(143) })
 
 async function text(page, selector) {
   return page.$eval(selector, el => el.textContent?.trim() ?? '').catch(() => null)
@@ -41,7 +97,7 @@ try {
   })
 
   // ── 1. 首页 ──
-  await page.goto(BASE + '/', { waitUntil: 'networkidle2', timeout: 30000 })
+  await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 30000 })
   await sleep(800)
   const homeTitle = await page.title()
   homeTitle.includes('ACGTI') ? pass('首页标题: ' + homeTitle) : fail('首页标题', homeTitle)
@@ -51,7 +107,7 @@ try {
   pass('首页截图')
 
   // ── 2. 进入答题页 ──
-  await page.goto(BASE + '/quiz', { waitUntil: 'networkidle2', timeout: 30000 })
+  await page.goto(BASE + '/quiz', { waitUntil: 'domcontentloaded', timeout: 30000 })
   await page.waitForSelector('.question-block', { timeout: 15000 })
   await sleep(500)
   let blocks = await page.$$eval('.question-block', els => els.length).catch(() => 0)
@@ -86,7 +142,7 @@ try {
   progressHint && progressHint.includes('39') ? pass('进度提示: ' + progressHint) : fail('进度提示', progressHint ?? '')
 
   // 刷新验证进度恢复
-  await page.reload({ waitUntil: 'networkidle2' })
+  await page.reload({ waitUntil: 'domcontentloaded' })
   await sleep(800)
   const hintAfterReload = await text(page, '.progress-hint')
   hintAfterReload && hintAfterReload.includes('39 / 39')
@@ -95,7 +151,7 @@ try {
 
   // ── 4. 提交 ──
   await page.click('.submit-btn')
-  await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(() => {})
+  await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => {})
   await sleep(1500)
   const resultUrl = page.url()
   resultUrl.includes('/result') ? pass('跳转结果页: ' + resultUrl) : fail('结果页跳转', resultUrl)
@@ -134,13 +190,13 @@ try {
   pass('反馈区交互元素数: ' + fbSection)
 
   // ── 7. 角色库 ──
-  await page.goto(BASE + '/characters', { waitUntil: 'networkidle2' })
+  await page.goto(BASE + '/characters', { waitUntil: 'domcontentloaded' })
   await sleep(1200)
   const cards = await page.$$eval('.character-card', els => els.length).catch(() => 0)
   cards >= 110 ? pass(`角色库渲染 ${cards} 张卡片`) : fail('角色库卡片数', String(cards))
 
   // ── 8. 统计页 ──
-  await page.goto(BASE + '/stats', { waitUntil: 'networkidle2' })
+  await page.goto(BASE + '/stats', { waitUntil: 'domcontentloaded' })
   await sleep(1500)
   const totalText = await text(page, '.overview-card .overview-value')
   totalText && totalText !== '0' ? pass('统计页总量: ' + totalText) : fail('统计页总量', totalText ?? '')
@@ -149,7 +205,7 @@ try {
   await page.screenshot({ path: 'scripts/e2e-stats.png' })
 
   // ── 9. 语言切换（切到英文后 hero/导航变化） ──
-  await page.goto(BASE + '/', { waitUntil: 'networkidle2' })
+  await page.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
   await sleep(500)
   await page.click('.lang-dropdown-trigger')
   await sleep(400)
@@ -165,13 +221,13 @@ try {
   pass('英文 SEO 标题: ' + seoTitle)
 
   // ── 10. 分享链接直达结果页（?character=） ──
-  await page.goto(BASE + '/result?character=frieren', { waitUntil: 'networkidle2' })
+  await page.goto(BASE + '/result?character=frieren', { waitUntil: 'domcontentloaded' })
   await sleep(1500)
   const previewName = await text(page, '.hero-title')
   previewName && previewName.length > 0 ? pass('角色预览直达: ' + previewName) : fail('角色预览', previewName ?? '')
 
   // ── 11. 404 路由回首页 ──
-  await page.goto(BASE + '/not-exist-route', { waitUntil: 'networkidle2' }).catch(() => {})
+  await page.goto(BASE + '/not-exist-route', { waitUntil: 'domcontentloaded' }).catch(() => {})
   await sleep(800)
   page.url().endsWith('/') || page.url().includes('/#') ? pass('未知路由重定向首页') : fail('未知路由', page.url())
 
@@ -188,4 +244,5 @@ try {
   realErrors.slice(0, 10).forEach(e => console.log('  [console]', e.slice(0, 200)))
 } finally {
   await browser.close()
+  cleanupServer()
 }

@@ -97,7 +97,8 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
 
   const characterId = str(raw.characterCode, 32)
   const lang = str(raw.lang, 8)
-  const langName = LANGUAGES[lang] ? lang : 'zh-CN'
+  // Object.hasOwn 防原型链键（toString 等）绕过白名单混入缓存键与提示词
+  const langName = Object.hasOwn(LANGUAGES, lang) ? lang : 'zh-CN'
 
   const ds = raw.dimensionScores
   const ei = num(ds?.ei, -1, 1)
