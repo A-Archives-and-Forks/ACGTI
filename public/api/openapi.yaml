@@ -8,7 +8,7 @@ openapi: 3.1.0
 
 info:
   title: ACGTI 匿名统计 API
-  version: 0.3.11
+  version: 0.4.0
   summary: ACGTI 人格测试站点的匿名统计、结果上报与 AI 解读接口
   description: |
     ACGTI（ACG Type Indicator）是一个基于 MBTI 的二次元人格测试站点。

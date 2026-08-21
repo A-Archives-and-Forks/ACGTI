@@ -88,4 +88,4 @@ npx wrangler d1 migrations apply acgti-stats --remote
 
 ## 数据分析流水线（本地）
 
-`analysis/` 目录提供反馈数据的导出、落地与分析脚本（基于用户自愿提交的自报 MBTI 样本做题目权重校准），依赖与用法见各脚本头部注释；完整说明保存在本地的 `analysis/README.md`（含内部数据规模，不随仓库发布）。全库备份流程见本地文档 `docs/d1-backup.md`。
+`analysis/` 目录提供反馈数据的导出、落地与分析脚本（基于用户自愿提交的自报 MBTI 样本做题目权重校准），其中 `item_health.py` 产出题目区分度（校正题总相关）与维度信度（Cronbach alpha）报表，是改题前的第一道体检；依赖与用法见各脚本头部注释；完整说明保存在本地的 `analysis/README.md`（含内部数据规模，不随仓库发布）。全库备份流程见本地文档 `docs/d1-backup.md`。
