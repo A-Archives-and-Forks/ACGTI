@@ -28,6 +28,9 @@ jobs:
       - name: Validate character data
         run: npm run validate:data
 
+      - name: Unit tests
+        run: npm test
+
       - name: Typecheck Pages Functions
         run: npx tsc -p tsconfig.functions.json
 

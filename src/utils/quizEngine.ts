@@ -251,11 +251,16 @@ function normalizeDimensionScore(
   directionalMax: { positive: number; negative: number },
 ) {
   // 按答案作用方向分别归一化：即使某方向的题目权重总量不足 1 也不放大百分比
+  let normalized: number
   if (rawScore >= 0) {
-    return directionalMax.positive > 0 ? rawScore / directionalMax.positive : 0
+    normalized = directionalMax.positive > 0 ? rawScore / directionalMax.positive : 0
+  } else {
+    normalized = directionalMax.negative > 0 ? rawScore / directionalMax.negative : 0
   }
 
-  return directionalMax.negative > 0 ? rawScore / directionalMax.negative : 0
+  // 权重覆盖表允许负权重（翻转语义）：反向作答负权重题会向正向注入
+  // 没有对应正向容量的分数，可能把比值推过 1。这里夹回 [-1, 1] 保住量纲契约。
+  return Math.max(-1, Math.min(1, normalized))
 }
 
 function normalizeQuestionWeights(weights: Partial<Record<QuestionArchetypeWeightId, number>>) {
