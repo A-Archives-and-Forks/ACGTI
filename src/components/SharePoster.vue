@@ -14,15 +14,30 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  /** 组件挂载且头像图加载完成（或失败）后触发，导出方等待此信号再截图 */
+  /** 组件挂载且头像图加载完成（或失败）后触发（仅作挂载期通知） */
   ready: []
 }>()
 
 const rootEl = ref<HTMLElement | null>(null)
 const { locale, t } = useI18n()
 
+// 每次调用都基于当前 <img> 状态返回新的就绪 Promise：
+// 首次导出与结果切换后的再次导出都能等到头像真正加载完成
+function waitReady(): Promise<void> {
+  return new Promise((resolve) => {
+    const done = () => resolve()
+    const el = rootEl.value
+    if (!el) return done()
+    const img = el.querySelector('img')
+    if (!img || img.complete) return done()
+    img.addEventListener('load', done, { once: true })
+    img.addEventListener('error', done, { once: true })
+  })
+}
+
 defineExpose({
   rootEl,
+  waitReady,
 })
 
 const primaryCharacter = computed(() => props.result.characterMatches[0] ?? null)
@@ -84,7 +99,7 @@ const rarityTierStyle = rarityVisuals.rarityTierStyle
 const rarityFontSizeStyle = rarityVisuals.rarityFontSizeStyle
 const raritySummaryLabel = rarityVisuals.raritySummaryLabel
 
-// 头像加载完成（含缓存命中 complete 与加载失败两种情况）后通知导出方
+// 头像加载完成（含缓存命中 complete 与加载失败两种情况）后发一次挂载期通知
 watch(rootEl, (el) => {
   if (!el) return
   const img = el.querySelector('img')

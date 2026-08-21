@@ -292,12 +292,13 @@ function pickMatchedArchetype(
     return left.id.localeCompare(right.id, 'en')
   })
 
-  return (
+  const fallback =
     sortedByScore[0] ??
     resolveArchetypeForMbti(finalCode, archetypes) ??
-    // archetypes 为空兜底（正常数据不可能触发，仅保证类型完备）
+    // archetypes 来自固定的 archetypes.json（8 条），空数组不可能发生；
+    // 这里仍显式兜底避免类型欺瞒
     archetypes[0]
-  )
+  return fallback as Archetype
 }
 
 type RankedCharacter = {

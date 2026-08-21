@@ -74,6 +74,7 @@ d1-backups/
 
 # Misc assets / archives（仓库根目录的零散 PNG 不入仓；角色图片等素材请放 assets/ 或 public/ 后显式添加）
 /*.png
+scripts/e2e-*.png
 *.zip
 *.tar
 *.gz

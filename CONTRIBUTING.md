@@ -60,6 +60,7 @@ PR 前请在本地确认以下检查通过（CI 也会执行同样的检查）�
 ```bash
 npm run validate:data   # 角色数据校验（图片引用、孤儿图片、i18n 完整性等）
 npm run build           # 类型检查 + 构建（内含数据校验）
+npm run test:e2e        # 可选：无头浏览器冒烟测试（需先启动 npm run dev:pages）
 ```
 
 ### 4. 提交 Pull Request

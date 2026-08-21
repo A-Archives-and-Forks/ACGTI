@@ -1,4 +1,4 @@
-// /api/stats/overview — 从快照表读取总提交数、今日提交数、24h 提交数
+// /api/stats/overview — 从快照表读取总提交数、今日提交数、近两日提交数
 // 快照表由 Cron Worker 每 15 分钟更新一次
 
 function isStatsSnapshotTableMissing(err: unknown): boolean {

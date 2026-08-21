@@ -1,5 +1,4 @@
 import type { QuizRecord } from '../types/quiz'
-import { isAnsweredValue } from '../types/quiz'
 
 const STORAGE_KEY = 'acgti:last-result'
 // 进行中的答题进度，避免刷新/误触返回导致 39 题答案全部丢失
@@ -86,7 +85,3 @@ export function clearQuizProgress() {
   window.localStorage.removeItem(PROGRESS_KEY)
 }
 
-/** 进度里只要有一题是有效作答就视为“已开始”，用于离开页面的提醒与恢复判断 */
-export function hasAnyAnswer(progress: QuizProgress | null): boolean {
-  return !!progress?.answers.some((value) => isAnsweredValue(value))
-}

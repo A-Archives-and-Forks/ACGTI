@@ -175,16 +175,18 @@ const authorSocialLinks: AuthorSocialLink[] = [
             <span class="arrow"></span>
           </button>
           <transition name="dropdown">
-            <ul class="lang-dropdown-menu" v-show="isLangOpen" role="listbox" :aria-label="t('app.language.label')">
+            <ul class="lang-dropdown-menu" v-show="isLangOpen" :aria-label="t('app.language.label')">
               <li
                 v-for="option in localeOptions"
                 :key="option.code"
-                role="option"
-                :aria-selected="option.code === locale"
                 :class="{ active: option.code === locale }"
-                tabindex="-1"
               >
-                <button type="button" class="lang-option-btn" @click="selectLanguage(option.code)">
+                <button
+                  type="button"
+                  class="lang-option-btn"
+                  :aria-pressed="option.code === locale"
+                  @click="selectLanguage(option.code)"
+                >
                   {{ option.label }}
                 </button>
               </li>

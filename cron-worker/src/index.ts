@@ -21,7 +21,7 @@ async function refreshAllSnapshots(db: D1Database) {
   const archetypes = await calculateArchetypeStats(db, overview.totalSubmissions)
   await updateSnapshot(db, 'archetypes', archetypes)
 
-  // 3. 计算角色排行榜（top 100）
+  // 3. 计算角色排行榜（top 200）
   const characters = await calculateCharacterStats(db, overview.totalSubmissions)
   await updateSnapshot(db, 'characters', characters)
 }

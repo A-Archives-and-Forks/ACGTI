@@ -31,10 +31,11 @@ const sortDirection = ref<SortDirection>('asc')
 const isSortMenuOpen = ref(false)
 const sortDropdownRef = ref<HTMLElement | null>(null)
 
-// 进入图鉴页时才加载角色数据与角色多语言文案
-onMounted(() => {
-  void Promise.all([ensureData(), ensureCharacterMessages()])
+// 进入图鉴页时才加载角色数据与角色多语言文案（await 保证卡片渲染时文案已就绪，
+// 避免非中文用户先闪现简体中文标题且不自动恢复）
+onMounted(async () => {
   document.addEventListener('click', closeSortMenu)
+  await Promise.all([ensureData(), ensureCharacterMessages()])
 })
 
 onUnmounted(() => {
@@ -222,16 +223,15 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
             </button>
 
             <transition name="dropdown">
-              <ul class="sort-dropdown-menu" v-show="isSortMenuOpen" role="listbox">
+              <ul class="sort-dropdown-menu" v-show="isSortMenuOpen">
                 <li
                   v-for="option in sortOptions"
                   :key="option.value"
-                  role="option"
-                  :aria-selected="option.value === sortField"
                   :class="{ active: option.value === sortField }"
-                  @click.stop="selectSortField(option.value)"
                 >
-                  {{ option.label }}
+                  <button type="button" class="sort-option-btn" :aria-pressed="option.value === sortField" @click="selectSortField(option.value)">
+                    {{ option.label }}
+                  </button>
                 </li>
               </ul>
             </transition>
@@ -419,8 +419,17 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
 }
 
 .sort-dropdown-menu li {
-  padding: 0.72rem 0.9rem;
   border-radius: 12px;
+}
+
+.sort-option-btn {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.72rem 0.9rem;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
   color: #4d5c66;
   font-weight: 700;
   line-height: 1.3;
@@ -428,12 +437,12 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
   transition: background-color 0.16s ease, color 0.16s ease;
 }
 
-.sort-dropdown-menu li:hover {
+.sort-option-btn:hover {
   background: #f4f8f6;
   color: #2c3c45;
 }
 
-.sort-dropdown-menu li.active {
+.sort-dropdown-menu li.active .sort-option-btn {
   background: #e8f4ee;
   color: #2d7f5e;
 }

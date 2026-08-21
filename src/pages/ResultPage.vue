@@ -27,10 +27,8 @@ const activeDebugResult = ref<ReturnType<typeof quiz.createDebugResult>>(null)
 const result = computed(() => activeDebugResult.value ?? quiz.latestResult.value)
 const isCharacterImageBroken = ref(false)
 const share = useShare()
-const posterRef = ref<{ rootEl: HTMLElement | null } | null>(null)
+const posterRef = ref<{ rootEl: HTMLElement | null; waitReady: () => Promise<void> } | null>(null)
 const shouldMountPoster = ref(false)
-let posterReadyResolve: (() => void) | null = null
-const posterReadyPromise = ref<Promise<void> | null>(null)
 const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
 const liveStats = ref<ResultStats | null>(null)
@@ -131,22 +129,21 @@ onMounted(async () => {
 
 async function exportPosterImage() {
   if (!result.value) return
-  // 首次导出时才挂载 SharePoster 组件，并等待其真正就绪（组件挂载 + 头像图加载完成）
+  // 首次导出时才挂载 SharePoster 异步组件
   if (!shouldMountPoster.value) {
-    posterReadyPromise.value = new Promise<void>((resolve) => {
-      posterReadyResolve = resolve
-      // 兜底：即使 ready 事件异常丢失，也不会让导出永远挂起
-      window.setTimeout(resolve, 4000)
-    })
     shouldMountPoster.value = true
+    for (let i = 0; i < 40 && !posterRef.value; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    }
   }
-  await posterReadyPromise.value
-  if (!posterRef.value?.rootEl) return
-  void share.exportPoster(posterRef.value.rootEl, result.value)
-}
-
-function handlePosterReady() {
-  posterReadyResolve?.()
+  const poster = posterRef.value
+  if (!poster?.rootEl) return
+  // 每次导出都等待当前头像加载完成；4s 兜底避免弱网下永久挂起
+  await Promise.race([
+    poster.waitReady(),
+    new Promise((resolve) => setTimeout(resolve, 4000)),
+  ])
+  void share.exportPoster(poster.rootEl, result.value)
 }
 
 watch(
@@ -762,7 +759,7 @@ async function handleFeedbackSubmit() {
         </section>
 
 <div class="poster-capture-wrapper">
-  <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" @ready="handlePosterReady" />
+  <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" />
 </div>
 
         <!-- 用户反馈卡片 -->
@@ -1029,7 +1026,8 @@ async function handleFeedbackSubmit() {
 .result-hero-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px 100px;  display: grid;
+  padding: 40px 24px 100px;
+  display: grid;
   gap: 40px;
   grid-template-columns: 1fr;
   align-items: start;
@@ -1235,6 +1233,14 @@ async function handleFeedbackSubmit() {
 
 .action-btn.ghost {
   background: transparent;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.action-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .hero-feedback {

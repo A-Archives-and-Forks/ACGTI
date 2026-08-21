@@ -149,6 +149,7 @@ export function useQuiz() {
       } else {
         state.answers = emptyAnswers()
         state.startedAt = null
+        clearQuizProgress()
       }
     },
     questions,

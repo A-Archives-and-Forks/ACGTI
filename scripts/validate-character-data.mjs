@@ -262,9 +262,22 @@ function validateQuestionAffinity(characters) {
 }
 
 /** 图片资产校验：引用必存在、禁用 png 引用、public 目录不允许孤儿图片回潮 */
-function validateImageAssets(visuals) {
+function validateImageAssets(visuals, characters, mode) {
+  // source 模式以源文件 visual 为真源（聚合 characterVisuals.json 可能滞后于源文件）；
+  // legacy 模式只能依赖聚合文件
+  const refOf = (id) => {
+    if (mode === 'source') {
+      const char = characters.find((c) => c.id === id)
+      return char?._visual ?? {}
+    }
+    return visuals[id] ?? {}
+  }
   const referenced = new Set()
-  for (const [id, v] of Object.entries(visuals)) {
+  const ids = mode === 'source'
+    ? characters.map((c) => c.id)
+    : Object.keys(visuals)
+  for (const id of ids) {
+    const v = refOf(id)
     for (const key of ['image', 'thumb']) {
       const p = v?.[key]
       if (!p) continue
@@ -445,6 +458,8 @@ function main() {
       }
       if (!char._i18n.series || Object.keys(char._i18n.series).length < VALID_LOCALES.size) {
         warn(`${prefix} 源文件中缺少或未覆盖四语的 i18n.series`)
+      } else if (char.series && char._i18n.series['zh-CN'] && char._i18n.series['zh-CN'] !== char.series) {
+        warn(`${prefix} i18n.series.zh-CN（${char._i18n.series['zh-CN']}）与 meta.series（${char.series}）不一致，运行时以 meta.series 为准`)
       }
       // title/note/tags 翻译完整性
       for (const locale of ['zh-TW', 'en', 'ja']) {
@@ -479,7 +494,7 @@ function main() {
   }
 
   validateQuestionAffinity(characters)
-  validateImageAssets(visuals)
+  validateImageAssets(visuals, characters, mode)
   validateMessageCountConstants(characters.length)
   validateEngineWeightSync()
 

@@ -217,7 +217,7 @@ npm run build:watch
 npm run dev:pages
 ```
 
-然后访问：`http://127.0.0.1:8788/#/stats`
+然后访问：`http://127.0.0.1:8788/stats`
 
 注意：
 

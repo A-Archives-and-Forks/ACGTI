@@ -66,7 +66,7 @@ export async function onRequestGet(context: any) {
         sameCharacterPercent = Math.round((sameCharacterCount / totalSubmissions) * 10000) / 100
       }
 
-      // 从快照排行算 rank（快照只存 top 100，超出则为 null）
+      // 从快照排行算 rank（快照只存 top 200，超出则为 null）
       if (sameCharacterCount > 0) {
         try {
           const charSnapshot = await DB.prepare(

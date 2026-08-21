@@ -79,7 +79,7 @@ try {
   await page.reload({ waitUntil: 'networkidle2' })
   await sleep(800)
   const hintAfterReload = await text(page, '.progress-hint')
-  hintAfterReload && hintAfterReload.includes('39') && hintAfterReload.includes('39')
+  hintAfterReload && hintAfterReload.includes('39 / 39')
     ? pass('刷新后答题进度已恢复: ' + hintAfterReload)
     : fail('刷新后进度未恢复', hintAfterReload ?? '')
 
@@ -103,7 +103,6 @@ try {
   // ── 5. 分享海报挂载（点击导出按钮，验证不报错且组件挂载） ──
   const exportBtn = await page.$('.hero-export-btn')
   if (exportBtn) {
-    await page.evaluate(() => { window.__posterReady = false })
     await exportBtn.click()
     await sleep(2500)
     const posterMounted = await page.$('.share-poster')
