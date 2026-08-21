@@ -10,12 +10,14 @@
  *   src/data/characters.json       — 角色元数据数组
  *   src/data/characterVisuals.json — 角色 visual 映射
  *   src/data/characterMessages.json — 角色结果文案 i18n 映射
+ *   functions/api/_data/characterBrief.json — 角色 id → 名称/系列/标签/MBTI 精简映射
+ *                                           （供 /api/insight 构造 AI 提示词，随构建自动同步）
  *
  * i18n/characters.ts 不再自动生成，保持手动维护。
  * 如需同步，运行 npm run validate:data 检查一致性。
  */
 
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -110,6 +112,24 @@ function main() {
   const messageJson = JSON.stringify(sortedCharacterMessages, null, 2) + '\n'
   writeFileSync(resolve(DATA_DIR, 'characterMessages.json'), messageJson, 'utf-8')
   console.log(`  ✓ src/data/characterMessages.json（${characters.length} 个角色 × 4 语言）`)
+
+  // 6. 写入后端 AI 提示词用的角色精简档案（不含长文案，控制 Functions 包体）
+  const briefs = {}
+  for (const char of characters) {
+    if (!char.id) continue
+    briefs[char.id] = {
+      name: char.name || char.id,
+      title: char.title || '',
+      series: char.series || '',
+      mbti: char.matchCode || '',
+      tags: (char.tags || []).slice(0, 8),
+    }
+  }
+  const briefJson = JSON.stringify(briefs, null, 2) + '\n'
+  const briefDir = resolve(ROOT, 'functions/api/_data')
+  mkdirSync(briefDir, { recursive: true })
+  writeFileSync(resolve(briefDir, 'characterBrief.json'), briefJson, 'utf-8')
+  console.log(`  ✓ functions/api/_data/characterBrief.json（${Object.keys(briefs).length} 个角色）`)
 
   console.log('\n  构建完成。\n')
 }

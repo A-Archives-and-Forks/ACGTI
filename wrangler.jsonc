@@ -9,5 +9,9 @@
       "database_name": "acgti-stats",
       "database_id": "23753cd6-93d4-4a65-b739-4ae456ae32de"
     }
-  ]
+  ],
+  // Workers AI binding：/api/insight 结果解读用；未部署该绑定的环境自动降级
+  "ai": {
+    "binding": "AI"
+  }
 }

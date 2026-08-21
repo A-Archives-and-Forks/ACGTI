@@ -3,6 +3,7 @@ import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AdsenseSlot from '../components/AdsenseSlot.vue'
+import AiInsightCard from '../components/AiInsightCard.vue'
 import AppIcon from '../components/AppIcon.vue'
 import { useCharacterRarity } from '../composables/useCharacterRarity'
 import { useShare } from '../composables/useShare'
@@ -706,6 +707,18 @@ async function handleFeedbackSubmit() {
             </aside>
           </div>
         </section>
+
+        <AiInsightCard
+          v-if="result"
+          :character-code="primaryCharacter?.id || ''"
+          :scores="{
+            ei: result.scores.E_I.score,
+            sn: result.scores.S_N.score,
+            tf: result.scores.T_F.score,
+            jp: result.scores.J_P.score,
+          }"
+          :accent="resultThemeColor"
+        />
 
         <section class="analysis-grid" id="analysis-section" v-reveal>
           <article class="analysis-card good">

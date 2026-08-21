@@ -29,6 +29,16 @@ try {
     if (msg.type() === 'error') consoleErrors.push(msg.text())
   })
   page.on('pageerror', (err) => consoleErrors.push('pageerror: ' + err.message))
+  // AI 解读依赖远程 Workers AI（冒烟环境网络不可达，且额度宝贵）：
+  // 统一拦截为不可用，顺带验证「后端不可用时卡片隐藏」的降级路径
+  await page.setRequestInterception(true)
+  page.on('request', (req) => {
+    if (req.url().includes('/api/insight')) {
+      req.respond({ status: 200, contentType: 'application/json', body: '{"text":null,"available":false}' })
+    } else {
+      req.continue()
+    }
+  })
 
   // ── 1. 首页 ──
   await page.goto(BASE + '/', { waitUntil: 'networkidle2', timeout: 30000 })
@@ -99,6 +109,10 @@ try {
   await sleep(1000)
   const liveStatsText = await page.evaluate(() => document.body.innerText.match(/测过|人测过|命中率|同角色/g)?.slice(0, 4) ?? [])
   pass('结果页统计词命中: ' + JSON.stringify(liveStatsText))
+
+  // AI 解读卡片降级：后端不可用时整卡隐藏、不留空白
+  const aiCard = await page.$('.ai-insight-section')
+  aiCard ? fail('AI 解读卡片应在不可用时隐藏') : pass('AI 解读卡片降级隐藏')
 
   // ── 5. 分享海报挂载（点击导出按钮，验证不报错且组件挂载） ──
   const exportBtn = await page.$('.hero-export-btn')

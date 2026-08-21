@@ -1,0 +1,280 @@
+<script setup lang="ts">
+// AI 结果解读卡片：进入结果页自动请求 /api/insight，
+// 后端未绑定 Workers AI 或生成失败时整卡隐藏（渐进增强，不占版面）。
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
+
+import { useI18n } from '../i18n'
+import { fetchAiInsight } from '../utils/insight'
+
+const props = defineProps<{
+  characterCode: string
+  scores: { ei: number; sn: number; tf: number; jp: number }
+  accent: string
+}>()
+
+const { locale, t } = useI18n()
+
+type Phase = 'loading' | 'streaming' | 'done' | 'hidden'
+const phase = ref<Phase>('loading')
+const fullText = ref('')
+const displayCount = ref(0)
+const isCached = ref(false)
+const isRegenerating = ref(false)
+const limitReached = ref(false)
+
+// 同一结果最多手动重试 3 次，保护免费额度
+const REGENERATE_LIMIT = 3
+const retryKey = computed(() => `acgti:ai-insight-retry:${props.characterCode}`)
+const retryCount = ref(Number(sessionStorage.getItem(retryKey.value) ?? '0') || 0)
+if (retryCount.value >= REGENERATE_LIMIT) {
+  limitReached.value = true
+}
+
+const prefersReducedMotion =
+  typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+let streamTimer: ReturnType<typeof setInterval> | null = null
+
+function stopStream() {
+  if (streamTimer) {
+    clearInterval(streamTimer)
+    streamTimer = null
+  }
+}
+
+function playStream() {
+  stopStream()
+  if (prefersReducedMotion || !fullText.value) {
+    displayCount.value = fullText.value.length
+    phase.value = 'done'
+    return
+  }
+  phase.value = 'streaming'
+  displayCount.value = 0
+  // 每 32ms 输出 1-2 个字符；约百字的解读在 2s 内播完
+  streamTimer = setInterval(() => {
+    displayCount.value = Math.min(fullText.value.length, displayCount.value + (Math.random() > 0.5 ? 2 : 1))
+    if (displayCount.value >= fullText.value.length) {
+      stopStream()
+      phase.value = 'done'
+    }
+  }, 32)
+}
+
+onBeforeUnmount(stopStream)
+
+async function load(fresh = false) {
+  if (!props.characterCode) {
+    phase.value = 'hidden'
+    return
+  }
+  phase.value = 'loading'
+  const data = await fetchAiInsight(props.characterCode, props.scores, locale.value, fresh)
+  if (!data?.available || !data.text) {
+    // 后端未绑定 AI / 额度耗尽 / 请求失败：隐藏整卡，页面其他内容不受影响
+    phase.value = 'hidden'
+    return
+  }
+  fullText.value = data.text
+  isCached.value = !!data.cached
+  playStream()
+}
+
+function regenerate() {
+  if (isRegenerating.value || limitReached.value || phase.value === 'hidden') return
+  retryCount.value += 1
+  sessionStorage.setItem(retryKey.value, String(retryCount.value))
+  if (retryCount.value >= REGENERATE_LIMIT) {
+    limitReached.value = true
+  }
+  isRegenerating.value = true
+  load(true).finally(() => {
+    isRegenerating.value = false
+  })
+}
+
+// 语言切换 / 角色预览切换后重新请求（缓存键含语言，命中时开销极小）
+watch(
+  () => [props.characterCode, locale.value] as const,
+  () => {
+    load()
+  },
+)
+
+load()
+
+const displayText = computed(() => fullText.value.slice(0, displayCount.value))
+const accentColor = computed(() => props.accent || '#33a474')
+</script>
+
+<template>
+  <section v-if="phase !== 'hidden'" class="ai-insight-section" v-reveal :style="{ '--ai-accent': accentColor }">
+    <div class="section-title-wrap">
+      <div class="section-index">✦</div>
+      <h2 class="section-title">{{ t('result.aiInsight.title') }}</h2>
+    </div>
+
+    <div class="ai-insight-card">
+      <div v-if="phase === 'loading'" class="ai-insight-skeleton" aria-live="polite">
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line short"></span>
+        <p class="ai-insight-loading-hint">{{ t('result.aiInsight.loading') }}</p>
+      </div>
+
+      <template v-else>
+        <p class="ai-insight-text" aria-live="polite">{{ displayText }}<span v-if="phase === 'streaming'" class="ai-caret">▍</span></p>
+
+        <div class="ai-insight-footer">
+          <p class="ai-insight-privacy">{{ t('result.aiInsight.privacy') }}</p>
+          <div class="ai-insight-actions">
+            <span v-if="isCached" class="ai-insight-cached-badge">{{ t('result.aiInsight.cachedBadge') }}</span>
+            <span v-if="limitReached" class="ai-insight-limit-hint">{{ t('result.aiInsight.limitReached') }}</span>
+            <button
+              v-else
+              class="ai-insight-regen-btn"
+              type="button"
+              :disabled="isRegenerating || phase === 'streaming'"
+              @click="regenerate"
+            >
+              {{ isRegenerating ? t('result.aiInsight.regenerating') : t('result.aiInsight.regenerate') }}
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.ai-insight-section {
+  margin-bottom: 32px;
+}
+
+.ai-insight-card {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--ai-accent, #33a474) 28%, #e3e8ee);
+  border-left: 4px solid var(--ai-accent, #33a474);
+  border-radius: 14px;
+  padding: 22px 24px 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--ai-accent, #33a474) 7%, #ffffff), #ffffff);
+  box-shadow: 0 2px 10px rgb(30 41 59 / 5%);
+}
+
+.ai-insight-skeleton {
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #edf1f5 25%, #f7fafc 50%, #edf1f5 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+.skeleton-line.short {
+  width: 62%;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.ai-insight-loading-hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #8a97a6;
+}
+
+.ai-insight-text {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.9;
+  color: #2c3a49;
+  min-height: 3.8em;
+}
+
+.ai-caret {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--ai-accent, #33a474);
+  animation: caret-blink 0.9s step-end infinite;
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+.ai-insight-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #e3e8ee;
+}
+
+.ai-insight-privacy {
+  margin: 0;
+  flex: 1 1 320px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #9aa6b4;
+}
+
+.ai-insight-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-insight-cached-badge {
+  font-size: 12px;
+  color: #8a97a6;
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.ai-insight-limit-hint {
+  font-size: 12px;
+  color: #b0bac6;
+}
+
+.ai-insight-regen-btn {
+  border: 1px solid color-mix(in srgb, var(--ai-accent, #33a474) 45%, #e3e8ee);
+  background: #ffffff;
+  color: var(--ai-accent, #33a474);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.ai-insight-regen-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ai-accent, #33a474) 10%, #ffffff);
+}
+
+.ai-insight-regen-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.ai-insight-regen-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line,
+  .ai-caret {
+    animation: none;
+  }
+}
+</style>

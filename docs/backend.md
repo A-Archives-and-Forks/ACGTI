@@ -12,6 +12,7 @@ functions/                # Cloudflare Pages Functions（后端 API）
 │   ├── config.ts         # 运行时配置（Turnstile site key 下发）
 │   ├── submit.ts         # 结果匿名上报（聚合表自增 + 2% 抽样明细，限流 30 次/分/IP）
 │   ├── feedback.ts       # 用户自报 MBTI 反馈（限流 5 次/分/IP，含答案明细）
+│   ├── insight.ts        # AI 结果解读（Workers AI + D1 缓存，限流 10 次/分/IP）
 │   ├── ping.ts           # 健康检查
 │   └── stats/            # 统计查询接口（读取快照/聚合表，带 5 分钟缓存）
 │       ├── overview.ts   # 总量 / 今日 / 近两日
@@ -33,6 +34,7 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 | `/api/feedback` | POST | 200 `{ok:true}` | 400/429/500 `{ok:false,error}` |
 | `/api/stats/*` | GET | 200 `{data, updatedAt}` | 500 `{error}` |
 | `/api/config` | GET | 200 `{turnstileSiteKey?}` | — |
+| `/api/insight` | POST | 200 `{text, cached, available}` | 400 参数非法 / 429 超限 |
 | `/api/ping` | GET | 200 `pong`（text/plain） | — |
 
 设计要点：
@@ -40,6 +42,16 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 - **聚合表不可逆**：`submit` 直接对 `archetype_counts` / `character_counts` / `pair_counts` / `daily_counts` 做 UPSERT 自增，无法事后剔除脏数据，因此入口配了分钟级限流兜底。
 - **答案量程约定**：前后端约定反馈/明细中的 `answerValue` 为五档量程（±2），前端会把七档 UI 的 ±3 压缩后上报（见 `src/pages/ResultPage.vue` 的 `collectAnswerList` 与 `functions/api/_shared.ts` 的 `validateAnswers`，两侧需同步修改）。
 - **版本号单一来源**：`appVersion` 来自 `package.json`（vite define 注入），上限 32 字符。
+
+## AI 结果解读（/api/insight）
+
+结果页的「AI 解读」卡片由 Workers AI 生成个性化文案，遵循三条硬约束：
+
+1. **隐私**：请求只包含角色代码、四维倾向分（-1~1）与语言，绝不包含逐题答案；提示词素材来自构建期生成的 `functions/api/_data/characterBrief.json`（角色名/系列/标签，随 `npm run generate:data` 自动同步）。
+2. **成本**：以「角色 + 四维倾向分桶（强/中/轻微，3⁴=81 桶）+ 语言」为缓存键写入 `ai_insight_cache`（迁移 0009），相同画像全站共享一次生成结果；免费额度（每日 10000 Neurons）下消耗与桶数同阶而非与流量同阶。前端「换一种说法」走 `fresh=1` 重生成并覆盖缓存，同一结果限 3 次（sessionStorage 计数）。
+3. **降级**：未绑定 AI、额度耗尽或生成失败一律返回 `{text:null, available:false}`，前端隐藏整卡，结果页静态解析不受影响。
+
+配置：`wrangler.jsonc` 已声明 `"ai": {"binding": "AI"}`，部署到 Cloudflare Pages 即自动生效，无需任何密钥。本地 `wrangler pages dev` 的 AI binding 走远程调用，需要网络可达；不可达时建议直接验证降级路径（E2E 冒烟已内置拦截）。模型为 `@cf/meta/llama-3.2-3b-instruct`（温度 0.2），升级模型时需同步清空 `ai_insight_cache`（缓存行记录了 `model` 字段可按需清理）。
 
 ## 数据库迁移
 
