@@ -3,7 +3,7 @@
 
 function isStatsSnapshotTableMissing(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err)
-  return /no such table:/i.test(msg)
+  return /no such table:\s*stats_snapshot/i.test(msg)
 }
 
 export async function onRequestGet(context: any) {
@@ -21,15 +21,17 @@ export async function onRequestGet(context: any) {
   }
 
   try {
-    // 1. 从 overview 快照拿 totalSubmissions
+    // 1. 从 overview 快照拿 totalSubmissions 与快照更新时间
     const overviewSnapshot = await DB.prepare(
-      'SELECT value_json FROM stats_snapshot WHERE key = ?'
-    ).bind('overview').first<{ value_json: string }>()
+      'SELECT value_json, updated_at FROM stats_snapshot WHERE key = ?'
+    ).bind('overview').first<{ value_json: string; updated_at: string }>()
 
     let totalSubmissions = 0
+    let snapshotUpdatedAt: string | null = null
     if (overviewSnapshot) {
       const overviewData = JSON.parse(overviewSnapshot.value_json)
       totalSubmissions = overviewData.totalSubmissions ?? 0
+      snapshotUpdatedAt = overviewSnapshot.updated_at ?? null
     }
 
     // 如果快照没有数据，尝试从聚合表直接计算
@@ -121,7 +123,8 @@ export async function onRequestGet(context: any) {
       }
     }
 
-    const updatedAt = new Date().toISOString()
+    // updatedAt 返回快照的真实更新时间（无快照时为 null），不再用响应生成时间冒充
+    const updatedAt = snapshotUpdatedAt
 
     return new Response(JSON.stringify({
       data: {

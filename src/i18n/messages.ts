@@ -517,7 +517,7 @@ export const messages = {
     overview: {
       total: '总测试次数',
       today: '今日测试',
-      last24h: '近 24 小时',
+      last24h: '近两日',
     },
     archetypes: {
       title: '原型排行榜',
@@ -1349,7 +1349,7 @@ export const messages = {
     overview: {
       total: '總測試次數',
       today: '今日測試',
-      last24h: '近 24 小時',
+      last24h: '近兩日',
     },
     archetypes: {
       title: '原型排行榜',
@@ -2058,7 +2058,7 @@ export const messages = {
     overview: {
       total: 'Total Tests',
       today: 'Today',
-      last24h: 'Last 24 Hours',
+      last24h: 'Last 2 Days',
     },
     archetypes: {
       title: 'Archetype Rankings',
@@ -2759,7 +2759,7 @@ export const messages = {
     overview: {
       total: '総テスト数',
       today: '今日のテスト',
-      last24h: '過去24時間',
+      last24h: '直近2日',
     },
     archetypes: {
       title: 'アーキタイプランキング',

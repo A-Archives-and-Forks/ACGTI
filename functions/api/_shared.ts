@@ -98,7 +98,7 @@ export async function verifyTurnstile(
 
 /**
  * 简易分钟级限流：基于 CF-Connecting-IP
- * 使用 D1 做轻量计数（每分钟归零）
+ * 使用 D1 做轻量计数（每分钟归零，由 cron-worker 定期清理过期行）
  * 适用于低流量场景；高流量应改用 Cloudflare Rate Limiting API
  */
 export async function checkRateLimit(
@@ -108,21 +108,16 @@ export async function checkRateLimit(
 ): Promise<boolean> {
   const windowKey = `rl:${ip}:${Math.floor(Date.now() / 60000)}`
   try {
+    // 单条原子 UPSERT + RETURNING：并发请求各自拿到自增后的计数，避免"先读后写"竞态超限
     const row = await DB.prepare(
-      'SELECT cnt FROM _rate_limit WHERE k = ?'
-    ).bind(windowKey).first<{ cnt: number }>()
+      `INSERT INTO _rate_limit (k, cnt, exp) VALUES (?, 1, ?)
+       ON CONFLICT(k) DO UPDATE SET cnt = cnt + 1
+       RETURNING cnt`
+    ).bind(windowKey, Math.floor(Date.now() / 1000) + 120).first<{ cnt: number }>()
 
-    const current = row?.cnt ?? 0
-    if (current >= limit) return false
-
-    // upsert 计数
-    await DB.prepare(
-      'INSERT INTO _rate_limit (k, cnt, exp) VALUES (?, 1, ?) ON CONFLICT(k) DO UPDATE SET cnt = cnt + 1'
-    ).bind(windowKey, Math.floor(Date.now() / 1000) + 120).run()
-
-    return true
+    return (row?.cnt ?? 0) <= limit
   } catch {
-    // 表可能不存在，降级为放行
+    // 表不存在或 D1 抖动时降级放行：统计类端点的可用性优先于严格限流
     return true
   }
 }

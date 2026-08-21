@@ -21,20 +21,6 @@ export async function onRequestGet(context: any) {
   const isLocalRequest = isLocalTurnstileHost(context.request.url)
   const siteKey = viteSiteKey || legacySiteKey || (isLocalRequest ? TURNSTILE_TEST_SITE_KEY : '')
 
-  console.log('[api/config] Turnstile key diagnostics', {
-    source: viteSiteKey
-      ? 'VITE_TURNSTILE_SITE_KEY'
-      : legacySiteKey
-        ? 'TURNSTILE_SITE_KEY'
-        : isLocalRequest
-          ? 'TURNSTILE_TEST_SITE_KEY(local-fallback)'
-          : 'none',
-    viteKeyLength: viteSiteKey.length,
-    legacyKeyLength: legacySiteKey.length,
-    isLocalRequest,
-    hasSiteKey: siteKey.length > 0,
-  })
-
   return new Response(
     JSON.stringify({
       turnstileSiteKey: siteKey || undefined,

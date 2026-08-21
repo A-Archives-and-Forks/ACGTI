@@ -101,34 +101,8 @@ async function insertFeedbackWithAnswers(
   ).run()
 }
 
-async function insertFeedbackLegacy(
-  DB: any,
-  params: {
-    feedbackId: string
-    submissionId: string | null
-    now: string
-    appVersion: string
-    selfMbti: string
-    confidence: number
-    note: string | null
-  }
-) {
-  return DB.prepare(
-    `INSERT INTO mbti_feedback (id, submission_id, created_at, app_version, self_mbti, confidence, note)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).bind(
-    params.feedbackId,
-    params.submissionId,
-    params.now,
-    params.appVersion,
-    params.selfMbti,
-    params.confidence,
-    params.note,
-  ).run()
-}
-
 export async function onRequestPost(context: any) {
-  const { DB } = context.env as { DB: any }
+  const { DB } = context.env as { DB: D1Database }
 
   // --- 限流 ---
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
@@ -151,7 +125,7 @@ export async function onRequestPost(context: any) {
   const selfMbti = str(raw.selfMbti, 4)
   const confidence = num(raw.confidence, 1, 5)
   const note = typeof raw.note === 'string' ? raw.note.slice(0, 200) : null
-  const appVersion = str(raw.appVersion, 16)
+  const appVersion = str(raw.appVersion, 32)
   const validatedAnswers = raw.answers === undefined ? null : validateAnswers(raw.answers)
   const predictedMbti = str(raw.predictedMbti, 4)
   const archetypeCode = str(raw.archetypeCode, 32)
@@ -196,20 +170,20 @@ export async function onRequestPost(context: any) {
       characterCode: characterCode || null,
     })
 
-    console.log('✅ Feedback stored', { feedbackId, res })
+    console.log('✅ Feedback stored', { feedbackId, meta: res.meta })
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
-    console.error('❌ Feedback error (initial attempt):', err)
+    // 首次插入仅在建表/加列缺失时失败（如迁移未执行的新环境），
+    // 尝试一次自修复后重试；不再降级写"无答案"的 legacy 记录，避免静默丢失校准数据。
     if (isMissingFeedbackTable(err) || isMissingFeedbackAnswerColumns(err)) {
       try {
-        console.log('🔧 Attempting feedback schema repair...')
-        await ensureFeedbackTable(DB)
+        console.warn('🔧 Feedback schema missing, attempting repair...')
         await ensureFeedbackAnswerColumns(DB)
-        const res = await insertFeedbackWithAnswers(DB, {
+        await insertFeedbackWithAnswers(DB, {
           feedbackId,
           submissionId: submissionIdOrNull,
           now,
@@ -224,44 +198,20 @@ export async function onRequestPost(context: any) {
           characterCode: characterCode || null,
         })
 
-        console.log('✅ Feedback stored after schema repair', { feedbackId, res })
-
+        console.log('✅ Feedback stored after schema repair', { feedbackId })
         return new Response(JSON.stringify({ ok: true }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         })
       } catch (retryErr) {
         console.error('❌ Feedback retry after schema repair failed:', retryErr)
-        try {
-          console.log('🔧 Attempting feedback legacy fallback...')
-          await ensureFeedbackTable(DB)
-          const res = await insertFeedbackLegacy(DB, {
-            feedbackId,
-            submissionId: submissionIdOrNull,
-            now,
-            appVersion,
-            selfMbti: selfMbtiUpper,
-            confidence,
-            note,
-          })
-
-          console.log('✅ Feedback stored with legacy schema', { feedbackId, res })
-
-          return new Response(JSON.stringify({ ok: true }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        } catch (legacyErr) {
-          console.error('❌ Feedback error after legacy fallback:', legacyErr)
-          return new Response(JSON.stringify({ ok: false, error: 'internal', details: String(legacyErr) }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
       }
+    } else {
+      console.error('❌ Feedback error:', err)
     }
 
-    return new Response(JSON.stringify({ ok: false, error: 'internal', details: String(err) }), {
+    // 对外只返回通用错误码，SQL 细节留在服务端日志
+    return new Response(JSON.stringify({ ok: false, error: 'internal' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })

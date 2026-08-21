@@ -32,5 +32,15 @@ export const onRequest: PagesFunction = async (context) => {
     return Response.redirect(clean.toString(), 301)
   }
 
-  return context.next()
+  const response = await context.next()
+
+  // API 响应统一补充基础安全响应头
+  if (url.pathname.startsWith('/api/')) {
+    const headers = new Headers(response.headers)
+    headers.set('X-Content-Type-Options', 'nosniff')
+    headers.set('Referrer-Policy', 'no-referrer')
+    return new Response(response.body, { status: response.status, headers })
+  }
+
+  return response
 }

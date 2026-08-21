@@ -31,7 +31,8 @@ export async function fetchResultStats(
 }
 // 使用 sendBeacon 优先，fallback 到 fetch keepalive
 
-const APP_VERSION = '0.3.10-tf-q29-tune'
+// 版本号由 vite define 从 package.json 注入，保证与发版一致
+const APP_VERSION = __APP_VERSION__
 
 export interface SubmitPayload {
   submissionId: string

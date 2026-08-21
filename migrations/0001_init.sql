@@ -28,10 +28,11 @@ CREATE TABLE IF NOT EXISTS mbti_feedback (
   app_version TEXT NOT NULL,
   self_mbti TEXT NOT NULL,
   confidence INTEGER NOT NULL,
-  note TEXT,
-  answers_json TEXT,
-  answer_count INTEGER
+  note TEXT
 );
+-- 注意：answers_json / answer_count 由 0006 追加，0001 保持最初形态。
+-- 已应用的迁移文件不可回改（不会被重放），否则全新环境按 0001 -> 0006
+-- 顺序执行时会因重复列中断（此前的回改正是这个坑，此处恢复原状）。
 
 -- 索引：加速按时间、原型、角色聚合查询
 CREATE INDEX IF NOT EXISTS idx_submissions_created_at ON submissions(created_at);

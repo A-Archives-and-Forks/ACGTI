@@ -1,7 +1,7 @@
 {
   "name": "acgti",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.11",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
@@ -20,6 +20,7 @@
     "vue-router": "^4.6.2"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
     "@types/node": "^24.12.2",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/tsconfig": "^0.9.1",
