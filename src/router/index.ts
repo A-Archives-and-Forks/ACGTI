@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocationRaw, type Router } from 'vue-router'
 
 // 兼容旧 hash 路由：在 router 创建之前替换 URL
 // 这样 createWebHistory 初始化时直接读到正确路径
@@ -28,5 +28,31 @@ const router = createRouter({
     return savedPosition ?? { top: 0 }
   },
 })
+
+// 同文档 View Transitions（渐进增强）：支持时编程式导航在过渡回调内完成，
+// 旧页面快照冻结期间恰好覆盖懒加载 chunk 的等待，随后播放合成器动画。
+// 不支持的浏览器与 prefers-reduced-motion 用户直接执行原导航。
+function enableViewTransitions(router: Router) {
+  if (typeof document === 'undefined' || typeof document.startViewTransition !== 'function') {
+    return
+  }
+
+  const wrap = (fn: (to: RouteLocationRaw) => Promise<unknown>) => {
+    return (to: RouteLocationRaw): Promise<undefined> => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return fn(to).then(() => undefined, () => undefined)
+      }
+
+      const transition = document.startViewTransition(() => fn(to))
+      // 导航失败（如守卫拦截）不产生未处理拒绝
+      return transition.updateCallbackDone.then(() => undefined, () => undefined)
+    }
+  }
+
+  router.push = wrap(router.push.bind(router)) as Router['push']
+  router.replace = wrap(router.replace.bind(router)) as Router['replace']
+}
+
+enableViewTransitions(router)
 
 export default router

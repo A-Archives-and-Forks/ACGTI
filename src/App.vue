@@ -103,8 +103,12 @@ watch(() => route.path, () => {
 })
 
 const showFooter = computed(() => route.path !== '/quiz')
+// 支持 View Transitions 的浏览器交由合成器动画接管路由切换
+// （见 src/router/index.ts 的 push/replace 包装与 style.css 的 ::view-transition-*），
+// 其余浏览器保留 Vue transition 的 fade 兜底
+const supportsViewTransition = typeof document.startViewTransition === 'function'
 const routeTransitionName = computed(() => {
-  if (isFirstLoad.value) return ''
+  if (isFirstLoad.value || supportsViewTransition) return ''
   return route.path === '/quiz' ? 'page-fade-static' : 'page-fade'
 })
 

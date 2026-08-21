@@ -144,7 +144,12 @@ async function exportPosterImage() {
     poster.waitReady(),
     new Promise((resolve) => setTimeout(resolve, 4000)),
   ])
-  void share.exportPoster(poster.rootEl, result.value)
+  // 移动端优先经系统分享面板直接分享海报文件（Web Share Level 2），
+  // 不支持时回落为下载 PNG
+  const shared = await share.sharePosterFile(poster.rootEl, result.value)
+  if (!shared) {
+    void share.exportPoster(poster.rootEl, result.value)
+  }
 }
 
 watch(

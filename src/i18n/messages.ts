@@ -84,7 +84,7 @@ export const messages = {
       language: {
         label: '语言',
       },
-      common: { sponsored: '赞助内容', unknownCharacter: '未知角色', unknownSeries: '未知作品', shareCode: '我在 ACGTI 命中的角色代码是 {code}', shareCharacter: '命中角色：{name}（{series}）', shareUnknown: '命中角色：未知角色', shareRarity: '稀有评级：{tier}（第 {rank}/{total} 名）', shareProbability: '理论命中率：{prob}%', shareProbabilityDesc: '该概率是随机答卷基线下的角色命中率，用于说明统计分布，不再直接等同于展示稀有度。', shareArchetype: '对应原型：{name}', shareRole: '剧情位置：{role}', shareFooterProject: '项目地址：https://github.com/tianxingleo/ACGTI', shareFooterStar: '如果觉得有趣，欢迎在 GitHub 给我们点个 Star ⭐', shareFooterCta: '来测测你的二次元角色代码 → {url}', exportSuccess: '海报已导出为 PNG。', exportFail: '导出失败，请稍后重试。', copySuccess: '分享文案已复制。', copyFail: '复制失败，请手动截图。' },
+      common: { sponsored: '赞助内容', unknownCharacter: '未知角色', unknownSeries: '未知作品', shareCode: '我在 ACGTI 命中的角色代码是 {code}', shareCharacter: '命中角色：{name}（{series}）', shareUnknown: '命中角色：未知角色', shareRarity: '稀有评级：{tier}（第 {rank}/{total} 名）', shareProbability: '理论命中率：{prob}%', shareProbabilityDesc: '该概率是随机答卷基线下的角色命中率，用于说明统计分布，不再直接等同于展示稀有度。', shareArchetype: '对应原型：{name}', shareRole: '剧情位置：{role}', shareFooterProject: '项目地址：https://github.com/tianxingleo/ACGTI', shareFooterStar: '如果觉得有趣，欢迎在 GitHub 给我们点个 Star ⭐', shareFooterCta: '来测测你的二次元角色代码 → {url}', exportSuccess: '海报已导出为 PNG。', exportFail: '导出失败，请稍后重试。', copySuccess: '分享文案已复制。', copyFail: '复制失败，请手动截图。', shareSuccess: '已打开系统分享面板。' },
     },
     home: {
       updateBadge: {
@@ -641,7 +641,7 @@ export const messages = {
         socialLinks: { xiaoheihe: '小黑盒', bilibili: '嗶哩嗶哩', xiaohongshu: '小紅書', github: 'GitHub' },
       },
       language: { label: '語言' },
-      common: { sponsored: '贊助內容', unknownCharacter: '未知角色', unknownSeries: '未知作品', shareCode: '我在 ACGTI 命中的角色代碼是 {code}', shareCharacter: '命中角色：{name}（{series}）', shareUnknown: '命中角色：未知角色', shareRarity: '稀有評級：{tier}（第 {rank}/{total} 名）', shareProbability: '理論命中率：{prob}%', shareProbabilityDesc: '該機率是隨機答卷基線下的角色命中率，用來說明統計分布，不再直接等同於展示稀有度。', shareArchetype: '對應原型：{name}', shareRole: '劇情位置：{role}', shareFooterProject: '專案地址：https://github.com/tianxingleo/ACGTI', shareFooterStar: '如果覺得有趣，歡迎在 GitHub 給我們點個 Star ⭐', shareFooterCta: '來測測你的二次元角色代碼 → {url}', exportSuccess: '海報已匯出為 PNG。', exportFail: '匯出失敗，請稍後重試。', copySuccess: '分享文案已複製。', copyFail: '複製失敗，請手動截圖。' },
+      common: { sponsored: '贊助內容', unknownCharacter: '未知角色', unknownSeries: '未知作品', shareCode: '我在 ACGTI 命中的角色代碼是 {code}', shareCharacter: '命中角色：{name}（{series}）', shareUnknown: '命中角色：未知角色', shareRarity: '稀有評級：{tier}（第 {rank}/{total} 名）', shareProbability: '理論命中率：{prob}%', shareProbabilityDesc: '該機率是隨機答卷基線下的角色命中率，用來說明統計分布，不再直接等同於展示稀有度。', shareArchetype: '對應原型：{name}', shareRole: '劇情位置：{role}', shareFooterProject: '專案地址：https://github.com/tianxingleo/ACGTI', shareFooterStar: '如果覺得有趣，歡迎在 GitHub 給我們點個 Star ⭐', shareFooterCta: '來測測你的二次元角色代碼 → {url}', exportSuccess: '海報已匯出為 PNG。', exportFail: '匯出失敗，請稍後重試。', copySuccess: '分享文案已複製。', copyFail: '複製失敗，請手動截圖。', shareSuccess: '已開啟系統分享面板。' },
     },
     home: {
       updateBadge: {
@@ -1252,7 +1252,7 @@ export const messages = {
         socialLinks: { xiaoheihe: 'Xiaoheihe', bilibili: 'Bilibili', xiaohongshu: 'Xiaohongshu', github: 'GitHub' },
       },
       language: { label: 'Language' },
-      common: { sponsored: 'Sponsored', unknownCharacter: 'Unknown character', unknownSeries: 'Unknown series', shareCode: 'My ACGTI character code is {code}', shareCharacter: 'Character: {name} ({series})', shareUnknown: 'Character: Unknown', shareRarity: 'Rarity tier: {tier} (#{rank}/{total})', shareProbability: 'Baseline hit rate: {prob}%', shareProbabilityDesc: 'This probability is the character hit rate under the random-answer baseline. It explains the statistical spread rather than serving as the main rarity label.', shareArchetype: 'Archetype: {name}', shareRole: 'Narrative Role: {role}', shareFooterProject: 'GitHub: https://github.com/tianxingleo/ACGTI', shareFooterStar: 'If you had fun, a GitHub Star would really help ⭐', shareFooterCta: 'Find your anime character code → {url}', exportSuccess: 'Poster exported as PNG.', exportFail: 'Export failed, try again.', copySuccess: 'Text copied to clipboard.', copyFail: 'Copy failed, screenshot instead.' },
+      common: { sponsored: 'Sponsored', unknownCharacter: 'Unknown character', unknownSeries: 'Unknown series', shareCode: 'My ACGTI character code is {code}', shareCharacter: 'Character: {name} ({series})', shareUnknown: 'Character: Unknown', shareRarity: 'Rarity tier: {tier} (#{rank}/{total})', shareProbability: 'Baseline hit rate: {prob}%', shareProbabilityDesc: 'This probability is the character hit rate under the random-answer baseline. It explains the statistical spread rather than serving as the main rarity label.', shareArchetype: 'Archetype: {name}', shareRole: 'Narrative Role: {role}', shareFooterProject: 'GitHub: https://github.com/tianxingleo/ACGTI', shareFooterStar: 'If you had fun, a GitHub Star would really help ⭐', shareFooterCta: 'Find your anime character code → {url}', exportSuccess: 'Poster exported as PNG.', exportFail: 'Export failed, try again.', copySuccess: 'Text copied to clipboard.', copyFail: 'Copy failed, screenshot instead.', shareSuccess: 'System share sheet opened.' },
     },
     home: {
       updateBadge: {
@@ -1823,7 +1823,7 @@ export const messages = {
         socialLinks: { xiaoheihe: 'Xiaoheihe', bilibili: 'Bilibili', xiaohongshu: 'Xiaohongshu', github: 'GitHub' },
       },
       language: { label: '言語' },
-      common: { sponsored: 'スポンサー', unknownCharacter: '不明なキャラ', unknownSeries: '不明な作品', shareCode: '私のACGTIキャラコードは {code}', shareCharacter: '命中キャラ：{name}（{series}）', shareUnknown: '命中キャラ：不明', shareRarity: '希少ランク：{tier}（{rank}/{total}位）', shareProbability: '理論命中率：{prob}%', shareProbabilityDesc: 'この確率はランダム回答ベースラインでのキャラ出現率です。統計分布を示すための値であり、そのまま表示上の希少度ではありません。', shareArchetype: '対応原型：{name}', shareRole: '役割：{role}', shareFooterProject: 'プロジェクト：https://github.com/tianxingleo/ACGTI', shareFooterStar: '楽しめたら GitHub で Star をお願いします ⭐', shareFooterCta: 'あなたの二次元キャラコードを診断 → {url}', exportSuccess: 'ポスターをPNGとしてエクスポートしました', exportFail: 'エクスポートに失敗しました', copySuccess: 'テキストをコピーしました', copyFail: 'コピーに失敗しました' },
+      common: { sponsored: 'スポンサー', unknownCharacter: '不明なキャラ', unknownSeries: '不明な作品', shareCode: '私のACGTIキャラコードは {code}', shareCharacter: '命中キャラ：{name}（{series}）', shareUnknown: '命中キャラ：不明', shareRarity: '希少ランク：{tier}（{rank}/{total}位）', shareProbability: '理論命中率：{prob}%', shareProbabilityDesc: 'この確率はランダム回答ベースラインでのキャラ出現率です。統計分布を示すための値であり、そのまま表示上の希少度ではありません。', shareArchetype: '対応原型：{name}', shareRole: '役割：{role}', shareFooterProject: 'プロジェクト：https://github.com/tianxingleo/ACGTI', shareFooterStar: '楽しめたら GitHub で Star をお願いします ⭐', shareFooterCta: 'あなたの二次元キャラコードを診断 → {url}', exportSuccess: 'ポスターをPNGとしてエクスポートしました', exportFail: 'エクスポートに失敗しました', copySuccess: 'テキストをコピーしました', copyFail: 'コピーに失敗しました', shareSuccess: 'システムの共有パネルを開きました' },
     },
     home: {
       updateBadge: {
