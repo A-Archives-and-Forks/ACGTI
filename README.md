@@ -18,9 +18,10 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/tianxingleo/ACGTI/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/tianxingleo/ACGTI/ci.yml?branch=dev&style=flat-square&label=CI" alt="CI" /></a>
   <a href="https://acgti.tianxingleo.top/"><img src="https://img.shields.io/badge/Deploy-Cloudflare_Pages-F38020?style=flat-square&logo=cloudflare" alt="Deploy to Cloudflare Pages" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg?style=flat-square" alt="License" /></a>
-  <img src="https://img.shields.io/badge/Hits-6.15M+-green.svg?style=flat-square" alt="Hits" />
+  <img src="https://img.shields.io/badge/Node-%E2%89%A522-339933?style=flat-square&logo=nodedotjs" alt="Node >= 22" />
 </p>
 
 <p align="center">
@@ -66,7 +67,7 @@
 
 - **MBTI 四维判定**：基于 E/I、S/N、T/F、J/P 四大维度构建严谨的底层框架。
 - **8 种专属原型**：发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者。
-- **110 位角色库**：涵盖 BanG Dream!、孤独摇滚！、鸣潮、明日方舟、轻音少女、我推的孩子、Re:从零开始的异世界生活、原神、崩坏：星穹铁道、葬送的芙丽莲、Fate/stay night 等 60+ 部热门作品，持续扩充中。
+- **110+ 位角色库**：涵盖 BanG Dream!、孤独摇滚！、鸣潮、明日方舟、轻音少女、我推的孩子、Re:从零开始的异世界生活、原神、崩坏：星穹铁道、葬送的芙丽莲、Fate/stay night 等 60+ 部热门作品，持续扩充中。
 - **可视化交互**：16personalities 风格的交互式倾向滑块，直观展现你的思维倾向。
 - **一键分享**：精美的结果图报表，支持一键导出 PNG 海报分享给同好。
 - **轻量全栈**：测试结果在本地浏览器完成计算；结果页会匿名上报最终命中角色与原型到后端（Cloudflare D1），用于全站统计、排行榜与题目权重校准；不要求注册，不收集邮箱等直接身份信息。
@@ -114,54 +115,52 @@
 ```text
 src/
 ├── components/           # 可复用 UI 组件
+│   ├── home/             # 首页区块（Hero / 数据 / 推广 / 评价 / 更新弹窗）
 │   ├── AppIcon.vue
-│   ├── ProgressBar.vue
-│   ├── QuestionCard.vue
-│   ├── ResultSummary.vue
-│   ├── SharePoster.vue
+│   ├── SharePoster.vue   # 分享海报
 │   └── AdsenseSlot.vue
 ├── composables/          # Vue 组合式函数
-│   ├── useQuiz.ts       # 测试状态与逻辑
-│   └── useShare.ts      # 分享与导出功能
-├── content/               # 角色源数据（每角色一个文件）
-│   └── characters/        # 角色配置（meta + visual + i18n）
-├── data/                # 静态数据（部分由脚本生成）
-│   ├── questions.json   # 39 道情境式题目
-│   ├── archetypes.json  # 8 个角色原型定义
-│   ├── characters.json  # 角色资料库（自动生成）
-│   ├── characterVisuals.json       # 角色视觉配置（自动生成）
-│   └── characterProbabilities.json # 角色命中概率
-├── i18n/                # 国际化
-│   └── messages.ts      # 多语言文案（简中/繁中/英/日）
-├── pages/               # 页面组件
-│   ├── HomePage.vue     # 首页
-│   ├── IntroPage.vue    # 测试说明页
-│   ├── QuizPage.vue     # 答题页
-│   ├── ResultPage.vue   # 结果展示页
-│   ├── CharactersPage.vue # 角色图鉴页
-│   ├── StatsPage.vue    # 统计与排行榜页
-│   └── AboutPage.vue    # 关于页
-├── types/
-│   └── quiz.ts          # TypeScript 类型定义
+│   ├── useQuiz.ts        # 测试状态、进度持久化与结果计算入口
+│   ├── useCharacterRarity.ts # 稀有度徽章派生逻辑（结果页/海报共用）
+│   ├── useShare.ts       # 分享文案与海报导出
+│   └── useSeo.ts         # 页面 meta / OG / JSON-LD
+├── content/characters/   # 角色源数据（每角色一个 JSON：meta + visual + i18n）
+├── data/                 # 题库与聚合产物（角色相关由脚本生成）
+│   ├── questions.json             # 39 道情境式题目
+│   ├── questionDimensionWeights.json  # 逐题维度权重（校准产物）
+│   ├── archetypes.json            # 8 个角色原型定义
+│   ├── characters.json            # 角色资料库（自动生成）
+│   ├── characterVisuals.json      # 角色视觉配置（自动生成）
+│   ├── characterMessages.json     # 角色多语言文案（自动生成，按需异步加载）
+│   └── characterProbabilities.json # 角色命中概率先验
+├── i18n/                 # 国际化（简中/繁中/英/日）
+│   ├── messages.ts       # UI 文案与题目翻译
+│   ├── characters.ts     # 角色名/系列名翻译与隐藏角色处理
+│   └── characterMessages.ts # 角色文案的按需加载入口
+├── pages/                # 页面组件（Home/Quiz/Result/Characters/Stats/About/Sponsor）
+├── types/quiz.ts         # 类型定义与答案量程常量
 ├── utils/
-│   ├── quizEngine.ts    # 评分、原型匹配、角色命中逻辑
-│   ├── characterVisuals.ts    # 角色视觉数据注水
-│   ├── characterProbability.ts # 角色命中概率计算
-│   ├── statsReporter.ts       # 结果匿名上报
-│   ├── runtimeApi.ts    # 运行时 API 调用工具
-│   ├── adsense.ts       # Google AdSense 配置
-│   └── storage.ts       # localStorage 工具
-├── router/
-│   └── index.ts         # 路由配置
-├── App.vue              # 根组件
-├── main.ts              # 入口文件
-└── style.css            # 全局样式
+│   ├── quizEngine.ts     # 评分、原型匹配、角色命中逻辑
+│   ├── characterRarity.ts      # 稀有度分桶
+│   ├── characterVisuals.ts     # 角色视觉注水与图片路径归一
+│   ├── characterProbability.ts # 角色命中概率
+│   ├── statsReporter.ts        # 结果/反馈匿名上报
+│   ├── color.ts                # 主题色工具（对比度/混色）
+│   ├── adsense.ts              # Google AdSense 配置
+│   └── storage.ts              # localStorage 工具（结果 + 答题进度）
+├── router/index.ts        # 路由配置
+├── App.vue                # 根组件（导航/页脚/语言切换）
+├── main.ts                # 入口文件（含 v-reveal 指令）
+└── style.css              # 全局样式
 
-functions/                # Cloudflare Pages Functions（后端 API）
-migrations/               # Cloudflare D1 数据库迁移
+functions/                 # Cloudflare Pages Functions（后端 API + 全局中间件）
+cron-worker/               # 独立 Cron Worker（统计快照重算与限流表清理）
+migrations/                # Cloudflare D1 数据库迁移（CI 会在全新库上干跑校验）
+scripts/                   # 数据校验 / 聚合构建 / 可达性审计脚本
+analysis/                  # 反馈数据分析与权重校准流水线（本地）
 ```
 
-后端 API 与迁移文件的详细说明见 [`docs/internal-ops.md`](docs/internal-ops.md)。
+后端 API、数据库迁移与 cron-worker 的详细说明见 [`docs/backend.md`](docs/backend.md)。
 
 </details>
 
@@ -172,7 +171,7 @@ migrations/               # Cloudflare D1 数据库迁移
 |:-----|:-----|
 | `src/data/questions.json` | 39 道情境式题目 — 维度、原型权重、场景标签 |
 | `src/data/archetypes.json` | 8 个角色原型 — 名称、描述、亮点、短板 |
-| `src/data/characters.json` | 111 个角色条目（含隐藏角色） — 角色代码、MBTI 映射、标签、六维向量（构建时自动生成） |
+| `src/data/characters.json` | 113 个角色条目（含隐藏角色） — 角色代码、MBTI 映射、标签、六维向量（构建时自动生成） |
 | `src/data/characterVisuals.json` | 角色视觉配置 — 立绘、色彩、主题（构建时自动生成） |
 | `src/data/characterProbabilities.json` | 角色命中概率 — 基于人群统计的先验分布 |
 
@@ -181,7 +180,7 @@ migrations/               # Cloudflare D1 数据库迁移
 ## 📰 时间线
 
 - **2026.4.18 12:00:** GitHub 仓库 ⭐ 数量达到 500，访问量达到 550W
-- **2026.4.14 15:00:** [网站](https://acgti.tianxingleo.top/)访问量超过 400 万，发布 blog：[【复盘】从一晚上一米工位到3天400w+浏览量的网站，我做了什么](https://tianxingleo.top/2026/04/12/%E4%BB%8E%E4%B8%80%E6%99%9A%E4%B8%8A%E4%B8%80%E7%B1%B3%E5%B7%A5%E4%BD%9C%E4%BD%8D%E5%88%B02%E5%A4%A968w%E4%BA%BA%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%EF%BC%8C%E6%88%91%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
+- **2026.4.14 15:00:** [网站](https://acgti.tianxingleo.top/)访问量超过 400 万，发布复盘博客：[《从一晚上一米工位到 2 天 68w 人访问的网站，我做了什么》](https://tianxingleo.top/2026/04/12/%E4%BB%8E%E4%B8%80%E6%99%9A%E4%B8%8A%E4%B8%80%E7%B1%B3%E5%B7%A5%E4%BD%9C%E4%BD%8D%E5%88%B02%E5%A4%A968w%E4%BA%BA%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%EF%BC%8C%E6%88%91%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
 - **2026.4.13 21:00:** [网站](https://acgti.tianxingleo.top/)访问人数达到 100 万，仓库 Star 数达到 300
 - **2026.4.12 8:00:** 访问人数达到 50 万
 - **2026.4.11 23:00:** 进入 [永雏塔菲](https://www.bilibili.com/video/BV11FDyBZEN1/?spm_id_from=333.337.search-card.all.click) 直播间
@@ -191,6 +190,8 @@ migrations/               # Cloudflare D1 数据库迁移
 ![](https://pub-f8d3afa0c3274f1e943ee2f8c45dff96.r2.dev/26_04_cd104ba6bdd4ba3053fcbd82fa1513f7.webp)
 
 ## 🚀 本地开发
+
+环境要求：Node.js >= 22（与 CI 一致）。图片处理脚本另需 Python 3 + Pillow（可选）。
 
 ```bash
 # 安装依赖
@@ -223,7 +224,7 @@ npm run dev:pages
 - `wrangler pages dev ...` 必须在仓库根目录执行，不要在 `cron-worker/` 目录执行。
 - 如果需要单独调试 Cron Worker，请在 `cron-worker/` 目录运行 `npm run dev`。该模式下出现 "Scheduled Workers are not automatically triggered during local development." 是正常提示，可按日志里的 `curl /cdn-cgi/handler/scheduled` 手动触发。
 
-构建产物输出到 `dist/`，配置为相对路径（`base: './'`）。后端 API 基于 Cloudflare Pages Functions，使用 D1 数据库存储匿名统计数据，部署在 Cloudflare Pages 上。
+构建产物输出到 `dist/`（站点部署在根路径）。后端 API 基于 Cloudflare Pages Functions，使用 D1 数据库存储匿名统计数据，部署在 Cloudflare Pages 上。
 
 ### 后端与环境变量
 
@@ -269,21 +270,21 @@ npm run dev:pages
 
 - **内部开发**：在 `dev` 分支上进行开发，稳定后向 `main` 发起 PR 合并
 - **外部贡献**：Fork 本仓库后，向 `dev` 分支提交 Pull Request
-- **CI 校验**：仓库已配置 GitHub Actions，会在 `push` 到 `main`/`dev` 和所有 PR 上自动执行 `npm ci` 与 `npm run build`
+- **CI 校验**：仓库已配置 GitHub Actions，会在 `push` 到 `main`/`dev` 和所有 PR 上自动执行数据校验、前后端类型检查、D1 迁移干跑与 `npm run build`
 
 线上部署由 Cloudflare Pages 负责，后端 API 通过 Cloudflare Pages Functions 运行，数据存储在 Cloudflare D1 数据库中。
 
 ## 📦 持续集成与部署
 
-- **GitHub Actions**：负责在 `main` push / PR 时校验构建是否通过
+- **GitHub Actions**：在 `main`/`dev` push 与 PR 时校验构建是否通过
 - **Cloudflare Pages**：负责连接 GitHub 后的自动构建与部署，同时托管 Pages Functions 后端 API
 - **GitHub Release**：在推送 `v*` tag 时自动构建 `dist/`、打包为 zip，并创建 Release
 
 发版方式示例：
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag vX.Y.Z
+git push origin vX.Y.Z   # 推送 tag 触发 Release 工作流
 ```
 
 ## 📄 开源协议与免责声明
