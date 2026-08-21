@@ -23,6 +23,20 @@ export function resolvePublicAsset(path: string | undefined) {
   return `${import.meta.env.BASE_URL}${normalized}`
 }
 
+/**
+ * 历史数据里个别角色仍配置 .png，而线上统一使用 .webp，
+ * 展示与海报导出前统一做一次后缀归一。
+ */
+export function normalizeCharacterImagePath(image: string | undefined) {
+  if (!image) {
+    return ''
+  }
+
+  return image.endsWith('.png')
+    ? image.replace(/\.png$/i, '.webp')
+    : image
+}
+
 export function hydrateCharacterVisual<T extends CharacterMatch>(character: T): T {
   const visual = characterVisuals[character.id]
 

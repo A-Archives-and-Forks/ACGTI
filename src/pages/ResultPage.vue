@@ -4,13 +4,15 @@ import { useRoute, useRouter } from 'vue-router'
 
 import AdsenseSlot from '../components/AdsenseSlot.vue'
 import AppIcon from '../components/AppIcon.vue'
+import { useCharacterRarity } from '../composables/useCharacterRarity'
 import { useShare } from '../composables/useShare'
 import { useSeo } from '../composables/useSeo'
 import { useQuiz } from '../composables/useQuiz'
 import { socialIcons, type SocialIconBrand } from '../data/socialIcons'
 import { useI18n } from '../i18n'
 import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
-import { getCharacterRarityMeta } from '../utils/characterRarity'
+import { hexToRgb, readableTextColorOn, relativeLuminance } from '../utils/color'
+import { normalizeCharacterImagePath } from '../utils/characterVisuals'
 import { formatCharacterProbability } from '../utils/characterProbability'
 import { normalizeMbtiCode } from '../utils/quizEngine'
 import { reportResultInBackground, submitFeedback, fetchResultStats, type ResultStats } from '../utils/statsReporter'
@@ -27,6 +29,8 @@ const isCharacterImageBroken = ref(false)
 const share = useShare()
 const posterRef = ref<{ rootEl: HTMLElement | null } | null>(null)
 const shouldMountPoster = ref(false)
+let posterReadyResolve: (() => void) | null = null
+const posterReadyPromise = ref<Promise<void> | null>(null)
 const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
 const liveStats = ref<ResultStats | null>(null)
@@ -109,14 +113,12 @@ onMounted(async () => {
 
   // 没有完整答案不上报（debug 结果、分享链接等场景）
   if (answerCount < quiz.questions.value.length) {
-    console.log('⏭️ Skip submit: answers incomplete', { answerCount, expected: quiz.questions.value.length })
     return
   }
 
   // 会话级去重：同一测试结果只上报一次
   const reportKey = `acgti:reported:${record?.createdAt ?? 'unknown'}`
   if (sessionStorage.getItem(reportKey)) {
-    console.log('⏭️ Skip submit: already reported in this session')
     return
   }
 
@@ -129,13 +131,22 @@ onMounted(async () => {
 
 async function exportPosterImage() {
   if (!result.value) return
-  // 首次导出时才挂载 SharePoster 组件
+  // 首次导出时才挂载 SharePoster 组件，并等待其真正就绪（组件挂载 + 头像图加载完成）
   if (!shouldMountPoster.value) {
+    posterReadyPromise.value = new Promise<void>((resolve) => {
+      posterReadyResolve = resolve
+      // 兜底：即使 ready 事件异常丢失，也不会让导出永远挂起
+      window.setTimeout(resolve, 4000)
+    })
     shouldMountPoster.value = true
-    await new Promise<void>((resolve) => setTimeout(resolve, 100))
   }
+  await posterReadyPromise.value
   if (!posterRef.value?.rootEl) return
   void share.exportPoster(posterRef.value.rootEl, result.value)
+}
+
+function handlePosterReady() {
+  posterReadyResolve?.()
 }
 
 watch(
@@ -159,16 +170,6 @@ function copyText() {
     return
   }
   void share.copyShareText(result.value)
-}
-
-function normalizeCharacterImagePath(image: string | undefined) {
-  if (!image) {
-    return ''
-  }
-
-  return image.endsWith('.png')
-    ? image.replace(/\.png$/i, '.webp')
-    : image
 }
 
 function handleCharacterImageError() {
@@ -221,6 +222,9 @@ const displayTags = computed(() => {
 const displayCode = computed(() => result.value?.code ?? result.value?.mbtiCode ?? '')
 const displayProbability = computed(() => formatCharacterProbability(result.value?.matchProbability ?? 0))
 const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? result.value?.archetype.accent ?? '#e2ad3b')
+// 浅色 accent（如 #F5E6E8）上白字不可读，切换为深色文字方案
+const heroIsLight = computed(() => relativeLuminance(hexToRgb(resultThemeColor.value)) > 0.45)
+const heroReadableColor = computed(() => readableTextColorOn(resultThemeColor.value))
 type CreatorLink = {
   id: string
   brand: SocialIconBrand
@@ -275,127 +279,16 @@ const creatorLinks = computed<CreatorLink[]>(() => ([
     },
   },
 ]))
-function hexToRgb(hex: string) {
-  const normalized = hex.replace('#', '')
-  const full = normalized.length === 3
-    ? normalized.split('').map((char) => char + char).join('')
-    : normalized
-
-  return {
-    r: parseInt(full.substring(0, 2), 16),
-    g: parseInt(full.substring(2, 4), 16),
-    b: parseInt(full.substring(4, 6), 16),
-  }
-}
-
-function mixRgb(base: { r: number; g: number; b: number }, target: { r: number; g: number; b: number }, weight: number) {
-  const ratio = Math.max(0, Math.min(1, weight))
-  return {
-    r: Math.round(base.r * (1 - ratio) + target.r * ratio),
-    g: Math.round(base.g * (1 - ratio) + target.g * ratio),
-    b: Math.round(base.b * (1 - ratio) + target.b * ratio),
-  }
-}
-
-function toRgbString(color: { r: number; g: number; b: number }, alpha?: number) {
-  if (alpha === undefined) {
-    return `rgb(${color.r}, ${color.g}, ${color.b})`
-  }
-
-  return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
-}
-
-const rarityMeta = computed(() => getCharacterRarityMeta(primaryCharacter.value?.id))
-const rarityTierLabel = computed(() => {
-  const tier = rarityMeta.value?.tier
-  return tier
-    ? t(`result.rarityTiers.${tier}`, undefined, tier)
-    : '--'
+const rarityVisuals = useCharacterRarity({
+  character: () => primaryCharacter.value,
+  themeColor: () => resultThemeColor.value,
+  withShadow: true,
 })
-const rarityTierStyle = computed(() => {
-  const base = hexToRgb(resultThemeColor.value)
-  const white = { r: 255, g: 255, b: 255 }
-  const dark = { r: 47, g: 58, b: 69 }
-
-  switch (rarityMeta.value?.tier) {
-    case 'ex': {
-      const text = mixRgb(base, dark, 0.15)
-      return {
-        color: toRgbString(text),
-        background: `linear-gradient(135deg, ${toRgbString(base, 0.2)}, ${toRgbString(base, 0.35)})`,
-        borderColor: toRgbString(base, 0.45),
-        boxShadow: `0 10px 24px ${toRgbString(base, 0.22)}`,
-      }
-    }
-    case 'ur': {
-      const text = mixRgb(base, dark, 0.22)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(base, 0.28),
-        borderColor: toRgbString(base, 0.5),
-        boxShadow: `0 8px 18px ${toRgbString(base, 0.18)}`,
-      }
-    }
-    case 'ssr': {
-      const text = mixRgb(base, dark, 0.3)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(base, 0.18),
-        borderColor: toRgbString(base, 0.34),
-        boxShadow: `0 6px 14px ${toRgbString(base, 0.12)}`,
-      }
-    }
-    case 'sr': {
-      const text = mixRgb(base, dark, 0.4)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(base, 0.1),
-        borderColor: toRgbString(base, 0.22),
-        boxShadow: 'none',
-      }
-    }
-    default: {
-      const muted = mixRgb(base, white, 0.72)
-      const text = mixRgb(base, dark, 0.52)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(muted, 0.32),
-        borderColor: toRgbString(base, 0.16),
-        boxShadow: 'none',
-      }
-    }
-  }
-})
-
-const rarityFontSizeStyle = computed(() => {
-  const len = rarityTierLabel.value.length
-  if (len > 12) return { fontSize: '13px' }
-  if (len > 8) return { fontSize: '14px' }
-  if (len > 5) return { fontSize: '15px' }
-  return { fontSize: '18px' }
-})
-const rarityRankLabel = computed(() => {
-  if (!rarityMeta.value) {
-    return ''
-  }
-
-  return t('result.rarityRank', {
-    rank: rarityMeta.value.rank,
-    total: rarityMeta.value.total,
-  }, `相对稀有排名 #${rarityMeta.value.rank}/${rarityMeta.value.total}`)
-})
-const raritySummaryLabel = computed(() => {
-  if (!rarityMeta.value) {
-    return ''
-  }
-
-  return t(`result.rarityTierDescriptions.${rarityMeta.value.tier}`, {
-    start: rarityMeta.value.startRank,
-    end: rarityMeta.value.endRank,
-    startPercent: rarityMeta.value.rangeStartPercent,
-    endPercent: rarityMeta.value.rangeEndPercent,
-  })
-})
+const rarityTierLabel = rarityVisuals.rarityTierLabel
+const rarityTierStyle = rarityVisuals.rarityTierStyle
+const rarityFontSizeStyle = rarityVisuals.rarityFontSizeStyle
+const rarityRankLabel = rarityVisuals.rarityRankLabel
+const raritySummaryLabel = rarityVisuals.raritySummaryLabel
 const probabilityLabel = computed(() => {
   if (!result.value) {
     return ''
@@ -489,20 +382,12 @@ function viewMatchedCharacter(characterId: string) {
 
 function buildSubmitPayload() {
   if (!result.value) {
-    console.error('❌ buildSubmitPayload: result.value is null')
     return null
   }
   const r = result.value
   const scores = r.scores
 
-  console.log('📋 Result object:', {
-    code: r.code,
-    mbtiCode: r.mbtiCode,
-    archetypeId: r.archetype.id,
-    scoresKeys: Object.keys(scores),
-  })
-
-  const submissionIdValue = ensureSubmissionId()
+  const submissionIdValue = quiz.ensureSubmissionId()
   const record = quiz.state.latestRecord
 
   let durationMs = 30000 // 默认值 30 秒
@@ -519,7 +404,7 @@ function buildSubmitPayload() {
   // 收集答案列表，供后端校验"是否真正完成测试"
   const answerList = collectAnswerList()
 
-  const payload = {
+  return {
     submissionId: submissionIdValue,
     archetypeCode: r.archetype?.id || 'unknown-archetype',
     characterCode: r.code || r.mbtiCode || 'UNKN',
@@ -533,16 +418,6 @@ function buildSubmitPayload() {
     durationMs,
     answers: answerList,
   }
-
-  console.log('✅ Payload validation:', {
-    submissionIdValid: /^[0-9a-f-]+$/.test(payload.submissionId),
-    archetypeCodeValid: /^[A-Za-z0-9_-]{1,32}$/.test(payload.archetypeCode),
-    characterCodeValid: /^[A-Za-z0-9_-]{1,32}$/.test(payload.characterCode),
-    durationMsValid: payload.durationMs >= 1000 && payload.durationMs <= 3600000,
-    dimensionScoresValid: Object.values(payload.dimensionScores).every(v => typeof v === 'number' && v >= 0 && v <= 100),
-  })
-
-  return payload
 }
 
 function collectAnswerList() {
@@ -550,8 +425,7 @@ function collectAnswerList() {
   const recordAnswers = Array.isArray(record?.answers) ? record.answers : []
   const stateAnswers = Array.isArray(quiz.state.answers) ? quiz.state.answers : []
   const rawAnswers = recordAnswers.length > 0 ? recordAnswers : stateAnswers
-  const answerSource = recordAnswers.length > 0 ? 'latestRecord' : 'quiz.state'
-  const answerList = rawAnswers
+  return rawAnswers
     .map((val: number, idx: number) => {
       if (!Number.isFinite(val) || val < -3 || val > 3) {
         return null
@@ -559,45 +433,12 @@ function collectAnswerList() {
       const questionId = quiz.questions.value[idx]?.id ?? `q${idx + 1}`
       return {
         questionId,
+        // 后端与历史数据约定为 5 档量程（±2）：这里把 7 档 UI 的 ±3 压缩到 ±2 上报，
+        // 与 functions/api 的 validateAnswers 保持一致，勿单独改动任一侧。
         answerValue: Math.max(-2, Math.min(2, Math.round(val))),
       }
     })
     .filter((item): item is { questionId: string; answerValue: number } => item !== null)
-
-  const questionCount = quiz.questions.value.length
-  console.log('📋 Feedback answer source:', {
-    answerSource,
-    questionCount,
-    recordAnswersCount: recordAnswers.length,
-    stateAnswersCount: stateAnswers.length,
-    answerCount: answerList.length,
-    answerPreview: answerList.slice(0, 3),
-  })
-
-  if (answerList.length !== questionCount) {
-    console.warn('⚠️ Feedback answers count mismatch:', {
-      questionCount,
-      answerCount: answerList.length,
-      missingCount: Math.max(0, questionCount - answerList.length),
-    })
-  }
-
-  return answerList
-}
-
-function ensureSubmissionId() {
-  // 优先使用 record 中存储的稳定 ID（方案三：开始测试时生成，一路沿用）
-  const record = quiz.state.latestRecord
-  if (record?.submissionId) {
-    return record.submissionId
-  }
-
-  // 旧记录可能没有 submissionId，生成一个并回写
-  const newId = crypto.randomUUID()
-  if (record) {
-    ;(record as any).submissionId = newId
-  }
-  return newId
 }
 
 // ── 用户反馈 ──
@@ -628,7 +469,7 @@ async function handleFeedbackSubmit() {
   const answers = collectAnswerList()
 
   const ok = await submitFeedback({
-    submissionId: ensureSubmissionId(),
+    submissionId: quiz.ensureSubmissionId(),
     selfMbti,
     confidence: feedbackConfidence.value,
     note: feedbackNote.value || undefined,
@@ -649,7 +490,7 @@ async function handleFeedbackSubmit() {
 
 <template>
   <div v-if="result" class="result-page">
-    <section class="result-hero" :style="{ background: resultThemeColor }">
+    <section class="result-hero" :class="{ 'hero-light': heroIsLight }" :style="{ background: resultThemeColor }">
       <div class="result-hero-inner">
         <div class="hero-copy type-box">
           <p class="hero-caption">{{ t('result.heroCaption') }}</p>
@@ -682,7 +523,7 @@ async function handleFeedbackSubmit() {
               <button
                 class="action-btn hero-export-btn"
                 :disabled="share.isExporting.value"
-                :style="{ backgroundColor: resultThemeColor, color: '#fff' }"
+                :style="{ backgroundColor: resultThemeColor, color: heroReadableColor }"
                 @click="exportPosterImage"
               >
                 <AppIcon name="spinner" v-if="share.isExporting.value" style="animation: spin 1s linear infinite" />
@@ -921,7 +762,7 @@ async function handleFeedbackSubmit() {
         </section>
 
 <div class="poster-capture-wrapper">
-  <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" />
+  <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" @ready="handlePosterReady" />
 </div>
 
         <!-- 用户反馈卡片 -->
@@ -1154,11 +995,41 @@ async function handleFeedbackSubmit() {
   padding-top: 56px;
 }
 
+/* 浅色 accent 主题：切换为深色文字与深色描边，保证对比度达标 */
+.result-hero.hero-light {
+  color: #2f3a45;
+  --hero-pill-border: 1px solid rgba(47, 58, 69, 0.26);
+  --hero-pill-bg: rgba(255, 255, 255, 0.45);
+}
+
+.hero-light .hero-title {
+  text-shadow: none;
+}
+
+.hero-light .hero-quote {
+  color: #2f3a45;
+  text-shadow: none;
+}
+
+.hero-light .hero-metric {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(47, 58, 69, 0.16);
+}
+
+.hero-light .hero-hidden-badge {
+  color: #2f3a45;
+}
+
+.hero-light .action-btn.ghost {
+  color: #2f3a45;
+  border-color: rgba(47, 58, 69, 0.32);
+  background: rgba(255, 255, 255, 0.35);
+}
+
 .result-hero-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px 100px;
-  display: grid;
+  padding: 40px 24px 100px;  display: grid;
   gap: 40px;
   grid-template-columns: 1fr;
   align-items: start;

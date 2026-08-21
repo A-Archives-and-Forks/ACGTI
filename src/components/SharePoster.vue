@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
+import { useCharacterRarity } from '../composables/useCharacterRarity'
 import { useI18n } from '../i18n'
 import { getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
 import type { QuizResult } from '../types/quiz'
-import { getCharacterRarityMeta } from '../utils/characterRarity'
+import { ensureReadableOnLight } from '../utils/color'
+import { normalizeCharacterImagePath } from '../utils/characterVisuals'
 import AppIcon from './AppIcon.vue'
 
 const props = defineProps<{
   result: QuizResult
+}>()
+
+const emit = defineEmits<{
+  /** 组件挂载且头像图加载完成（或失败）后触发，导出方等待此信号再截图 */
+  ready: []
 }>()
 
 const rootEl = ref<HTMLElement | null>(null)
@@ -20,6 +27,8 @@ defineExpose({
 
 const primaryCharacter = computed(() => props.result.characterMatches[0] ?? null)
 const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? props.result.archetype.accent ?? '#e2ad3b')
+// 浅色 accent 在海报浅底上不可读，混合加深以保住对比度
+const posterTitleColor = computed(() => ensureReadableOnLight(resultThemeColor.value))
 const posterSubtitle = computed(() => {
   if (primaryCharacter.value) {
     if (isHiddenCharacter(primaryCharacter.value)) {
@@ -55,7 +64,7 @@ const posterImage = computed(() => {
     return ''
   }
 
-  return primaryCharacter.value.image || `/images/characters/${primaryCharacter.value.id}.webp`
+  return normalizeCharacterImagePath(primaryCharacter.value.image || `/images/characters/${primaryCharacter.value.id}.webp`)
 })
 const posterSeries = computed(() => {
   if (!primaryCharacter.value) {
@@ -64,119 +73,34 @@ const posterSeries = computed(() => {
 
   return getLocalizedCharacterSeries(primaryCharacter.value, locale.value)
 })
-function hexToRgb(hex: string) {
-  const normalized = hex.replace('#', '')
-  const full = normalized.length === 3
-    ? normalized.split('').map((char) => char + char).join('')
-    : normalized
 
-  return {
-    r: parseInt(full.substring(0, 2), 16),
-    g: parseInt(full.substring(2, 4), 16),
-    b: parseInt(full.substring(4, 6), 16),
-  }
-}
-
-function mixRgb(base: { r: number; g: number; b: number }, target: { r: number; g: number; b: number }, weight: number) {
-  const ratio = Math.max(0, Math.min(1, weight))
-  return {
-    r: Math.round(base.r * (1 - ratio) + target.r * ratio),
-    g: Math.round(base.g * (1 - ratio) + target.g * ratio),
-    b: Math.round(base.b * (1 - ratio) + target.b * ratio),
-  }
-}
-
-function toRgbString(color: { r: number; g: number; b: number }, alpha?: number) {
-  if (alpha === undefined) {
-    return `rgb(${color.r}, ${color.g}, ${color.b})`
-  }
-
-  return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
-}
-
-const rarityMeta = computed(() => getCharacterRarityMeta(primaryCharacter.value?.id))
-const rarityTierLabel = computed(() => {
-  const tier = rarityMeta.value?.tier
-  return tier
-    ? t(`result.rarityTiers.${tier}`, undefined, tier)
-    : '--'
+const rarityVisuals = useCharacterRarity({
+  character: () => primaryCharacter.value,
+  themeColor: () => resultThemeColor.value,
+  withShadow: false,
 })
-const rarityTierStyle = computed(() => {
-  const base = hexToRgb(resultThemeColor.value)
-  const white = { r: 255, g: 255, b: 255 }
-  const dark = { r: 47, g: 58, b: 69 }
+const rarityTierLabel = rarityVisuals.rarityTierLabel
+const rarityTierStyle = rarityVisuals.rarityTierStyle
+const rarityFontSizeStyle = rarityVisuals.rarityFontSizeStyle
+const raritySummaryLabel = rarityVisuals.raritySummaryLabel
 
-  switch (rarityMeta.value?.tier) {
-    case 'ex': {
-      const text = mixRgb(base, dark, 0.15)
-      return {
-        color: toRgbString(text),
-        background: `linear-gradient(135deg, ${toRgbString(base, 0.2)}, ${toRgbString(base, 0.35)})`,
-        borderColor: toRgbString(base, 0.45),
-      }
-    }
-    case 'ur': {
-      const text = mixRgb(base, dark, 0.22)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(base, 0.28),
-        borderColor: toRgbString(base, 0.5),
-      }
-    }
-    case 'ssr': {
-      const text = mixRgb(base, dark, 0.3)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(base, 0.18),
-        borderColor: toRgbString(base, 0.34),
-      }
-    }
-    case 'sr': {
-      const text = mixRgb(base, dark, 0.4)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(base, 0.1),
-        borderColor: toRgbString(base, 0.22),
-      }
-    }
-    default: {
-      const muted = mixRgb(base, white, 0.72)
-      const text = mixRgb(base, dark, 0.52)
-      return {
-        color: toRgbString(text),
-        background: toRgbString(muted, 0.32),
-        borderColor: toRgbString(base, 0.16),
-      }
-    }
+// 头像加载完成（含缓存命中 complete 与加载失败两种情况）后通知导出方
+watch(rootEl, (el) => {
+  if (!el) return
+  const img = el.querySelector('img')
+  if (!img || img.complete) {
+    emit('ready')
+    return
   }
-})
-
-// Compute dynamic font size for the rarity text
-const rarityFontSizeStyle = computed(() => {
-  const len = rarityTierLabel.value.length
-  if (len > 12) return { fontSize: '13px' }
-  if (len > 8) return { fontSize: '14px' }
-  if (len > 5) return { fontSize: '15px' }
-  return { fontSize: '18px' } // Default size
-})
-
-const raritySummaryLabel = computed(() => {
-  if (!rarityMeta.value) {
-    return ''
-  }
-
-  return t(`result.rarityTierDescriptions.${rarityMeta.value.tier}`, {
-    start: rarityMeta.value.startRank,
-    end: rarityMeta.value.endRank,
-    startPercent: rarityMeta.value.rangeStartPercent,
-    endPercent: rarityMeta.value.rangeEndPercent,
-  })
-})
+  const notify = () => emit('ready')
+  img.addEventListener('load', notify, { once: true })
+  img.addEventListener('error', notify, { once: true })
+}, { immediate: true, flush: 'post' })
 </script>
 
 <template>
   <div class="poster-container">
-    <section ref="rootEl" class="share-poster" :style="{ '--poster-accent': resultThemeColor }">
+    <section ref="rootEl" class="share-poster" :style="{ '--poster-accent': resultThemeColor, '--poster-title-color': posterTitleColor }">
       <div class="share-poster__accent-bar"></div>
       <div class="share-poster__surface"></div>
 
@@ -190,7 +114,7 @@ const raritySummaryLabel = computed(() => {
                 {{ t('result.personaBasisBadge') }}
               </p>
             </div>
-            <h2 class="share-poster__title" :style="{ color: resultThemeColor }">
+            <h2 class="share-poster__title" :style="{ color: posterTitleColor }">
               {{ primaryCharacter ? getLocalizedCharacterName(primaryCharacter, locale, { revealHidden: true }) : t('archetypes.' + result.archetype.id + '.name', undefined, result.archetype.name) }}
             </h2>
             <p class="share-poster__subtitle">{{ posterSubtitle }}</p>
@@ -199,7 +123,7 @@ const raritySummaryLabel = computed(() => {
           <div class="share-poster__metrics">
             <div class="share-poster__metric">
               <span class="metric-label">{{ t('result.match') }}</span>
-              <strong class="metric-value" :style="{ color: resultThemeColor }">{{ result.matchScore }}%</strong>
+              <strong class="metric-value" :style="{ color: posterTitleColor }">{{ result.matchScore }}%</strong>
             </div>
             <div class="share-poster__metric-divider"></div>
             <div class="share-poster__metric">
@@ -214,7 +138,7 @@ const raritySummaryLabel = computed(() => {
               v-for="tag in posterTags"
               :key="tag"
               class="tag-pill"
-              :style="{ backgroundColor: resultThemeColor + '15', color: resultThemeColor }"
+              :style="{ backgroundColor: resultThemeColor + '15', color: posterTitleColor }"
             ># {{ tag }}</span>
           </div>
 
@@ -338,7 +262,7 @@ const raritySummaryLabel = computed(() => {
   padding: 6px 14px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--poster-accent) 14%, #ffffff);
-  color: var(--poster-accent);
+  color: var(--poster-title-color, var(--poster-accent));
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.08em;

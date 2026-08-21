@@ -60,8 +60,10 @@ export function useShare() {
     try {
       htmlToImageLoader ??= import('html-to-image')
       const { toPng } = await htmlToImageLoader
+      // 等待字体就绪，避免导出图片出现字体回退；同源资源关闭 cacheBust，
+      // 避免每次导出都绕过缓存重新拉取图片。
+      await document.fonts.ready
       const dataUrl = await toPng(target, {
-        cacheBust: true,
         pixelRatio: 2,
         backgroundColor: '#ffffff',
       })
