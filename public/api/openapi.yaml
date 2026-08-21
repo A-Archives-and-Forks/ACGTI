@@ -1,0 +1,857 @@
+# ACGTI 匿名统计 API — OpenAPI 3.1.0 规范
+#
+# 本文件部署在 /api/openapi.yaml（构建时由 public/api/ 复制到 dist/api/）。
+# 所有行为描述与 functions/api/ 下的源码一一对应，修改接口时请同步更新此文件，
+# 详细说明见 docs/api.md。
+
+openapi: 3.1.0
+
+info:
+  title: ACGTI 匿名统计 API
+  version: 0.3.11
+  summary: ACGTI 人格测试站点的匿名统计、结果上报与 AI 解读接口
+  description: |
+    ACGTI（ACG Type Indicator）是一个基于 MBTI 的二次元人格测试站点。
+    本 API 由 Cloudflare Pages Functions + D1 数据库实现，仅用于匿名统计数据的
+    收集与查询，不涉及用户系统、登录或鉴权。
+
+    通用约定：
+
+    - 所有 `/api/` 路径的响应均附带安全响应头 `X-Content-Type-Options: nosniff`
+      与 `Referrer-Policy: no-referrer`（见 `functions/_middleware.ts`）。
+    - 写入类接口（submit / feedback / insight）基于 `CF-Connecting-IP` 做
+      D1 分钟级限流（按自然分钟分桶计数，过期行由 Cron Worker 清理）；
+      限流计数表异常时降级放行，统计端点的可用性优先于严格限流。
+    - `/api/submit` 对非法输入与内部错误同样返回 204 空响应（防枚举设计），
+      调用方无法从状态码区分「已入库」与「被丢弃」。
+    - 统计读取类接口的数据来自 `stats_snapshot` 快照表，
+      由 Cron Worker 每 15 分钟刷新一次，`updatedAt` 为快照生成时间。
+    - 请求体中的未知字段会被忽略：服务端按白名单逐字段提取并截断。
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: /
+    description: 相对路径，随站点部署域名自动适配
+
+# 本 API 无用户系统与鉴权，所有端点均可匿名调用
+security: []
+
+tags:
+  - name: health
+    description: 健康检查
+  - name: config
+    description: 前端运行时配置
+  - name: reporting
+    description: 结果上报与用户反馈（写入类）
+  - name: stats
+    description: 匿名统计查询（只读）
+  - name: insight
+    description: AI 结果解读（渐进增强）
+
+paths:
+  /api/ping:
+    get:
+      operationId: getPing
+      summary: 健康检查
+      description: 返回纯文本 `pong`，用于探活与部署验证。无参数、无鉴权、无限流。
+      tags: [health]
+      responses:
+        '200':
+          description: 服务正常。
+          content:
+            text/plain:
+              schema:
+                type: string
+                const: pong
+
+  /api/config:
+    get:
+      operationId: getConfig
+      summary: 获取前端运行时配置
+      description: |
+        返回当前环境对前端公开的 Turnstile 站点密钥（站点密钥本身是公开信息）。
+
+        取值优先级：环境变量 `VITE_TURNSTILE_SITE_KEY` > `TURNSTILE_SITE_KEY`；
+        若两者均未配置且请求来自本地 host（localhost、127.0.0.1、0.0.0.0、::1、
+        *.localhost），返回 Turnstile 官方测试密钥。
+
+        没有任何可用密钥时，`turnstileSiteKey` 字段不会出现在响应体中
+        （即响应为 `{}`）。响应禁止缓存。
+      tags: [config]
+      responses:
+        '200':
+          description: 配置读取成功。
+          headers:
+            Cache-Control:
+              description: 固定为 `no-store`。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  turnstileSiteKey:
+                    type: string
+                    description: Turnstile 站点密钥；无可用密钥时该字段缺失。
+
+  /api/submit:
+    post:
+      operationId: submitResult
+      summary: 上报测试结果（聚合计数 + 抽样明细）
+      description: |
+        每次提交只对聚合表做 UPSERT 自增；约 2% 的提交会额外抽样保留完整明细
+        （含逐题答案），用于校准与排查。聚合表无法事后剔除脏数据，
+        因此入口做分钟级限流兜底。
+
+        防枚举设计：无论写入成功、校验失败还是内部错误，一律返回 204 空响应，
+        调用方无法据此探测任何数据是否已存在，也无法区分有效与无效提交。
+
+        限流：单 IP 每分钟最多 30 次，超限返回 429 空响应。
+      tags: [reporting]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitRequest'
+            examples:
+              minimal:
+                summary: 最小合法提交
+                value:
+                  submissionId: 0f8a2b1c-3d4e-4f5a-9b6c-7d8e9f0a1b2c
+                  appVersion: 0.3.11
+                  archetypeCode: analyst-intj
+                  characterCode: INTJ-001
+                  dimensionScores:
+                    ei: 32
+                    sn: 74
+                    tf: 81
+                    jp: 66
+                  durationMs: 420000
+                  answers:
+                    - questionId: q1
+                      answerValue: -2
+                    - questionId: q2
+                      answerValue: 1
+                    - questionId: q3
+                      answerValue: 0
+                    - questionId: q4
+                      answerValue: 2
+                    - questionId: q5
+                      answerValue: -1
+                    - questionId: q6
+                      answerValue: -2
+                    - questionId: q7
+                      answerValue: 1
+                    - questionId: q8
+                      answerValue: 2
+                    - questionId: q9
+                      answerValue: 0
+                    - questionId: q10
+                      answerValue: -1
+                    - questionId: q11
+                      answerValue: 1
+                    - questionId: q12
+                      answerValue: -2
+                    - questionId: q13
+                      answerValue: 0
+                    - questionId: q14
+                      answerValue: 2
+                    - questionId: q15
+                      answerValue: -1
+                    - questionId: q16
+                      answerValue: 1
+                    - questionId: q17
+                      answerValue: -2
+                    - questionId: q18
+                      answerValue: 0
+                    - questionId: q19
+                      answerValue: 2
+                    - questionId: q20
+                      answerValue: -1
+      responses:
+        '204':
+          description: |
+            已受理。校验通过并计数，或校验失败被静默丢弃，响应均为空体，
+            两者不可区分。可能被丢弃的原因：JSON 解析失败、必填字段缺失、
+            submissionId 非 UUID v4、代码格式非法、predictedMbti 非 MBTI 四字母、
+            durationMs 超出 [1000, 3600000]、dimensionScores 超出 [0, 100]、
+            answers 不是数组或少于 20 条、数据库写入失败。
+        '429':
+          description: 触发分钟级限流（单 IP 每分钟超过 30 次）。空响应体。
+
+  /api/feedback:
+    post:
+      operationId: submitFeedback
+      summary: 提交真实 MBTI 自评反馈
+      description: |
+        用户主动上报自评的真实 MBTI 类型，用于校准测试准确度。
+
+        限流：单 IP 每分钟最多 5 次，超限返回 429 空响应。
+
+        Turnstile 人机校验当前处于暂时禁用状态（服务端跳过 token 校验），
+        字段 `turnstileToken` 即使上传也会被忽略。
+
+        与 `/api/submit` 不同，本接口对非法输入返回 400（纯文本错误信息），
+        仅保留 500 对外隐藏内部细节。
+      tags: [reporting]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+            examples:
+              typical:
+                summary: 典型反馈
+                value:
+                  selfMbti: INTJ
+                  confidence: 4
+                  appVersion: 0.3.11
+                  submissionId: 0f8a2b1c-3d4e-4f5a-9b6c-7d8e9f0a1b2c
+                  predictedMbti: INTJ
+                  archetypeCode: analyst-intj
+                  characterCode: INTJ-001
+                  note: 大部分描述挺准的
+                  answers:
+                    - questionId: q1
+                      answerValue: -2
+      responses:
+        '200':
+          description: 反馈已入库。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackOk'
+        '400':
+          description: |
+            请求非法。响应体为纯文本错误信息（非 JSON），取值为以下之一：
+            `Invalid JSON`（JSON 解析失败）、`Invalid answers`（answers 数组
+            中存在非法条目）、`Missing required fields`（缺 selfMbti /
+            confidence / appVersion）、`Invalid MBTI format`（selfMbti 非四字母
+            MBTI）、`Invalid submissionId`（submissionId 非 UUID v4）。
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                  - Invalid JSON
+                  - Invalid answers
+                  - Missing required fields
+                  - Invalid MBTI format
+                  - Invalid submissionId
+        '429':
+          description: 触发分钟级限流（单 IP 每分钟超过 5 次）。空响应体。
+        '500':
+          description: |
+            数据库写入失败（含自修复重试仍失败）。SQL 细节仅记录在服务端日志，
+            对外只返回通用错误码。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackInternalError'
+
+  /api/insight:
+    post:
+      operationId: generateInsight
+      summary: AI 结果解读（渐进增强）
+      description: |
+        基于 Workers AI（`@cf/meta/llama-3.2-3b-instruct`）为结果页生成一段
+        第二人称的角色解读文案。
+
+        隐私：请求只包含角色代码与四维倾向分（[-1, 1]），绝不接收逐题答案。
+
+        缓存：以「角色代码 + 语言 + 四维倾向分桶」为键写入 D1 缓存，
+        相同画像全站共享一次生成结果。分桶规则：|score| >= 0.5 记为明显倾向、
+        >= 0.2 记为中等、否则轻微，因此同一角色每种语言最多 81 种桶组合。
+
+        降级：未绑定 AI、额度耗尽、生成失败、输出为空、未知角色时均返回
+        `available: false`，前端隐藏卡片并回落到静态解析文案。
+
+        限流：单 IP 每分钟最多 10 次（生成路径比查询路径重，阈值更紧），
+        超限返回 429 JSON。
+      tags: [insight]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsightRequest'
+            examples:
+              typical:
+                summary: 请求简体中文解读
+                value:
+                  characterCode: INTJ-001
+                  lang: zh-CN
+                  dimensionScores:
+                    ei: -0.6
+                    sn: 0.4
+                    tf: 0.8
+                    jp: 0.3
+      responses:
+        '200':
+          description: |
+            解读可用或已降级。`available: true` 时 `text` 为清洗后的正文
+            （约 60~240 字符，去除引号包裹与前缀，超长截断）；
+            `available: false` 时 `text` 恒为 null，`reason` 说明降级原因。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InsightOk'
+                  - $ref: '#/components/schemas/InsightUnavailable'
+        '400':
+          description: |
+            请求非法：`bad-json`（JSON 解析失败）或 `invalid-payload`
+            （characterCode 格式非法或 dimensionScores 超出 [-1, 1] / 缺失）。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightError'
+        '429':
+          description: 触发分钟级限流（单 IP 每分钟超过 10 次）。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightError'
+
+  /api/stats/overview:
+    get:
+      operationId: getStatsOverview
+      summary: 站点总体统计
+      description: |
+        从快照表读取总提交数、今日提交数与近两日提交数。
+        快照由 Cron Worker 每 15 分钟更新一次；无快照（新环境或迁移未执行）时
+        返回全零数据与 `updatedAt: null`。
+      tags: [stats]
+      responses:
+        '200':
+          description: 统计读取成功。
+          headers:
+            Cache-Control:
+              description: 固定为 `public, max-age=60`。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OverviewEnvelope'
+        '500':
+          description: 快照表存在但读取失败等内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError'
+
+  /api/stats/archetypes:
+    get:
+      operationId: getStatsArchetypes
+      summary: 原型命中排行榜
+      description: |
+        从快照表读取全部原型的命中计数排行（按 count 降序）。
+        快照由 Cron Worker 每 15 分钟更新一次；无快照时返回空列表
+        与 `updatedAt: null`。
+      tags: [stats]
+      responses:
+        '200':
+          description: 排行榜读取成功。
+          headers:
+            Cache-Control:
+              description: 固定为 `public, max-age=120`。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RankEnvelope'
+        '500':
+          description: 快照表存在但读取失败等内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError'
+
+  /api/stats/characters:
+    get:
+      operationId: getStatsCharacters
+      summary: 角色命中排行榜（前 200 名）
+      description: |
+        从快照表读取角色命中计数排行，仅保留前 200 名（按 count 降序）。
+        快照由 Cron Worker 每 15 分钟更新一次；无快照时返回空列表
+        与 `updatedAt: null`。
+      tags: [stats]
+      responses:
+        '200':
+          description: 排行榜读取成功。
+          headers:
+            Cache-Control:
+              description: 固定为 `public, max-age=120`。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RankEnvelope'
+        '500':
+          description: 快照表存在但读取失败等内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError'
+
+  /api/stats/result:
+    get:
+      operationId: getStatsResult
+      summary: 结果页专用统计（当前角色 / 原型）
+      description: |
+        返回指定角色与原型的站内统计数据：总提交数、同角色 / 同原型命中数
+        与百分比、以及排名。计数直接来自聚合表（实时性高于快照），
+        排名来自快照排行榜（快照只存前 200 名，超出则为 null）。
+        百分比按两位小数四舍五入。
+      tags: [stats]
+      parameters:
+        - name: character
+          in: query
+          required: false
+          description: 角色代码；与 archetype 至少提供一个。
+          schema:
+            type: string
+        - name: archetype
+          in: query
+          required: false
+          description: 原型代码；与 character 至少提供一个。
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 统计读取成功。`updatedAt` 为快照更新时间，无快照时为 null。
+          headers:
+            Cache-Control:
+              description: 固定为 `public, max-age=300`。
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultStatsEnvelope'
+        '400':
+          description: character 与 archetype 参数均缺失。
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: string
+                    const: missing character or archetype param
+        '500':
+          description: 快照表存在但读取失败等内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsError'
+
+components:
+  schemas:
+    AnswerItem:
+      type: object
+      description: |
+        单题答案。上报量程为 5 档（-2 ~ +2）；前端 UI 使用 7 档（±3），
+        上报前由前端压缩到 ±2，详见 docs/api.md「答案量程约定」。
+      required: [questionId, answerValue]
+      properties:
+        questionId:
+          type: string
+          maxLength: 16
+          description: 题目 ID，超长部分会被截断。
+        answerValue:
+          type: integer
+          minimum: -2
+          maximum: 2
+          description: 5 档量程的作答值（-2、-1、0、1、2）。
+
+    DimensionScoresPercent:
+      type: object
+      description: 四维倾向百分比，取值 [0, 100]，50 为分界。用于 /api/submit。
+      required: [ei, sn, tf, jp]
+      properties:
+        ei:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 外向（E）倾向百分比。
+        sn:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 直觉（N）倾向百分比。
+        tf:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 情感（F）倾向百分比。
+        jp:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 知觉（P）倾向百分比。
+
+    DimensionScoresSigned:
+      type: object
+      description: 四维倾向分，取值 [-1, 1]，正负号表示方向，绝对值表示强度。用于 /api/insight。
+      required: [ei, sn, tf, jp]
+      properties:
+        ei:
+          type: number
+          minimum: -1
+          maximum: 1
+          description: 正值偏向外向（E），负值偏内向（I）。
+        sn:
+          type: number
+          minimum: -1
+          maximum: 1
+          description: 正值偏向直觉（N），负值偏实感（S）。
+        tf:
+          type: number
+          minimum: -1
+          maximum: 1
+          description: 正值偏向情感（F），负值偏思考（T）。
+        jp:
+          type: number
+          minimum: -1
+          maximum: 1
+          description: 正值偏向随性（P），负值偏计划（J）。
+
+    MbtiCode:
+      type: string
+      minLength: 4
+      maxLength: 4
+      pattern: '^[EI][SN][TF][JP]$'
+      description: MBTI 四字母编码，大小写不敏感（服务端按 /i 校验，存储为大写）。
+
+    SubmitRequest:
+      type: object
+      description: |
+        /api/submit 请求体。服务端按白名单提取字段，未知字段会被忽略；
+        任一必填校验不通过则整条提交被静默丢弃（仍返回 204）。
+      required:
+        - submissionId
+        - appVersion
+        - archetypeCode
+        - characterCode
+        - durationMs
+        - dimensionScores
+        - answers
+      properties:
+        submissionId:
+          type: string
+          maxLength: 64
+          description: 本次提交的唯一标识，必须是 UUID v4。
+          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+        appVersion:
+          type: string
+          maxLength: 32
+          description: 前端版本号，超长部分会被截断。
+        archetypeCode:
+          type: string
+          maxLength: 32
+          pattern: '^[A-Za-z0-9_-]{1,32}$'
+          description: 命中的原型代码（字母、数字、下划线、短横线）。
+        characterCode:
+          type: string
+          maxLength: 32
+          pattern: '^[A-Za-z0-9_-]{1,32}$'
+          description: 命中的角色代码（字母、数字、下划线、短横线）。
+        predictedMbti:
+          allOf:
+            - $ref: '#/components/schemas/MbtiCode'
+          description: 可选。底层的 MBTI 四字母判定结果。
+        durationMs:
+          type: number
+          minimum: 1000
+          maximum: 3600000
+          description: 完成测试所用毫秒数，超出 [1000, 3600000] 视为无效提交。
+        dimensionScores:
+          $ref: '#/components/schemas/DimensionScoresPercent'
+        answers:
+          type: array
+          minItems: 20
+          description: |
+            逐题答案。少于 20 条视为无效提交，整条丢弃不写库。
+            服务端仅校验数组长度；元素结构遵循 AnswerItem 约定
+            （仅在被抽样时原样存档）。
+          items:
+            $ref: '#/components/schemas/AnswerItem'
+
+    FeedbackRequest:
+      type: object
+      description: /api/feedback 请求体。服务端按白名单提取字段，未知字段会被忽略。
+      required: [selfMbti, confidence, appVersion]
+      properties:
+        selfMbti:
+          allOf:
+            - $ref: '#/components/schemas/MbtiCode'
+          description: 用户自评的真实 MBTI 类型。
+        confidence:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: 用户对自评结果的确信度打分。
+        appVersion:
+          type: string
+          maxLength: 32
+          description: 前端版本号。
+        submissionId:
+          type: string
+          maxLength: 64
+          description: 可选。关联的提交 ID，必须是 UUID v4。
+          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+        note:
+          type: string
+          maxLength: 200
+          description: 可选。自由文本备注；超过 200 字符的部分会被截断（不报错）。
+        answers:
+          type: array
+          description: |
+            可选。测试时的逐题答案，用于校准分析。一旦提供则逐条严格校验，
+            任一条目非法即返回 400 `Invalid answers`；不提供则跳过。
+          items:
+            $ref: '#/components/schemas/AnswerItem'
+        predictedMbti:
+          allOf:
+            - $ref: '#/components/schemas/MbtiCode'
+          description: 可选。测试判定的 MBTI 结果。
+        archetypeCode:
+          type: string
+          maxLength: 32
+          pattern: '^[A-Za-z0-9_-]{1,32}$'
+          description: 可选。命中的原型代码。
+        characterCode:
+          type: string
+          maxLength: 32
+          pattern: '^[A-Za-z0-9_-]{1,32}$'
+          description: 可选。命中的角色代码。
+
+    FeedbackOk:
+      type: object
+      description: 反馈写入成功（含建表自修复后的重试成功）。
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          const: true
+
+    FeedbackInternalError:
+      type: object
+      description: 数据库写入失败，对外只暴露通用错误码。
+      required: [ok, error]
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+          const: internal
+          description: 恒为 `internal`，SQL 细节仅记录在服务端日志。
+
+    InsightRequest:
+      type: object
+      description: /api/insight 请求体。只携带角色代码、语言与四维倾向分，不含逐题答案。
+      required: [characterCode, dimensionScores]
+      properties:
+        characterCode:
+          type: string
+          maxLength: 32
+          pattern: '^[A-Za-z0-9_-]{1,32}$'
+          description: |
+            角色代码。格式校验通过后还必须存在于服务端角色档案
+            （functions/api/_data/characterBrief.json）中，否则返回
+            `unknown-character` 降级。
+        lang:
+          type: string
+          maxLength: 8
+          enum: [zh-CN, zh-TW, en, ja]
+          default: zh-CN
+          description: |
+            解读语言。不在枚举内的值会被静默回退为 `zh-CN`（不报错）。
+        dimensionScores:
+          $ref: '#/components/schemas/DimensionScoresSigned'
+        fresh:
+          type: boolean
+          default: false
+          description: |
+            可选。为 true 时跳过缓存读取、强制重新生成，并用新结果覆写缓存；
+            false / 缺省时优先读缓存。
+
+    InsightOk:
+      type: object
+      description: 解读可用。
+      required: [text, cached, available]
+      properties:
+        text:
+          type: string
+          description: 解读正文（约 60~240 字符，已清洗截断）。
+        cached:
+          type: boolean
+          description: true 表示命中 D1 缓存，false 表示本次新生成。
+        available:
+          type: boolean
+          const: true
+
+    InsightUnavailable:
+      type: object
+      description: 解读不可用，前端应隐藏卡片并回落到静态解析文案。
+      required: [text, available, reason]
+      properties:
+        text:
+          type: 'null'
+          description: 恒为 null。
+        available:
+          type: boolean
+          const: false
+        reason:
+          type: string
+          enum: [unknown-character, no-binding, generation-failed, empty-output]
+          description: |
+            降级原因：
+            `unknown-character` 角色代码不在档案中；
+            `no-binding` 当前环境未绑定 Workers AI（本地开发或未配置）；
+            `generation-failed` AI 调用失败（含额度耗尽）；
+            `empty-output` 输出清洗后为空。
+
+    InsightError:
+      type: object
+      description: 400 / 429 错误响应体（均为 JSON）。
+      required: [text, available, reason]
+      properties:
+        text:
+          type: 'null'
+          description: 恒为 null。
+        available:
+          type: boolean
+          const: false
+        reason:
+          type: string
+          enum: [bad-json, invalid-payload, rate-limited]
+          description: |
+            `bad-json` 请求体不是合法 JSON（400）；
+            `invalid-payload` characterCode 格式非法或 dimensionScores
+            缺失 / 超出 [-1, 1]（400）；
+            `rate-limited` 单 IP 每分钟超过 10 次（429）。
+
+    OverviewEnvelope:
+      type: object
+      description: /api/stats/overview 响应。
+      required: [data, updatedAt]
+      properties:
+        data:
+          type: object
+          required: [totalSubmissions, todaySubmissions, last24hSubmissions]
+          properties:
+            totalSubmissions:
+              type: integer
+              description: 累计提交总数。
+            todaySubmissions:
+              type: integer
+              description: 今日（UTC 自然日）提交数。
+            last24hSubmissions:
+              type: integer
+              description: |
+                近两日提交数。daily_counts 只有「日」粒度，实际统计口径为
+                「今日 + 昨日」两个 UTC 自然日（凌晨时接近 48 小时、深夜时接近
+                24 小时），前端按「近两日」展示。
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+          description: 快照更新时间（ISO 8601）；无快照数据时为 null。
+
+    RankEnvelope:
+      type: object
+      description: /api/stats/archetypes 与 /api/stats/characters 的响应。
+      required: [data, updatedAt]
+      properties:
+        data:
+          type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              description: 按 count 降序排列的条目列表；无快照数据时为空数组。
+              items:
+                $ref: '#/components/schemas/RankItem'
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+          description: 快照更新时间（ISO 8601）；无快照数据时为 null。
+
+    RankItem:
+      type: object
+      required: [code, count, percent]
+      properties:
+        code:
+          type: string
+          description: 原型或角色代码。
+        count:
+          type: integer
+          description: 命中次数。
+        percent:
+          type: number
+          description: 占总提交数的百分比，保留两位小数。
+
+    ResultStatsEnvelope:
+      type: object
+      description: /api/stats/result 响应。
+      required: [data, updatedAt]
+      properties:
+        data:
+          type: object
+          required:
+            - totalSubmissions
+            - sameCharacterCount
+            - sameCharacterPercent
+            - sameArchetypeCount
+            - sameArchetypePercent
+            - characterRank
+            - archetypeRank
+          properties:
+            totalSubmissions:
+              type: integer
+              description: 总提交数（优先取快照，无快照时从聚合表实时求和）。
+            sameCharacterCount:
+              type: integer
+              description: 与指定参数 character 相同的角色命中次数；未提供该参数时为 0。
+            sameCharacterPercent:
+              type: number
+              description: 同角色占比（百分比，保留两位小数）。
+            sameArchetypeCount:
+              type: integer
+              description: 与指定参数 archetype 相同的原型命中次数；未提供该参数时为 0。
+            sameArchetypePercent:
+              type: number
+              description: 同原型占比（百分比，保留两位小数）。
+            characterRank:
+              type: [integer, 'null']
+              description: |
+                角色排名（1 起）。来自快照排行榜，快照只存前 200 名，
+                落榜或无数据时为 null。
+            archetypeRank:
+              type: [integer, 'null']
+              description: 原型排名（1 起）。来自快照排行榜，无数据时为 null。
+        updatedAt:
+          type: [string, 'null']
+          format: date-time
+          description: 快照更新时间（ISO 8601）；无快照数据时为 null。
+
+    StatsError:
+      type: object
+      description: 统计接口内部错误（500）。SQL 细节仅记录在服务端日志。
+      required: [error]
+      properties:
+        error:
+          type: string
+          const: internal
