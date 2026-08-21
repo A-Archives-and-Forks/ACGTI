@@ -1,3 +1,13 @@
+// 答案量程约定：-3（强烈反对）.. 3（强烈同意），全部 UI 与评分逻辑共用
+export const ANSWER_MIN = -3
+export const ANSWER_MAX = 3
+// 未作答哨兵值，与有效量程刻意拉开距离，避免与真实答案混淆
+export const UNANSWERED = -10
+
+export function isAnsweredValue(value: number): boolean {
+  return Number.isFinite(value) && value >= ANSWER_MIN && value <= ANSWER_MAX
+}
+
 export type DimensionId =
   | 'expression'
   | 'temperature'
@@ -30,19 +40,11 @@ export type QuestionArchetypeWeightId =
   | 'trickster'
   | 'ruler'
 
-export interface QuestionOption {
-  id: string
-  label: string
-  tone: string
-  weights: Partial<Record<QuestionArchetypeWeightId, number>>
-}
-
 export interface Question {
   id: string
-  text?: string
-  prompt?: string
+  /** 题干原文（简体中文），其他语言由 i18n 的 quiz.questions 数组按序提供 */
+  text: string
   scene: string
-  options?: QuestionOption[]
   weights?: Partial<Record<QuestionArchetypeWeightId, number>>
   dimension: DimensionPair
   sign: 1 | -1
@@ -134,22 +136,4 @@ export interface QuizResult {
   characterMatches: CharacterMatch[]
   topCharacterMatches: CharacterMatchResult[]
   featuredCharacter: CharacterMatch | null
-}
-
-// 16personalities 风格的额外类型
-export interface TraitBar {
-  label: string
-  leftLabel: string
-  rightLabel: string
-  percentage: number
-  dominant: 'left' | 'right'
-  color: string
-}
-
-export interface RoleCard {
-  title: string
-  subtitle: string
-  description: string
-  imageUrl?: string
-  learnMoreUrl?: string
 }

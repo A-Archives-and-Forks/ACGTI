@@ -1,9 +1,17 @@
 import { computed, reactive, readonly, ref } from 'vue'
 
 import type { Archetype, CharacterMatch, Question, QuizRecord, QuizResult } from '../types/quiz'
+import { UNANSWERED, isAnsweredValue } from '../types/quiz'
 import { hydrateCharacterVisual, hydrateQuizRecord } from '../utils/characterVisuals'
 import { calculateQuizResult, createDebugQuizResult } from '../utils/quizEngine'
-import { clearLastRecord, loadLastRecord, saveLastRecord } from '../utils/storage'
+import {
+  clearLastRecord,
+  clearQuizProgress,
+  loadLastRecord,
+  loadQuizProgress,
+  saveLastRecord,
+  saveQuizProgress,
+} from '../utils/storage'
 
 // ── 异步加载数据 ──────────────────────────────────────────
 // 数据不再顶层静态导入，改为首次使用时按需异步加载
@@ -33,40 +41,22 @@ const questions = ref<Question[]>([])
 const archetypes = ref<Archetype[]>([])
 const characters = ref<CharacterMatch[]>([])
 
-// 数据是否已就绪
-const dataReady = computed(() => questions.value.length > 0)
-
-const UNANSWERED = -10
-
-function isAnsweredValue(value: number) {
-  return value >= -3 && value <= 3
-}
-
 const emptyAnswers = () => Array.from({ length: questions.value.length }, () => UNANSWERED)
 
 const state = reactive({
-  currentIndex: 0,
-  answers: emptyAnswers(),
+  answers: [] as number[],
   startedAt: null as string | null,
-  latestRecord: hydrateQuizRecord(loadLastRecord() as QuizRecord | null),
+  latestRecord: hydrateQuizRecord(loadLastRecord()),
 })
 
-const currentQuestion = computed(() => questions.value[state.currentIndex] ?? null)
-const selectedOptionIndex = computed(() => state.answers[state.currentIndex] ?? UNANSWERED)
-const progress = computed(() => (questions.value.length ? (state.currentIndex + 1) / questions.value.length : 0))
 const answeredCount = computed(() => state.answers.filter((answer) => isAnsweredValue(answer)).length)
 const firstUnansweredIndex = computed(() => state.answers.findIndex((answer) => !isAnsweredValue(answer)))
-const canGoNext = computed(() => isAnsweredValue(selectedOptionIndex.value))
-const canGoPrev = computed(() => state.currentIndex > 0)
-const isComplete = computed(() => state.answers.every((answer) => isAnsweredValue(answer)))
+const isComplete = computed(() => state.answers.length > 0 && state.answers.every((answer) => isAnsweredValue(answer)))
 const latestResult = computed(() => state.latestRecord?.result ?? null)
 
-function selectOption(optionIndex: number) {
-  if (!isAnsweredValue(optionIndex)) return
-  if (!state.startedAt) {
-    state.startedAt = new Date().toISOString()
-  }
-  state.answers[state.currentIndex] = optionIndex
+function persistProgress() {
+  if (!state.startedAt) return
+  saveQuizProgress({ answers: [...state.answers], startedAt: state.startedAt })
 }
 
 function selectOptionAt(questionIndex: number, optionValue: number) {
@@ -76,30 +66,13 @@ function selectOptionAt(questionIndex: number, optionValue: number) {
     state.startedAt = new Date().toISOString()
   }
   state.answers[questionIndex] = optionValue
-}
-
-function goNext() {
-  if (canGoNext.value && state.currentIndex < questions.value.length - 1) {
-    state.currentIndex += 1
-  }
-}
-
-function goPrev() {
-  if (canGoPrev.value) {
-    state.currentIndex -= 1
-  }
-}
-
-function jumpToQuestion(index: number) {
-  if (index >= 0 && index < questions.value.length) {
-    state.currentIndex = index
-  }
+  persistProgress()
 }
 
 function resetQuiz(clearHistory = false) {
-  state.currentIndex = 0
   state.answers = emptyAnswers()
   state.startedAt = null
+  clearQuizProgress()
 
   if (clearHistory) {
     state.latestRecord = null
@@ -129,12 +102,32 @@ function finalizeQuiz(): QuizResult | null {
 
   state.latestRecord = hydrateQuizRecord(record)
   saveLastRecord(record)
+  clearQuizProgress()
 
   return result
 }
 
 function resumeLastResult() {
   state.latestRecord = hydrateQuizRecord(loadLastRecord())
+}
+
+/**
+ * 兜底保证记录上存在稳定的 submissionId（旧版本记录可能没有）。
+ * 通过整体替换记录并回写 localStorage，避免外部直接改写 readonly 状态。
+ */
+function ensureSubmissionId(): string {
+  const record = state.latestRecord
+  if (record?.submissionId) {
+    return record.submissionId
+  }
+
+  const newId = crypto.randomUUID()
+  if (record) {
+    const updated: QuizRecord = { ...record, submissionId: newId }
+    state.latestRecord = hydrateQuizRecord(updated)
+    saveLastRecord(updated)
+  }
+  return newId
 }
 
 export function useQuiz() {
@@ -145,33 +138,33 @@ export function useQuiz() {
       questions.value = data.questions
       archetypes.value = data.archetypes
       characters.value = data.characters
-      // 如果 answers 长度和 questions 不匹配，重置
-      if (state.answers.length !== questions.value.length) {
+
+      // 恢复上次未完成的答题进度（题数一致才可信，防止题库变更后错位）
+      const progress = state.answers.length > 0
+        ? { answers: state.answers, startedAt: state.startedAt }
+        : loadQuizProgress()
+      if (progress && progress.answers.length === questions.value.length && progress.startedAt) {
+        state.answers = [...progress.answers]
+        state.startedAt = progress.startedAt
+      } else {
         state.answers = emptyAnswers()
+        state.startedAt = null
       }
     },
-    dataReady,
     questions,
     archetypes,
     characters,
     state: readonly(state),
-    currentQuestion,
-    selectedOptionIndex,
-    progress,
     answeredCount,
     firstUnansweredIndex,
-    canGoNext,
-    canGoPrev,
     isComplete,
     latestResult,
-    selectOption,
+    isAnsweredValue,
     selectOptionAt,
-    goNext,
-    goPrev,
-    jumpToQuestion,
     resetQuiz,
     finalizeQuiz,
     resumeLastResult,
+    ensureSubmissionId,
     createDebugResult: (characterId: string): QuizResult | null =>
       createDebugQuizResult({
         characterId,

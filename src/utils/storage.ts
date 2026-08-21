@@ -1,6 +1,14 @@
 import type { QuizRecord } from '../types/quiz'
+import { isAnsweredValue } from '../types/quiz'
 
 const STORAGE_KEY = 'acgti:last-result'
+// 进行中的答题进度，避免刷新/误触返回导致 39 题答案全部丢失
+const PROGRESS_KEY = 'acgti:quiz-progress'
+
+export interface QuizProgress {
+  answers: number[]
+  startedAt: string | null
+}
 
 export function loadLastRecord(): QuizRecord | null {
   if (typeof window === 'undefined') {
@@ -35,4 +43,50 @@ export function clearLastRecord() {
   }
 
   window.localStorage.removeItem(STORAGE_KEY)
+}
+
+export function saveQuizProgress(progress: QuizProgress) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress))
+}
+
+export function loadQuizProgress(): QuizProgress | null {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const raw = window.localStorage.getItem(PROGRESS_KEY)
+  if (!raw) {
+    return null
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<QuizProgress>
+    if (!Array.isArray(parsed.answers) || parsed.answers.some((v) => typeof v !== 'number')) {
+      return null
+    }
+    return {
+      answers: parsed.answers,
+      startedAt: typeof parsed.startedAt === 'string' ? parsed.startedAt : null,
+    }
+  } catch {
+    window.localStorage.removeItem(PROGRESS_KEY)
+    return null
+  }
+}
+
+export function clearQuizProgress() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.removeItem(PROGRESS_KEY)
+}
+
+/** 进度里只要有一题是有效作答就视为“已开始”，用于离开页面的提醒与恢复判断 */
+export function hasAnyAnswer(progress: QuizProgress | null): boolean {
+  return !!progress?.answers.some((value) => isAnsweredValue(value))
 }

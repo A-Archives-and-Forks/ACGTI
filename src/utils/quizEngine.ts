@@ -10,6 +10,7 @@ import type {
   QuestionArchetypeWeightId,
   QuizResult,
 } from '../types/quiz'
+import { ANSWER_MAX, isAnsweredValue } from '../types/quiz'
 import questionDimensionWeights from '../data/questionDimensionWeights.json' with { type: 'json' }
 import { getCharacterPopulationProbability } from './characterProbability.ts'
 
@@ -64,67 +65,15 @@ const MBTI_WEIGHT = 0.25
 const ARCHETYPE_WEIGHT = 0.28
 const VECTOR_WEIGHT = 0.27
 const CHARACTER_SPECIFIC_WEIGHT = 0.2
-const CLOSE_MATCH_THRESHOLD = 0.025
-const ENABLE_DIMENSION_WEIGHT_OVERRIDE = true
+
+// 逐题维度权重覆盖表（基于真实反馈数据校准）。
+// 覆盖语义为“整体替换”：表中列出的题目会完全取代题目自带的 dimension/sign 计分，
+// 未列出的维度权重归零（含置 0 的降噪题），不在表中的题目沿用自身维度。
 const DIMENSION_SCORE_WEIGHTS = questionDimensionWeights as Record<string, Partial<Record<DimensionPair, number>>>
 
-// 16personalities 风格的维度标签配置
-export const TRAIT_CONFIG = {
-  'E_I': {
-    label: 'Energy',
-    leftLabel: 'Extraverted',
-    rightLabel: 'Introverted',
-    leftCN: '外放',
-    rightCN: '收束',
-    color: '#9b59b6'
-  },
-  'S_N': {
-    label: 'Mind',
-    leftLabel: 'Intuitive',
-    rightLabel: 'Observant',
-    leftCN: '直觉',
-    rightCN: '实感',
-    color: '#3498db'
-  },
-  'T_F': {
-    label: 'Nature',
-    leftLabel: 'Thinking',
-    rightLabel: 'Feeling',
-    leftCN: '理性',
-    rightCN: '共情',
-    color: '#e74c3c'
-  },
-  'J_P': {
-    label: 'Tactics',
-    leftLabel: 'Judging',
-    rightLabel: 'Prospecting',
-    leftCN: '判断',
-    rightCN: '展望',
-    color: '#f39c12'
-  }
-}
-
-export const ROLE_MAPPING: Record<string, { name: string; description: string }> = {
-  INTJ: { name: 'Analysts', description: 'Analysts are imaginative and strategic thinkers, with a plan for everything.' },
-  INTP: { name: 'Analysts', description: 'Analysts are imaginative and strategic thinkers, with a plan for everything.' },
-  ENTJ: { name: 'Analysts', description: 'Analysts are imaginative and strategic thinkers, with a plan for everything.' },
-  ENTP: { name: 'Analysts', description: 'Analysts are imaginative and strategic thinkers, with a plan for everything.' },
-  INFJ: { name: 'Diplomats', description: 'Diplomats are empathetic and principled, with a deep concern for others.' },
-  INFP: { name: 'Diplomats', description: 'Diplomats are empathetic and principled, with a deep concern for others.' },
-  ENFJ: { name: 'Diplomats', description: 'Diplomats are empathetic and principled, with a deep concern for others.' },
-  ENFP: { name: 'Diplomats', description: 'Diplomats are empathetic and principled, with a deep concern for others.' },
-  ISTJ: { name: 'Sentinels', description: 'Sentinels are cooperative and practical, bringing stability and order.' },
-  ISFJ: { name: 'Sentinels', description: 'Sentinels are cooperative and practical, bringing stability and order.' },
-  ESTJ: { name: 'Sentinels', description: 'Sentinels are cooperative and practical, bringing stability and order.' },
-  ESFJ: { name: 'Sentinels', description: 'Sentinels are cooperative and practical, bringing stability and order.' },
-  ISTP: { name: 'Explorers', description: 'Explorers are utilitarian, practical, and spontaneous, shining in situations that require quick reaction.' },
-  ISFP: { name: 'Explorers', description: 'Explorers are utilitarian, practical, and spontaneous, shining in situations that require quick reaction.' },
-  ESTP: { name: 'Explorers', description: 'Explorers are utilitarian, practical, and spontaneous, shining in situations that require quick reaction.' },
-  ESFP: { name: 'Explorers', description: 'Explorers are utilitarian, practical, and spontaneous, shining in situations that require quick reaction.' }
-}
-
 const MBTI_PATTERN = /^[EI][SN][TF][JP]$/
-const DEFAULT_DEBUG_PERCENTAGES: Record<DimensionPair, number> = {
+// 角色预览路由（?character=）在无真实作答时使用的默认倾向幅度
+const DEFAULT_PREVIEW_PERCENTAGES: Record<DimensionPair, number> = {
   'E_I': 78,
   'S_N': 74,
   'T_F': 72,
@@ -166,17 +115,17 @@ export function calculateQuizResult({
     archetypeRaw,
     userVector,
     answers,
+    questionIndexById: buildQuestionIndexById(questions),
   })
-  const leadingMatches = collectLeadingMatches(characterRankings)
-  const featuredCharacter = leadingMatches[0]?.character ?? null
-  const charMatches = leadingMatches.slice(0, 3).map((item) => item.character)
-  const topCharacterMatches = leadingMatches.slice(0, 4).map((item) => ({
+  const featuredCharacter = characterRankings[0]?.character ?? null
+  const charMatches = characterRankings.slice(0, 3).map((item) => item.character)
+  const topCharacterMatches = characterRankings.slice(0, 4).map((item) => ({
     character: item.character,
     score: calculateCharacterMatchScore(item),
     probability: getCharacterPopulationProbability(item.character.id),
   }))
   const roleCode = featuredCharacter?.code ?? 'UNKN'
-  const matchScore = calculateCharacterMatchScore(leadingMatches[0])
+  const matchScore = calculateCharacterMatchScore(characterRankings[0])
   const matchProbability = getCharacterPopulationProbability(featuredCharacter?.id)
 
   return {
@@ -221,21 +170,17 @@ function buildAnswerProfile({
       return
     }
 
-    const dimensionWeights = ENABLE_DIMENSION_WEIGHT_OVERRIDE
-      ? (DIMENSION_SCORE_WEIGHTS[question.id] ?? { [question.dimension]: question.sign })
-      : { [question.dimension]: question.sign }
-    for (const pair in dimensionWeights) {
-      const dimension = pair as DimensionPair
-      const weight = dimensionWeights[dimension] ?? 0
-      if (weight === 0) {
+    const dimensionWeights = DIMENSION_SCORE_WEIGHTS[question.id] ?? { [question.dimension]: question.sign }
+    for (const [pair, weight] of Object.entries(dimensionWeights) as [DimensionPair, number | undefined][]) {
+      if (!weight) {
         continue
       }
 
-      rawScores[dimension] += answer * weight
+      rawScores[pair] += answer * weight
       if (weight > 0) {
-        directionalMaxScores[dimension].positive += 3 * weight
+        directionalMaxScores[pair].positive += ANSWER_MAX * weight
       } else {
-        directionalMaxScores[dimension].negative += 3 * Math.abs(weight)
+        directionalMaxScores[pair].negative += ANSWER_MAX * Math.abs(weight)
       }
     }
 
@@ -261,16 +206,16 @@ function buildAnswerProfile({
   const scores = {} as Record<DimensionPair, DimensionScore>
   let mbtiCode = ''
 
-  for (const pair in DIMENSION_LETTERS) {
-    const dimension = pair as DimensionPair
-    const score = normalizeDimensionScore(rawScores[dimension], directionalMaxScores[dimension])
-    const [posLetter, negLetter] = DIMENSION_LETTERS[dimension]
+  for (const [pair, [posLetter, negLetter]] of Object.entries(DIMENSION_LETTERS) as [DimensionPair, [MBTILetter, MBTILetter]][]) {
+    const score = normalizeDimensionScore(rawScores[pair], directionalMaxScores[pair])
+    // 平局规则：score === 0 时偏向正字母（E/S/T/J），四维全中性会得到 ESTJ。
+    // 这是 16personalities 风格的既定取舍：UI 的 percentage 恒 >= 50，不展示“完全中立”。
     const dominant = score >= 0 ? posLetter : negLetter
     const intensity = Math.min(1, Math.abs(score))
     const percentage = Math.round(50 + (intensity * 50))
 
-    scores[dimension] = {
-      pair: dimension,
+    scores[pair] = {
+      pair,
       score,
       dominant,
       percentage
@@ -301,19 +246,16 @@ function createEmptyUserVector(): UserVector {
   }, {} as UserVector)
 }
 
-function isAnsweredValue(value: number) {
-  return value >= -3 && value <= 3
-}
-
 function normalizeDimensionScore(
   rawScore: number,
   directionalMax: { positive: number; negative: number },
 ) {
+  // 按答案作用方向分别归一化：即使某方向的题目权重总量不足 1 也不放大百分比
   if (rawScore >= 0) {
-    return rawScore / Math.max(1, directionalMax.positive)
+    return directionalMax.positive > 0 ? rawScore / directionalMax.positive : 0
   }
 
-  return rawScore / Math.max(1, directionalMax.negative)
+  return directionalMax.negative > 0 ? rawScore / directionalMax.negative : 0
 }
 
 function normalizeQuestionWeights(weights: Partial<Record<QuestionArchetypeWeightId, number>>) {
@@ -352,20 +294,9 @@ function pickMatchedArchetype(
 
   return (
     sortedByScore[0] ??
-    resolveArchetypeForMbti(finalCode, archetypes) ?? {
-      id: 'luminous-lead' as ArchetypeId,
-      name: '异格旅行者',
-      subtitle: '无法被定义的观测者',
-      oneLiners: ['世界之外，唯有真实的自我。'],
-      description: '游离于传统分类之外的特殊存在',
-      tags: ['神秘判定', '罕见'],
-      narrativeRole: '旁观者',
-      spotlight: '不可名状的直觉',
-      weakness: '常常难以被常人理解',
-      keywords: ['观测', '唯一', '脱轨'],
-      accent: '#aaaaaa',
-      vector: { expression: 0, temperature: 0, judgement: 0, order: 0, agency: 0, aura: 0 }
-    }
+    resolveArchetypeForMbti(finalCode, archetypes) ??
+    // archetypes 为空兜底（正常数据不可能触发，仅保证类型完备）
+    archetypes[0]
   )
 }
 
@@ -378,30 +309,27 @@ type RankedCharacter = {
   specific: number
 }
 
-export interface CharacterProbabilityWeight {
-  characterId: string
-  weight: number
-}
-
 function rankCharactersByProfile({
   scores,
   characters,
   archetypeRaw,
   userVector,
   answers,
+  questionIndexById,
 }: {
   scores: Record<DimensionPair, DimensionScore>
   characters: CharacterMatch[]
   archetypeRaw: ArchetypeAccumulator
   userVector: UserVector
   answers: number[]
+  questionIndexById: Map<string, number>
 }) {
   return [...characters]
     .map((character) => {
       const mbti = scoreFlexibleMbti(character, scores)
       const archetype = scoreArchetype(character.archetypeId, archetypeRaw)
       const vector = scoreVector(userVector, character.vector)
-      const specific = scoreCharacterSpecific(userVector, character, answers)
+      const specific = scoreCharacterSpecific(userVector, character, answers, questionIndexById)
       const total =
         MBTI_WEIGHT * mbti +
         ARCHETYPE_WEIGHT * archetype +
@@ -439,67 +367,17 @@ function rankCharactersByProfile({
         return specificDelta
       }
 
+      // 同分兜底按中文名排序，保证榜次稳定
       return left.character.name.localeCompare(right.character.name, 'zh-Hans-CN')
     })
-}
-
-export function calculateCharacterProbabilityWeights({
-  answers,
-  questions,
-  archetypes,
-  characters,
-  sharpness = 120,
-}: {
-  answers: number[]
-  questions: Question[]
-  archetypes: Archetype[]
-  characters: CharacterMatch[]
-  sharpness?: number
-}): CharacterProbabilityWeight[] {
-  const answerProfile = buildAnswerProfile({
-    answers,
-    questions,
-    archetypes,
-  })
-
-  const rankings = rankCharactersByProfile({
-    scores: answerProfile.scores,
-    characters,
-    archetypeRaw: answerProfile.archetypeRaw,
-    userVector: answerProfile.userVector,
-    answers,
-  })
-
-  if (!rankings.length) {
-    return []
-  }
-
-  const maxTotal = Math.max(...rankings.map((item) => item.total))
-  const weighted = rankings.map((item) => ({
-    characterId: item.character.id,
-    // 使用相对分数做 softmax，保留“接近命中”的展示权重，同时避免极低频角色长期为 0。
-    weight: Math.exp((item.total - maxTotal) * sharpness),
-  }))
-
-  const totalWeight = weighted.reduce((sum, item) => sum + item.weight, 0)
-  if (totalWeight <= 0) {
-    return weighted.map((item) => ({
-      characterId: item.characterId,
-      weight: 1 / weighted.length,
-    }))
-  }
-
-  return weighted.map((item) => ({
-    characterId: item.characterId,
-    weight: item.weight / totalWeight,
-  }))
 }
 
 function scoreMbti(
   matchCode: string,
   scores: Record<DimensionPair, DimensionScore>,
 ) {
-  if (!MBTI_PATTERN.test(matchCode.toUpperCase())) {
+  const code = matchCode.toUpperCase()
+  if (!MBTI_PATTERN.test(code)) {
     return 0
   }
 
@@ -509,7 +387,7 @@ function scoreMbti(
   for (let index = 0; index < pairs.length; index += 1) {
     const pair = pairs[index]
     const actual = scores[pair]
-    const expectedLetter = matchCode[index] as MBTILetter
+    const expectedLetter = code[index] as MBTILetter
     total += actual.dominant === expectedLetter ? actual.percentage : 100 - actual.percentage
   }
 
@@ -549,6 +427,7 @@ function scoreCharacterSpecific(
   userVector: UserVector,
   character: CharacterMatch,
   answers: number[],
+  questionIndexById: Map<string, number>,
 ) {
   const uniqueAxes = character.signature?.uniqueAxes
   const questionAffinity = character.signature?.questionAffinity ?? []
@@ -561,7 +440,7 @@ function scoreCharacterSpecific(
     return axisScore
   }
 
-  const affinityScore = scoreQuestionAffinity(questionAffinity, answers)
+  const affinityScore = scoreQuestionAffinity(questionAffinity, answers, questionIndexById)
   return axisScore * 0.45 + affinityScore * 0.55
 }
 
@@ -590,13 +469,16 @@ function scoreUniqueAxes(
 function scoreQuestionAffinity(
   affinities: NonNullable<NonNullable<CharacterMatch['signature']>['questionAffinity']>,
   answers: number[],
+  questionIndexById: Map<string, number>,
 ) {
   let weightedScore = 0
   let weightTotal = 0
 
   for (const affinity of affinities) {
-    const questionIndex = getQuestionIndexById(affinity.questionId)
-    if (questionIndex < 0) {
+    // 用 id -> 下标映射并校验题目确实存在，题库增删后签名不会静默指错题
+    const questionIndex = questionIndexById.get(affinity.questionId)
+    if (questionIndex === undefined) {
+      console.warn(`[quizEngine] 角色签名引用了不存在的题目: ${affinity.questionId}`)
       continue
     }
 
@@ -625,26 +507,12 @@ function evaluateAffinity(answer: number, expected: 'agree' | 'disagree' | 'neut
   return Math.max(0, 1 - Math.abs(answer) / 3)
 }
 
-function getQuestionIndexById(questionId: string) {
-  return Number.parseInt(questionId.replace(/^q/i, ''), 10) - 1
-}
-
-function collectLeadingMatches(rankings: RankedCharacter[]) {
-  if (!rankings.length) {
-    return []
-  }
-
-  const leader = rankings[0]
-  const closeMatches = rankings.filter((item) => leader.total - item.total <= CLOSE_MATCH_THRESHOLD)
-
-  if (closeMatches.length === 1) {
-    return rankings
-  }
-
-  return [
-    ...closeMatches,
-    ...rankings.filter((item) => leader.total - item.total > CLOSE_MATCH_THRESHOLD)
-  ]
+function buildQuestionIndexById(questions: Question[]) {
+  const indexById = new Map<string, number>()
+  questions.forEach((question, index) => {
+    indexById.set(question.id, index)
+  })
+  return indexById
 }
 
 function cosineSimilarity(
@@ -674,6 +542,7 @@ export function normalizeMbtiCode(mbtiCode: string) {
   return MBTI_PATTERN.test(normalized) ? normalized : null
 }
 
+// 由 MBTI 编码直接构造四维得分（角色预览用，与真实作答路径量纲一致：score ∈ [-1, 1]）
 export function buildScoresFromMbtiCode(
   mbtiCode: string,
   percentages: Partial<Record<DimensionPair, number>> = {},
@@ -688,14 +557,14 @@ export function buildScoresFromMbtiCode(
 
   return pairs.reduce((acc, pair, index) => {
     const dominant = normalized[index] as MBTILetter
-    const percentage = Math.max(50, Math.min(99, Math.round(percentages[pair] ?? DEFAULT_DEBUG_PERCENTAGES[pair])))
+    const percentage = Math.max(50, Math.min(99, Math.round(percentages[pair] ?? DEFAULT_PREVIEW_PERCENTAGES[pair])))
     const sign = dominant === DIMENSION_LETTERS[pair][0] ? 1 : -1
 
     acc[pair] = {
       pair,
       dominant,
       percentage,
-      score: sign * (percentage - 50),
+      score: sign * (percentage - 50) / 50,
     }
 
     return acc
@@ -717,58 +586,8 @@ export function resolveArchetypeForMbti(mbtiCode: string, archetypes: Archetype[
   )
 }
 
-export function rankCharactersForMbti({
-  characters,
-  mbtiCode,
-  preferredCharacterId,
-}: {
-  characters: CharacterMatch[]
-  mbtiCode: string
-  preferredCharacterId?: string | null
-}) {
-  const normalized = normalizeMbtiCode(mbtiCode)
-
-  if (!normalized) {
-    return []
-  }
-
-  const scores = buildScoresFromMbtiCode(normalized)
-  if (!scores) {
-    return []
-  }
-
-  const matchedArchetypeId = TYPE_TO_ARCHETYPE[normalized]
-  const emptyArchetypeRaw = createEmptyArchetypeAccumulator()
-  if (matchedArchetypeId) {
-    emptyArchetypeRaw[matchedArchetypeId] = 1
-  }
-
-  const ranked = rankCharactersByProfile({
-    scores,
-    characters,
-    archetypeRaw: emptyArchetypeRaw,
-    userVector: createEmptyUserVector(),
-    answers: [],
-  }).map((item) => item.character)
-
-  const preferredId = preferredCharacterId?.trim().toLowerCase()
-  if (!preferredId) {
-    return ranked
-  }
-
-  return [...ranked].sort((left, right) => {
-    if (left.id === preferredId && right.id !== preferredId) {
-      return -1
-    }
-
-    if (right.id === preferredId && left.id !== preferredId) {
-      return 1
-    }
-
-    return 0
-  })
-}
-
+// 角色预览结果：服务于 /result?character= 分享链接，不是调试专用。
+// 无真实作答，matchScore 固定展示一个可信的中高值。
 export function createDebugQuizResult({
   characterId,
   archetypes,
@@ -823,9 +642,4 @@ function calculateCharacterMatchScore(topMatch?: Pick<RankedCharacter, 'total'> 
   }
 
   return Math.max(60, Math.min(99, Math.round(topMatch.total * 100)))
-}
-
-export function getRoleForType(mbtiType: string): { name: string; description: string } {
-  const baseType = mbtiType.slice(0, 4)
-  return ROLE_MAPPING[baseType] || { name: 'Explorers', description: 'Unique individuals with diverse perspectives.' }
 }

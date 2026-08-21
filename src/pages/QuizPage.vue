@@ -5,7 +5,7 @@
         v-for="(answer, i) in state.answers"
         :key="i"
         class="quiz-progress-segment"
-        :class="{ answered: answer >= -3 && answer <= 3 }"
+        :class="{ answered: isAnsweredValue(answer) }"
       ></div>
     </div>
     <main class="quiz-main">
@@ -23,45 +23,54 @@
       </section>
 
       <section class="quiz-notice" aria-label="测试说明">
+        <p v-if="showResumeNotice" class="resume-notice">
+          {{ t('quiz.resumeNotice') }}
+          <button type="button" class="resume-restart" @click="restartQuiz">{{ t('quiz.resumeRestart') }}</button>
+        </p>
         <p>{{ t('quiz.noticeA', { count: questions.length }) }}</p>
         <p>{{ t('quiz.noticeB') }}</p>
         <p>{{ t('quiz.noticeC') }}</p>
       </section>
 
-      <section class="question-list" aria-label="测试题目">
+      <p v-if="questions.length === 0" class="quiz-loading">{{ t('quiz.loading') }}</p>
+
+      <section v-else class="question-list" aria-label="测试题目">
         <article
           v-for="(question, idx) in questions"
           :key="question.id"
           class="question-block"
-          :class="{ 
+          :class="{
             'needs-answer': pendingUnansweredIndex === idx,
-            'upcoming-dimmed': idx > firstUnansweredIndex && state.answers[idx] === undefined
+            'upcoming-dimmed': idx > firstUnansweredIndex && !isAnsweredValue(state.answers[idx])
           }"
           :ref="(el) => setQuestionRef(el, idx)"
           v-reveal
         >
-          <h2>{{ t('quiz.questions.' + idx, undefined, (question.text || question.prompt || t('quiz.missingQuestion'))) }}</h2>
+          <h2>{{ t('quiz.questions.' + idx, undefined, question.text) }}</h2>
 
           <div class="question-scale">
             <span class="agree-label">{{ t('quiz.agree') }}</span>
 
             <div class="scale-buttons" role="radiogroup" :aria-label="t('quiz.questionLabel', { index: idx + 1 })">
-              <button
-                v-for="option in scaleOptions"
-                :key="option.value"
-                type="button"
-                class="scale-btn"
-                :class="[
-                  option.sizeClass,
-                  option.side === 'agree' ? 'agree-ring' : option.side === 'disagree' ? 'disagree-ring' : 'neutral-ring',
-                  { selected: state.answers[idx] === option.value }
-                ]"
-                :aria-checked="state.answers[idx] === option.value"
-                :aria-label="option.label"
-                @click="onSelect(idx, option.value)"
-              >
-                <span class="checkmark" v-if="state.answers[idx] === option.value">✓</span>
-              </button>
+              <span v-for="(option, optIdx) in scaleOptions" :key="option.value" class="hit-pad">
+                <button
+                  type="button"
+                  class="scale-btn"
+                  :class="[
+                    option.sizeClass,
+                    option.side === 'agree' ? 'agree-ring' : option.side === 'disagree' ? 'disagree-ring' : 'neutral-ring',
+                    { selected: state.answers[idx] === option.value }
+                  ]"
+                  role="radio"
+                  :aria-checked="state.answers[idx] === option.value"
+                  :tabindex="state.answers[idx] === option.value || (!isAnsweredValue(state.answers[idx]) && optIdx === 0) ? 0 : -1"
+                  :aria-label="option.label"
+                  @click="onSelect(idx, option.value)"
+                  @keydown="onScaleKeydown($event, idx, optIdx)"
+                >
+                  <span class="checkmark" v-if="state.answers[idx] === option.value">✓</span>
+                </button>
+              </span>
             </div>
 
             <span class="disagree-label">{{ t('quiz.disagree') }}</span>
@@ -92,8 +101,8 @@
       <div class="quiz-footer-inner">
         <div class="share-count">{{ t('quiz.footerCount', { count: questions.length }) }}</div>
         <div class="footer-links">
-          <RouterLink to="/">{{ tm<Record<string, string>>('app.footer.social').home }}</RouterLink>
-          <RouterLink to="/about">{{ tm<Record<string, string>>('app.footer.social').about }}</RouterLink>
+          <RouterLink to="/">{{ t('app.footer.social.home') }}</RouterLink>
+          <RouterLink to="/about">{{ t('app.footer.social.about') }}</RouterLink>
           <RouterLink to="/result">{{ t('app.nav.result') }}</RouterLink>
           <span>{{ t('quiz.footerLocal') }}</span>
         </div>
@@ -104,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, computed } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, computed } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -134,17 +143,39 @@ const {
   answeredCount,
   isComplete,
   firstUnansweredIndex,
+  isAnsweredValue,
   selectOptionAt,
+  resetQuiz,
   finalizeQuiz,
   ensureData,
 } = useQuiz()
 const { t, tm } = useI18n()
 
-// 进入答题页时才加载题库数据
-onMounted(() => {
-  void ensureData()
+const showResumeNotice = ref(false)
+
+// 进入答题页时才加载题库数据；若本地存有未完成进度则一并恢复
+onMounted(async () => {
+  await ensureData()
+  showResumeNotice.value = answeredCount.value > 0 && !isComplete.value
+  window.addEventListener('beforeunload', handleBeforeUnload)
 })
 
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
+
+// 进度虽已持久化，仍保留浏览器原生确认，拦截误触刷新/关闭
+function handleBeforeUnload(event: BeforeUnloadEvent) {
+  if (answeredCount.value > 0 && !isComplete.value) {
+    event.preventDefault()
+    event.returnValue = ''
+  }
+}
+
+function restartQuiz() {
+  resetQuiz()
+  showResumeNotice.value = false
+}
 
 const questionRefs = ref<HTMLElement[]>([])
 const pendingUnansweredIndex = ref<number | null>(null)
@@ -167,15 +198,33 @@ function onSelect(questionIndex: number, value: number) {
   selectOptionAt(questionIndex, value)
 }
 
-function setQuestionRef(element: Element | ComponentPublicInstance | null, index: number) {
-  const target = element instanceof HTMLElement
-    ? element
-    : element && '$el' in element && element.$el instanceof HTMLElement
-      ? element.$el
-      : null
+// 方向键在 7 档圆点间移动并直接选中（roving tabindex 的键盘交互）
+function onScaleKeydown(event: KeyboardEvent, questionIndex: number, optionIndex: number) {
+  const delta = event.key === 'ArrowRight' || event.key === 'ArrowUp'
+    ? 1
+    : event.key === 'ArrowLeft' || event.key === 'ArrowDown'
+      ? -1
+      : 0
+  if (delta === 0) return
 
-  if (!target) return
-  questionRefs.value[index] = target
+  event.preventDefault()
+  const nextIndex = Math.min(Math.max(optionIndex + delta, 0), scaleOptions.value.length - 1)
+  const option = scaleOptions.value[nextIndex]
+  if (!option) return
+
+  onSelect(questionIndex, option.value)
+  void nextTick(() => {
+    const group = questionRefs.value[questionIndex]?.querySelector('.scale-buttons')
+    const buttons = group ? Array.from(group.querySelectorAll<HTMLButtonElement>('button.scale-btn')) : []
+    buttons[nextIndex]?.focus()
+  })
+}
+
+function setQuestionRef(element: Element | ComponentPublicInstance | null, index: number) {
+  // ref 绑定在原生 <article> 上，组件实例分支仅为满足模板 ref 的类型签名
+  if (element instanceof HTMLElement) {
+    questionRefs.value[index] = element
+  }
 }
 
 async function jumpToUnansweredQuestion(index: number) {
@@ -411,6 +460,40 @@ async function submitQuiz() {
   align-items: center;
   justify-content: center;
   gap: 14px;
+}
+
+/* 触摸热区：视觉圆较小，但命中范围不小于 44px */
+.hit-pad {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.quiz-loading {
+  text-align: center;
+  color: #6d7c8a;
+  padding: 48px 0;
+}
+
+.resume-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.resume-restart {
+  border: 1px solid #33a474;
+  background: transparent;
+  color: #33a474;
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .scale-btn {
