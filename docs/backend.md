@@ -65,6 +65,25 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 
 缓存键含模型标签（如 `:step-3.7-flash`），切换 provider 后旧缓存自然失效，不会互相污染。**密钥只放环境变量与 `.dev.vars`（已被 gitignore），绝不提交仓库。**
 
+### 缓存预热（可选，上线前执行）
+
+缓存默认惰性填充：线上第一个命中某画像的用户需等真实生成（推理模型约 9-15s）。可在上线前用 `scripts/prewarm-insights.mjs` 预灌高频画像：
+
+```bash
+# 1. .dev.vars 加 ACGTI_INSIGHT_RATE_LIMIT=600（跳过本地限流），启动联调环境
+npm run dev:pages
+
+# 2. 预热（复用 /api/insight 完整链路：提示词/清洗/分桶/缓存键零重复）
+node scripts/prewarm-insights.mjs --dry-run            # 查看计划
+node scripts/prewarm-insights.mjs --langs zh-CN        # 按语言分批（推荐）
+node scripts/prewarm-insights.mjs --characters frieren,akemi-homura --buckets 1111,2112
+
+# 3. 部署后把本地预热结果推到线上库（INSERT OR IGNORE，幂等可重复）
+node scripts/prewarm-insights.mjs --push
+```
+
+默认桶组合为常见强度画像（`1111/2112/1211/1121/1112`，依据反馈数据的得分分布）；全量 113 角色 × 4 语言 × 5 桶 ≈ 2260 条、串行约 6 小时，建议按语言分批。重跑幂等（已缓存直接命中并自增 hits）。
+
 ### 本地联调（受限网络环境）
 
 本地 `wrangler pages dev` 的 AI binding 走 wrangler 远程代理会话（部署在 `<随机hash>.<账号>.workers.dev`）。实测受限网络下该域名存在两层封锁：系统 DNS 被随机投毒（返回被墙站点 IP）+ 真实 IP 的 TLS 流量被按 SNI 重置，远程绑定 RPC 会确定性 `internal error` 并拖垮进程；而经本机代理访问 Cloudflare API 完全正常。

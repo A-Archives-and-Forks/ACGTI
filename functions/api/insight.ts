@@ -37,6 +37,8 @@ type Env = {
   // REST 回退（本地联调用，见 runModel）：与 AI binding 二选一即可
   ACGTI_AI_TOKEN?: string
   ACGTI_AI_ACCOUNT_ID?: string
+  // 限流覆盖（本地预热/联调用；线上保持默认 10 次/分/IP）
+  ACGTI_INSIGHT_RATE_LIMIT?: string
 }
 
 type ChatMessage = { role: 'system' | 'user'; content: string }
@@ -181,7 +183,10 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   const { DB, AI, AIGW_API_KEY, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
 
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
-  const allowed = await checkRateLimit(DB, ip, INSIGHT_RATE_LIMIT)
+  const rateLimit = Number(context.env.ACGTI_INSIGHT_RATE_LIMIT) > 0
+    ? Number(context.env.ACGTI_INSIGHT_RATE_LIMIT)
+    : INSIGHT_RATE_LIMIT
+  const allowed = await checkRateLimit(DB, ip, rateLimit)
   if (!allowed) {
     return json({ text: null, available: false, reason: 'rate-limited' }, 429)
   }
