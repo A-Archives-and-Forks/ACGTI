@@ -5,7 +5,7 @@
     "series": "BanG Dream! Ave Mujica",
     "matchCode": "INFJ",
     "code": "DLRS",
-    "title": "温柔皮下的剧情变量",
+    "title": "天使微笑·黑金舞台的Doloris",
     "archetypeId": "gentle-healer",
     "tags": [
       "白月光假象",
@@ -13,7 +13,7 @@
       "自己也不知道下一步",
       "温柔型不定时炸弹"
     ],
-    "note": "你给人的第一印象是「应该很好相处」，但真正危险的地方在于：你自己也未必完全知道自己下一步会做什么——属于「温柔型不定时炸弹」。建议远离，除非你享受被炸的刺激。",
+    "note": "初见是MyGO!!!!!里笑得最治愈的那位，再见已经戴上Doloris的面具，站上Ave Mujica的黑金舞台。她的温柔从来不是演的——只是那份温柔底下，压着连她自己都没敢细看的执念。最要命的是，她笑着说出的每一句重话，语气都和哄人时一模一样。",
     "vector": {
       "expression": 0,
       "temperature": 0.26,
@@ -77,8 +77,8 @@
       "ja": "BanG Dream! Ave Mujica"
     },
     "zh-TW": {
-      "title": "溫柔皮下的劇情變量",
-      "note": "你給人的第一印象是「應該很好相處」，但真正危險的地方在於：你自己也未必完全知道自己下一步會做什麼——屬於「溫柔型不定時炸彈」。建議遠離，除非你享受被炸的刺激。",
+      "title": "天使微笑·黑金舞臺的Doloris",
+      "note": "初見是MyGO!!!!!裡笑得最治癒的那位，再見已經戴上Doloris的面具，站上Ave Mujica的黑金舞台。她的溫柔從來不是演的——只是那份溫柔底下，壓著連她自己都沒敢細看的執念。最要命的是，她笑著說出的每一句重話，語氣都和哄人時一模一樣。",
       "tags": [
         "白月光假象",
         "越看越不對勁",
@@ -87,10 +87,10 @@
       ]
     },
     "en": {
-      "title": "Gentle Surface, Plot Variable",
+      "title": "Angel Smile — Doloris on the Black-Gold Stage",
       "note": "First impression: \"probably easy to get along with.\" Real danger: even you don't fully know what you'll do next. A gentle timed explosive. Approach with caution unless you enjoy being surprised.",
       "tags": [
-        "White Moonlight Illusion",
+        "The Angel No One Suspects",
         "Something Feels Off",
         "\"Even She Doesn't Know Her Next Move\"",
         "Gentle Timed Explosive"
