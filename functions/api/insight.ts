@@ -50,6 +50,9 @@ type Env = {
 
 type ChatMessage = { role: 'system' | 'user'; content: string }
 
+// 网关并发限流（可恢复）：与永久性生成失败区分，调用方据此等待重试
+class RateLimitError extends Error {}
+
 type GatewayChannel = { name: 'aigw' | 'aigw2'; key: string; base: string; model: string }
 
 // 收集已配置的网关通道（顺序即优先级，主通道在前）
@@ -110,6 +113,10 @@ async function runModel(
       throw new Error(`AIGW[${gw.name}] fetch failed: ${err instanceof Error ? err.message : String(err)}`)
     }
     if (!resp.ok) {
+      if (resp.status === 429) {
+        // 网关限流是瞬时可恢复状态：向上透传为 429，预热脚本据此等待补跑
+        throw new RateLimitError(`AIGW[${gw.name}] 429: ${(await resp.text()).slice(0, 200)}`)
+      }
       throw new Error(`AIGW[${gw.name}] ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
     }
     const text = parseChatChoices(await resp.json())
@@ -307,6 +314,11 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     usedModel = result.modelTag
     console.log(`[insight] generated via ${channel?.name ?? 'binding/rest'} in ${Date.now() - t0}ms`)
   } catch (err) {
+    if (err instanceof RateLimitError) {
+      // 打日志观测网关侧的并发计数（current 值），供预热调参
+      console.warn(`[insight] gateway rate-limited: ${err.message}`)
+      return json({ text: null, available: false, reason: 'rate-limited' }, 429)
+    }
     console.error('Insight generation error:', err instanceof Error ? err.message : err)
     return json({ text: null, available: false, reason: 'generation-failed' })
   }

@@ -20,7 +20,9 @@
 // 双通道：.dev.vars 同时配置 AIGW_API_KEY 与 AIGW2_API_KEY 时，任务按各通道
 // 并发比例分流（两通道模型同名 step-3.7-flash，缓存键互通）。2026-08 实测：
 //   aigw  = saurlax 网关，有效并发 ≈2（超发只排队不报错，吞吐反而下降）
-//   aigw2 = stepfun 官方，并发 ≥32 无劣化，默认取 10 留余量
+//   aigw2 = stepfun 官方，在途长请求并发上限 10（超限直接 429 concurrency
+//           reached；短请求压测的 32 无劣化是假象——快进快出堆不起在途数），
+//           默认取 9 留余量
 //
 // 默认桶组合：bucket 顺序为 ei,sn,tf,jp（0 轻微 / 1 中等 / 2 明显），
 // 依据反馈数据中维度得分多集中于 0.3-0.7 的分布，取常见强度组合；
@@ -59,8 +61,8 @@ function detectChannels() {
 }
 
 // 各通道并发：默认取实测安全值；--concurrency 传 N 全通道同值、传 N1,N2 按通道。
-// 上限 32：stepfun 官方实测 32 并发无劣化；saurlax 只能吃 2（超发纯排队）
-const DEFAULT_CONCURRENCY = { aigw: 2, aigw2: 10 }
+// 上限 32 仅对确认高并发的通道有意义；stepfun 在途长请求硬上限 10，aigw2 取 9
+const DEFAULT_CONCURRENCY = { aigw: 2, aigw2: 9 }
 function parseConcurrency(channels) {
   const parts = (concRaw || '').split(',').filter((s) => s.trim() !== '').map(Number)
   return Object.fromEntries(
@@ -138,6 +140,26 @@ let first = null
 let retryQueue = []
 const t0 = Date.now()
 
+// 单任务带就地重试：网关 429 用随机抖动等待（15-35s）错峰，
+// 避免所有 worker 同步睡眠→同步醒来→同步再撞限流的惊群循环
+async function postInsight(payload, label) {
+  for (let attempt = 0; ; attempt++) {
+    const resp = await fetch(BASE + '/api/insight', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(120000),
+    })
+    if (resp.status === 429 && attempt < 5) {
+      const wait = 15000 + Math.random() * 20000
+      console.warn(`\n  ⏳ ${label} 限流，${Math.round(wait / 1000)}s 后重试（第 ${attempt + 1} 次）`)
+      await new Promise((r) => setTimeout(r, wait))
+      continue
+    }
+    return resp
+  }
+}
+
 async function runTasks(queue, provider) {
   let cursor = 0
   async function worker() {
@@ -157,18 +179,7 @@ async function runTasks(queue, provider) {
       if (provider !== 'default') payload.provider = provider
       const label = `${character.id}/${lang}/${bucket}${provider !== 'default' ? `[${provider}]` : ''}`
       try {
-        const resp = await fetch(BASE + '/api/insight', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(120000),
-        })
-        if (resp.status === 429) {
-          console.warn(`\n  ⏳ ${label} 限流，等待 60s（.dev.vars 需配 ACGTI_INSIGHT_RATE_LIMIT）`)
-          await new Promise((r) => setTimeout(r, 60000))
-          retryQueue.push({ task: { lang, character, bucket }, provider })
-          continue
-        }
+        const resp = await postInsight(payload, label)
         const data = await resp.json()
         if (data?.available) {
           data.cached ? cached++ : ok++
