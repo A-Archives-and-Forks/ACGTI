@@ -133,10 +133,11 @@ function startPagesDev(extraEnv) {
 }
 
 const token = readWranglerToken()
-// 已手动配置网关 key（AIGW_API_KEY）时优先走网关模型，无需注入 wrangler 凭据
+// 已手动配置任一网关 key（AIGW_API_KEY / AIGW2_API_KEY）时优先走网关模型，
+// 无需注入 wrangler 凭据
 let gatewayConfigured = false
 try {
-  gatewayConfigured = /^AIGW_API_KEY\s*=\s*\S/m.test(readFileSync(DEV_VARS, 'utf-8'))
+  gatewayConfigured = /^AIGW2?_API_KEY\s*=\s*\S/m.test(readFileSync(DEV_VARS, 'utf-8'))
 } catch {}
 const accountId = token && !gatewayConfigured ? resolveAccountId() : null
 

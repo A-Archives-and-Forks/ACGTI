@@ -58,12 +58,13 @@ function detectChannels() {
   return list
 }
 
-// 各通道并发：默认取实测安全值；--concurrency 传 N 全通道同值、传 N1,N2 按通道
+// 各通道并发：默认取实测安全值；--concurrency 传 N 全通道同值、传 N1,N2 按通道。
+// 上限 32：stepfun 官方实测 32 并发无劣化；saurlax 只能吃 2（超发纯排队）
 const DEFAULT_CONCURRENCY = { aigw: 2, aigw2: 10 }
 function parseConcurrency(channels) {
   const parts = (concRaw || '').split(',').filter((s) => s.trim() !== '').map(Number)
   return Object.fromEntries(
-    channels.map((c, i) => [c, Math.max(1, Math.min(16, parts[i] ?? parts[0] ?? DEFAULT_CONCURRENCY[c]))]),
+    channels.map((c, i) => [c, Math.max(1, Math.min(32, parts[i] ?? parts[0] ?? DEFAULT_CONCURRENCY[c]))]),
   )
 }
 
