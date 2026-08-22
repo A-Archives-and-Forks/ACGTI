@@ -12,8 +12,6 @@
 import briefs from './_data/characterBrief.json'
 import { checkRateLimit, isValidCode, num, str } from './_shared'
 
-type Env = { DB: D1Database; AI?: Ai }
-
 const MODEL_ID = '@cf/meta/llama-3.2-3b-instruct'
 // 单 IP 每分钟最多解读次数（生成路径比查询路径重，收紧到 10）
 const INSIGHT_RATE_LIMIT = 10
@@ -22,6 +20,59 @@ const LANGUAGES: Record<string, string> = {
   'zh-TW': '繁體中文',
   en: 'English',
   ja: '日本語',
+}
+
+type Env = {
+  DB: D1Database
+  AI?: Ai
+  // REST 回退（本地联调用，见 runModel）：与 AI binding 二选一即可
+  ACGTI_AI_TOKEN?: string
+  ACGTI_AI_ACCOUNT_ID?: string
+}
+
+type ChatMessage = { role: 'system' | 'user'; content: string }
+
+// 模型调用：优先 AI binding（线上部署零配置）；
+// 本地 pages dev 的远程绑定依赖 wrangler 的远程代理会话，在受限网络下
+// 会 internal error，因此支持用 REST API + .dev.vars 凭据回退联调。
+async function runModel(env: Env, messages: ChatMessage[]): Promise<string> {
+  if (env.AI) {
+    const result = await env.AI.run(MODEL_ID, {
+      messages,
+      max_tokens: 300,
+      temperature: 0.2,
+    })
+    return typeof result === 'string' ? result : (result as { response?: string })?.response ?? ''
+  }
+
+  if (env.ACGTI_AI_TOKEN && env.ACGTI_AI_ACCOUNT_ID) {
+    let resp: Response
+    try {
+      resp = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${env.ACGTI_AI_ACCOUNT_ID}/ai/run/${MODEL_ID}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${env.ACGTI_AI_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ messages, max_tokens: 300, temperature: 0.2 }),
+        },
+      )
+    } catch (err) {
+      throw new Error(`REST AI fetch failed: ${err instanceof Error ? err.message : String(err)}`)
+    }
+    if (!resp.ok) {
+      throw new Error(`REST AI ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
+    }
+    const data = await resp.json<{ success?: boolean; errors?: Array<{ message?: string }>; result?: { choices?: Array<{ message?: { content?: string } }> } }>()
+    if (data.success === false) {
+      throw new Error(`REST AI api error: ${JSON.stringify(data.errors ?? []).slice(0, 200)}`)
+    }
+    return data.result?.choices?.[0]?.message?.content ?? ''
+  }
+
+  throw new Error('no ai binding and no rest credentials')
 }
 
 // 分桶阈值：|score| ≥ 0.5 记为明显倾向，≥ 0.2 记为中等，否则轻微
@@ -80,7 +131,7 @@ function json(data: unknown, status = 200) {
 }
 
 export async function onRequestPost(context: { env: Env; request: Request }) {
-  const { DB, AI } = context.env
+  const { DB, AI, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
 
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
   const allowed = await checkRateLimit(DB, ip, INSIGHT_RATE_LIMIT)
@@ -115,8 +166,8 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     return json({ text: null, available: false, reason: 'unknown-character' })
   }
 
-  if (!AI) {
-    // 未绑定 Workers AI（本地或未配置）：明确告知前端不可用，走静态降级
+  if (!AI && !(ACGTI_AI_TOKEN && ACGTI_AI_ACCOUNT_ID)) {
+    // 既无 AI binding 也无 REST 凭据：明确告知前端不可用，走静态降级
     return json({ text: null, available: false, reason: 'no-binding' })
   }
 
@@ -146,15 +197,10 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
 
   let generated: string
   try {
-    const result = await AI.run(MODEL_ID, {
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      max_tokens: 300,
-      temperature: 0.2,
-    })
-    generated = typeof result === 'string' ? result : (result as { response?: string })?.response ?? ''
+    generated = await runModel(context.env, [
+      { role: 'system', content: system },
+      { role: 'user', content: user },
+    ])
   } catch (err) {
     console.error('Insight generation error:', err instanceof Error ? err.message : err)
     return json({ text: null, available: false, reason: 'generation-failed' })

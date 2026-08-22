@@ -23,6 +23,8 @@
 
 一致性控制：模型 `@cf/meta/llama-3.2-3b-instruct`、温度 0.2；提示词明确「只依据给定资料改写、禁止引入档案外的作品名/人名、角色名最多出现一次」；输出经去引号/截断清洗后落缓存。
 
+补充（2026-08-22）：**模型调用增加 REST 直连回退**（`runModel`）。起因是本地 `pages dev` 的 AI binding 依赖 wrangler 远程代理会话（`<hash>.<账号>.workers.dev`），在受限网络下该域名既有 DNS 投毒又有 SNI 阻断，远程绑定 RPC 确定性 `internal error`（而同账号 REST 调用经代理完全正常）。REST 凭据从 `.dev.vars` 的 `ACGTI_AI_TOKEN`/`ACGTI_AI_ACCOUNT_ID` 读取，由 `npm run dev:pages` 自动注入（复用 wrangler OAuth 登录态）。线上仍以 AI binding 为第一优先（零配置零凭据），REST 仅作本地与特殊环境的联调通道——这也是「渐进增强」原则在开发工作流上的延伸。
+
 ## 后果
 
 - 正面：部署即用、零密钥、零边际成本（缓存命中后）；隐私模型不变；降级路径保证功能永不因 AI 不可用而破损。

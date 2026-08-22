@@ -51,7 +51,19 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 2. **成本**：以「角色 + 四维倾向分桶（强/中/轻微，3⁴=81 桶）+ 语言」为缓存键写入 `ai_insight_cache`（迁移 0009），相同画像全站共享一次生成结果；免费额度（每日 10000 Neurons）下消耗与桶数同阶而非与流量同阶。前端「换一种说法」走 `fresh: true` 重新生成并覆盖缓存，同一结果限 3 次（sessionStorage 计数）。
 3. **降级**：未绑定 AI、额度耗尽或生成失败一律返回 `{text:null, available:false}`，前端隐藏整卡，结果页静态解析不受影响。
 
-配置：`wrangler.jsonc` 已声明 `"ai": {"binding": "AI"}`，部署到 Cloudflare Pages 即自动生效，无需任何密钥。本地 `wrangler pages dev` 的 AI binding 走远程调用，需要网络可达；不可达时建议直接验证降级路径（E2E 冒烟已内置拦截）。模型为 `@cf/meta/llama-3.2-3b-instruct`（温度 0.2），升级模型时需同步清空 `ai_insight_cache`（缓存行记录了 `model` 字段可按需清理）。
+配置：`wrangler.jsonc` 已声明 `"ai": {"binding": "AI"}`，部署到 Cloudflare Pages 即自动生效，无需任何密钥。模型为 `@cf/meta/llama-3.2-3b-instruct`（温度 0.2），升级模型时需同步清空 `ai_insight_cache`（缓存行记录了 `model` 字段可按需清理）。
+
+### 本地联调（受限网络环境）
+
+本地 `wrangler pages dev` 的 AI binding 走 wrangler 远程代理会话（部署在 `<随机hash>.<账号>.workers.dev`）。实测受限网络下该域名存在两层封锁：系统 DNS 被随机投毒（返回被墙站点 IP）+ 真实 IP 的 TLS 流量被按 SNI 重置，远程绑定 RPC 会确定性 `internal error` 并拖垮进程；而经本机代理访问 Cloudflare API 完全正常。
+
+为此 `npm run dev:pages`（`scripts/dev-pages.mjs`）提供本地联调模式：
+
+1. 临时剥离 `wrangler.jsonc` 的 ai binding（退出自动恢复）；
+2. `/api/insight` 由此走 REST 直连回退（`runModel` 读 `.dev.vars` 中自动注入的 `ACGTI_AI_TOKEN` / `ACGTI_AI_ACCOUNT_ID`，凭据复用 wrangler 本地 OAuth 登录态，退出时按标记移除）；
+3. 注入 `scripts/wrangler-proxy-preload.cjs`：对 Node 侧三类出站路径（https.request 的 createConnection、https.Agent 原型、undici 全局 dispatcher）统一接管为代理 CONNECT 隧道——wrangler 自身的远程连接不遵守 `https_proxy` 环境变量，这是本地不崩的前提。
+
+各层诊断结论记录在 `scripts/wrangler-proxy-preload.cjs` 头部注释。
 
 ## 数据库迁移
 
