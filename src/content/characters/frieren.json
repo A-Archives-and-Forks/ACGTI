@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "frieren",
-    "name": "芙丽莲",
+    "name": "芙莉莲",
     "series": "葬送的芙丽莲",
     "addedAt": "2026-04-15",
     "matchCode": "INTP",
@@ -43,7 +43,7 @@
   },
   "i18n": {
     "name": {
-      "zh-CN": "芙丽莲",
+      "zh-CN": "芙莉莲",
       "zh-TW": "芙莉蓮",
       "en": "Frieren",
       "ja": "フリーレン"

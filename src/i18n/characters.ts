@@ -283,7 +283,7 @@ const characterNameI18n: Record<string, LocalizedText> = {
   'uika-nyubara': {
     'zh-CN': '祐天寺若麦 / Amoris',
     'zh-TW': '祐天寺若麥 / Amoris',
-    en: 'Nyubara Uika / Amoris',
+    en: 'Yutenji Nyamu / Amoris',
     ja: '祐天寺若麦 / Amoris',
   },
   'jia-ran': {
