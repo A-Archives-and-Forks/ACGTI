@@ -13,6 +13,11 @@ import briefs from './_data/characterBrief.json'
 import { checkRateLimit, isValidCode, num, str } from './_shared'
 
 const MODEL_ID = '@cf/meta/llama-3.2-3b-instruct'
+// OpenAI 兼容网关（如 saurlax AI 网关）：配置 AIGW_API_KEY 即启用，
+// 模型与端点可覆盖。网关上的推理模型（如 step-3.7-flash）会先输出
+// 思考过程再出正文，max_tokens 需给足推理余量。
+const AIGW_DEFAULT_BASE = 'https://aigw.saurlax.com/v1'
+const AIGW_DEFAULT_MODEL = 'step-3.7-flash'
 // 单 IP 每分钟最多解读次数（生成路径比查询路径重，收紧到 10）
 const INSIGHT_RATE_LIMIT = 10
 const LANGUAGES: Record<string, string> = {
@@ -25,6 +30,10 @@ const LANGUAGES: Record<string, string> = {
 type Env = {
   DB: D1Database
   AI?: Ai
+  // OpenAI 兼容网关（优先级最高；配置后 AIGW_MODEL/AIGW_BASE_URL 可选覆盖）
+  AIGW_API_KEY?: string
+  AIGW_BASE_URL?: string
+  AIGW_MODEL?: string
   // REST 回退（本地联调用，见 runModel）：与 AI binding 二选一即可
   ACGTI_AI_TOKEN?: string
   ACGTI_AI_ACCOUNT_ID?: string
@@ -32,17 +41,55 @@ type Env = {
 
 type ChatMessage = { role: 'system' | 'user'; content: string }
 
-// 模型调用：优先 AI binding（线上部署零配置）；
-// 本地 pages dev 的远程绑定依赖 wrangler 的远程代理会话，在受限网络下
-// 会 internal error，因此支持用 REST API + .dev.vars 凭据回退联调。
-async function runModel(env: Env, messages: ChatMessage[]): Promise<string> {
+// 解析 OpenAI 兼容的 chat/completions 响应（网关与 Cloudflare REST 同构）
+function parseChatChoices(data: unknown): string {
+  const d = data as { choices?: Array<{ message?: { content?: string } }> }
+  return d?.choices?.[0]?.message?.content ?? ''
+}
+
+// 模型调用，按优先级回退：
+//   1. OpenAI 兼容网关（AIGW_API_KEY，中文质量最佳）
+//   2. AI binding（线上部署零配置）
+//   3. Cloudflare REST + .dev.vars 凭据（本地联调：pages dev 的远程绑定
+//      依赖 wrangler 远程代理会话，受限网络下会 internal error）
+async function runModel(env: Env, messages: ChatMessage[]): Promise<{ text: string; modelTag: string }> {
+  if (env.AIGW_API_KEY) {
+    const base = (env.AIGW_BASE_URL || AIGW_DEFAULT_BASE).replace(/\/+$/, '')
+    const model = env.AIGW_MODEL || AIGW_DEFAULT_MODEL
+    let resp: Response
+    try {
+      resp = await fetch(`${base}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${env.AIGW_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        // 推理模型先思考后成文；思考长度不稳定，4000 给足余量
+        // （max_tokens 是上限而非消耗，正文长度仍由提示词约束）
+        body: JSON.stringify({ model, messages, max_tokens: 4000, temperature: 0.2 }),
+      })
+    } catch (err) {
+      throw new Error(`AIGW fetch failed: ${err instanceof Error ? err.message : String(err)}`)
+    }
+    if (!resp.ok) {
+      throw new Error(`AIGW ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
+    }
+    const text = parseChatChoices(await resp.json())
+    if (!text) {
+      // 推理模型 token 耗尽在思考阶段时 content 为空
+      throw new Error('AIGW empty content (reasoning exceeded max_tokens?)')
+    }
+    return { text, modelTag: model }
+  }
+
   if (env.AI) {
     const result = await env.AI.run(MODEL_ID, {
       messages,
-      max_tokens: 300,
+      max_tokens: 400,
       temperature: 0.2,
     })
-    return typeof result === 'string' ? result : (result as { response?: string })?.response ?? ''
+    const text = typeof result === 'string' ? result : (result as { response?: string })?.response ?? ''
+    return { text, modelTag: 'llama-3.2-3b' }
   }
 
   if (env.ACGTI_AI_TOKEN && env.ACGTI_AI_ACCOUNT_ID) {
@@ -56,7 +103,7 @@ async function runModel(env: Env, messages: ChatMessage[]): Promise<string> {
             Authorization: `Bearer ${env.ACGTI_AI_TOKEN}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ messages, max_tokens: 300, temperature: 0.2 }),
+          body: JSON.stringify({ messages, max_tokens: 400, temperature: 0.2 }),
         },
       )
     } catch (err) {
@@ -65,14 +112,14 @@ async function runModel(env: Env, messages: ChatMessage[]): Promise<string> {
     if (!resp.ok) {
       throw new Error(`REST AI ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
     }
-    const data = await resp.json<{ success?: boolean; errors?: Array<{ message?: string }>; result?: { choices?: Array<{ message?: { content?: string } }> } }>()
+    const data = await resp.json<{ success?: boolean; errors?: Array<{ message?: string }>; result?: unknown }>()
     if (data.success === false) {
       throw new Error(`REST AI api error: ${JSON.stringify(data.errors ?? []).slice(0, 200)}`)
     }
-    return data.result?.choices?.[0]?.message?.content ?? ''
+    return { text: parseChatChoices(data.result), modelTag: 'llama-3.2-3b' }
   }
 
-  throw new Error('no ai binding and no rest credentials')
+  throw new Error('no ai provider configured')
 }
 
 // 分桶阈值：|score| ≥ 0.5 记为明显倾向，≥ 0.2 记为中等，否则轻微
@@ -131,7 +178,7 @@ function json(data: unknown, status = 200) {
 }
 
 export async function onRequestPost(context: { env: Env; request: Request }) {
-  const { DB, AI, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
+  const { DB, AI, AIGW_API_KEY, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
 
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
   const allowed = await checkRateLimit(DB, ip, INSIGHT_RATE_LIMIT)
@@ -166,13 +213,17 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     return json({ text: null, available: false, reason: 'unknown-character' })
   }
 
-  if (!AI && !(ACGTI_AI_TOKEN && ACGTI_AI_ACCOUNT_ID)) {
-    // 既无 AI binding 也无 REST 凭据：明确告知前端不可用，走静态降级
+  if (!AIGW_API_KEY && !AI && !(ACGTI_AI_TOKEN && ACGTI_AI_ACCOUNT_ID)) {
+    // 无任何可用 provider（网关 / AI binding / REST 凭据）：明确告知前端不可用
     return json({ text: null, available: false, reason: 'no-binding' })
   }
 
   const scores = { ei, sn, tf, jp }
-  const cacheKey = `${characterId}:${langName}:${bucketOf(ei)}${bucketOf(sn)}${bucketOf(tf)}${bucketOf(jp)}`
+  // 缓存键含模型标签：切换 provider/模型后旧缓存自然失效，不互相污染
+  const providerTag = AIGW_API_KEY
+    ? (context.env.AIGW_MODEL || AIGW_DEFAULT_MODEL)
+    : 'llama-3.2-3b'
+  const cacheKey = `${characterId}:${langName}:${bucketOf(ei)}${bucketOf(sn)}${bucketOf(tf)}${bucketOf(jp)}:${providerTag}`
   const wantFresh = raw.fresh === true
 
   // 缓存读取失败不阻塞生成路径
@@ -196,11 +247,14 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   const { system, user } = buildPrompt(brief, scores, LANGUAGES[langName])
 
   let generated: string
+  let usedModel: string
   try {
-    generated = await runModel(context.env, [
+    const result = await runModel(context.env, [
       { role: 'system', content: system },
       { role: 'user', content: user },
     ])
+    generated = result.text
+    usedModel = result.modelTag
   } catch (err) {
     console.error('Insight generation error:', err instanceof Error ? err.message : err)
     return json({ text: null, available: false, reason: 'generation-failed' })
@@ -218,7 +272,7 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
        ON CONFLICT(cache_key) DO UPDATE SET
          text = excluded.text, model = excluded.model,
          hits = 0, updated_at = excluded.updated_at`
-    ).bind(cacheKey, text, MODEL_ID, langName, new Date().toISOString(), new Date().toISOString()).run()
+    ).bind(cacheKey, text, usedModel, langName, new Date().toISOString(), new Date().toISOString()).run()
   } catch {
     // 缓存写入失败不影响本次返回
   }

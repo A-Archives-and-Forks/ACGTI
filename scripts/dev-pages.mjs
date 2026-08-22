@@ -77,14 +77,24 @@ function startPagesDev(extraEnv) {
 }
 
 const token = readWranglerToken()
-const accountId = token ? resolveAccountId() : null
+// 已手动配置网关 key（AIGW_API_KEY）时优先走网关模型，无需注入 wrangler 凭据
+let gatewayConfigured = false
+try {
+  gatewayConfigured = /^AIGW_API_KEY\s*=\s*\S/m.test(readFileSync(DEV_VARS, 'utf-8'))
+} catch {}
+const accountId = token && !gatewayConfigured ? resolveAccountId() : null
 
-if (token && accountId) {
-  const stripped = originalConfig.replace(/,?\s*\/\/[^\n]*\n\s*"ai":\s*\{[^}]*\}/, '')
-  writeFileSync(WRANGLER_CONFIG, stripped, 'utf-8')
-  configStripped = true
+// 无论走网关还是 REST：本地远程绑定在受限网络下必崩，一律剥离 ai binding
+const stripped = originalConfig.replace(/,?\s*\/\/[^\n]*\n\s*"ai":\s*\{[^}]*\}/, '')
+writeFileSync(WRANGLER_CONFIG, stripped, 'utf-8')
+configStripped = true
 
-  const preload = join(process.cwd(), 'scripts', 'wrangler-proxy-preload.cjs').replace(/\\/g, '/')
+const preload = join(process.cwd(), 'scripts', 'wrangler-proxy-preload.cjs').replace(/\\/g, '/')
+
+if (gatewayConfigured) {
+  console.log('AI 本地联调模式：网关直连（.dev.vars 已配置 AIGW_API_KEY），已临时剥离 ai binding')
+  startPagesDev({ NODE_OPTIONS: `--require "${preload}"` })
+} else if (token && accountId) {
   // pages dev 的变量只认 .dev.vars（忽略进程环境注入），追加临时凭据段，
   // cleanup 时按标记移除
   try {
@@ -98,10 +108,8 @@ if (token && accountId) {
     console.warn('无法写入 .dev.vars，AI REST 模式可能不生效')
   }
   console.log(`AI 本地联调模式：REST 直连（账号 ${accountId.slice(0, 8)}…），已临时剥离 ai binding`)
-  startPagesDev({
-    NODE_OPTIONS: `--require "${preload}"`,
-  })
+  startPagesDev({ NODE_OPTIONS: `--require "${preload}"` })
 } else {
-  console.warn('未取得 wrangler 凭据或账号 ID（需 npx wrangler login），以普通模式启动')
-  startPagesDev({})
+  console.warn('未取得网关配置或 wrangler 凭据（npx wrangler login），AI 解读将走降级隐藏')
+  startPagesDev({ NODE_OPTIONS: `--require "${preload}"` })
 }

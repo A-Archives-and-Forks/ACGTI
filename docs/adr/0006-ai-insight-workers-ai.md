@@ -25,6 +25,8 @@
 
 补充（2026-08-22）：**模型调用增加 REST 直连回退**（`runModel`）。起因是本地 `pages dev` 的 AI binding 依赖 wrangler 远程代理会话（`<hash>.<账号>.workers.dev`），在受限网络下该域名既有 DNS 投毒又有 SNI 阻断，远程绑定 RPC 确定性 `internal error`（而同账号 REST 调用经代理完全正常）。REST 凭据从 `.dev.vars` 的 `ACGTI_AI_TOKEN`/`ACGTI_AI_ACCOUNT_ID` 读取，由 `npm run dev:pages` 自动注入（复用 wrangler OAuth 登录态）。线上仍以 AI binding 为第一优先（零配置零凭据），REST 仅作本地与特殊环境的联调通道——这也是「渐进增强」原则在开发工作流上的延伸。
 
+补充（同日）：**增加 OpenAI 兼容网关 provider（最高优先级）**。3B llama 的中文输出质量是体验短板（成语错位、人称生硬），引入 saurlax AI 网关的 `step-3.7-flash`（推理模型，中文显著更自然）。设计要点：网关配置（`AIGW_API_KEY`，可选 `AIGW_BASE_URL`/`AIGW_MODEL`）只从环境变量读取，密钥永不入仓；**缓存键追加模型标签**，多 provider 共存时缓存互不污染；推理模型先思考后成文，max_tokens 放宽到 4000（上限而非消耗）。三级优先级（网关 > binding > REST）让「配了 key 用好模型、没配零配置可用」同时成立。
+
 ## 后果
 
 - 正面：部署即用、零密钥、零边际成本（缓存命中后）；隐私模型不变；降级路径保证功能永不因 AI 不可用而破损。
