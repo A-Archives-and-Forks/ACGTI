@@ -18,6 +18,9 @@ const MODEL_ID = '@cf/meta/llama-3.2-3b-instruct'
 // 思考过程再出正文，max_tokens 需给足推理余量。
 const AIGW_DEFAULT_BASE = 'https://aigw.saurlax.com/v1'
 const AIGW_DEFAULT_MODEL = 'step-3.7-flash'
+// 第二网关通道：与 AIGW_* 独立的并发额度，专供预热脚本分流提速
+// （两通道模型同名时缓存键一致，可混跑互通）。线上默认仍走主通道。
+const AIGW2_DEFAULT_BASE = 'https://api.stepfun.com/step_plan/v1'
 // 单 IP 每分钟最多解读次数（生成路径比查询路径重，收紧到 10）
 const INSIGHT_RATE_LIMIT = 10
 const LANGUAGES: Record<string, string> = {
@@ -34,6 +37,10 @@ type Env = {
   AIGW_API_KEY?: string
   AIGW_BASE_URL?: string
   AIGW_MODEL?: string
+  // 第二网关通道（预热双通道分流用，见 runModel）
+  AIGW2_API_KEY?: string
+  AIGW2_BASE_URL?: string
+  AIGW2_MODEL?: string
   // REST 回退（本地联调用，见 runModel）：与 AI binding 二选一即可
   ACGTI_AI_TOKEN?: string
   ACGTI_AI_ACCOUNT_ID?: string
@@ -43,6 +50,30 @@ type Env = {
 
 type ChatMessage = { role: 'system' | 'user'; content: string }
 
+type GatewayChannel = { name: 'aigw' | 'aigw2'; key: string; base: string; model: string }
+
+// 收集已配置的网关通道（顺序即优先级，主通道在前）
+function gatewayChannels(env: Env): GatewayChannel[] {
+  const channels: GatewayChannel[] = []
+  if (env.AIGW_API_KEY) {
+    channels.push({
+      name: 'aigw',
+      key: env.AIGW_API_KEY,
+      base: (env.AIGW_BASE_URL || AIGW_DEFAULT_BASE).replace(/\/+$/, ''),
+      model: env.AIGW_MODEL || AIGW_DEFAULT_MODEL,
+    })
+  }
+  if (env.AIGW2_API_KEY) {
+    channels.push({
+      name: 'aigw2',
+      key: env.AIGW2_API_KEY,
+      base: (env.AIGW2_BASE_URL || AIGW2_DEFAULT_BASE).replace(/\/+$/, ''),
+      model: env.AIGW2_MODEL || AIGW_DEFAULT_MODEL,
+    })
+  }
+  return channels
+}
+
 // 解析 OpenAI 兼容的 chat/completions 响应（网关与 Cloudflare REST 同构）
 function parseChatChoices(data: unknown): string {
   const d = data as { choices?: Array<{ message?: { content?: string } }> }
@@ -50,38 +81,43 @@ function parseChatChoices(data: unknown): string {
 }
 
 // 模型调用，按优先级回退：
-//   1. OpenAI 兼容网关（AIGW_API_KEY，中文质量最佳）
+//   1. OpenAI 兼容网关（显式指定通道，或主通道，中文质量最佳）
 //   2. AI binding（线上部署零配置）
 //   3. Cloudflare REST + .dev.vars 凭据（本地联调：pages dev 的远程绑定
 //      依赖 wrangler 远程代理会话，受限网络下会 internal error）
-async function runModel(env: Env, messages: ChatMessage[]): Promise<{ text: string; modelTag: string }> {
-  if (env.AIGW_API_KEY) {
-    const base = (env.AIGW_BASE_URL || AIGW_DEFAULT_BASE).replace(/\/+$/, '')
-    const model = env.AIGW_MODEL || AIGW_DEFAULT_MODEL
+// 显式通道仅由预热脚本通过请求体 provider 字段指定（双通道并发分流），
+// 线上请求不带该字段，永远走主通道，缓存键行为与单通道时一致。
+async function runModel(
+  env: Env,
+  messages: ChatMessage[],
+  channel?: GatewayChannel,
+): Promise<{ text: string; modelTag: string }> {
+  const gw = channel ?? gatewayChannels(env)[0]
+  if (gw) {
     let resp: Response
     try {
-      resp = await fetch(`${base}/chat/completions`, {
+      resp = await fetch(`${gw.base}/chat/completions`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${env.AIGW_API_KEY}`,
+          Authorization: `Bearer ${gw.key}`,
           'Content-Type': 'application/json',
         },
         // 推理模型先思考后成文；思考长度不稳定，4000 给足余量
         // （max_tokens 是上限而非消耗，正文长度仍由提示词约束）
-        body: JSON.stringify({ model, messages, max_tokens: 4000, temperature: 0.2 }),
+        body: JSON.stringify({ model: gw.model, messages, max_tokens: 4000, temperature: 0.2 }),
       })
     } catch (err) {
-      throw new Error(`AIGW fetch failed: ${err instanceof Error ? err.message : String(err)}`)
+      throw new Error(`AIGW[${gw.name}] fetch failed: ${err instanceof Error ? err.message : String(err)}`)
     }
     if (!resp.ok) {
-      throw new Error(`AIGW ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
+      throw new Error(`AIGW[${gw.name}] ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
     }
     const text = parseChatChoices(await resp.json())
     if (!text) {
       // 推理模型 token 耗尽在思考阶段时 content 为空
-      throw new Error('AIGW empty content (reasoning exceeded max_tokens?)')
+      throw new Error(`AIGW[${gw.name}] empty content (reasoning exceeded max_tokens?)`)
     }
-    return { text, modelTag: model }
+    return { text, modelTag: gw.model }
   }
 
   if (env.AI) {
@@ -180,7 +216,8 @@ function json(data: unknown, status = 200) {
 }
 
 export async function onRequestPost(context: { env: Env; request: Request }) {
-  const { DB, AI, AIGW_API_KEY, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
+  const { DB, AI, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
+  const channels = gatewayChannels(context.env)
 
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
   const rateLimit = Number(context.env.ACGTI_INSIGHT_RATE_LIMIT) > 0
@@ -218,16 +255,19 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     return json({ text: null, available: false, reason: 'unknown-character' })
   }
 
-  if (!AIGW_API_KEY && !AI && !(ACGTI_AI_TOKEN && ACGTI_AI_ACCOUNT_ID)) {
+  if (channels.length === 0 && !AI && !(ACGTI_AI_TOKEN && ACGTI_AI_ACCOUNT_ID)) {
     // 无任何可用 provider（网关 / AI binding / REST 凭据）：明确告知前端不可用
     return json({ text: null, available: false, reason: 'no-binding' })
   }
 
+  // 预热脚本可指定网关通道（双通道并发分流）；非法值或未指定回落主通道
+  const providerRaw = str(raw.provider, 8)
+  const channel = channels.find((c) => c.name === providerRaw) ?? channels[0]
+
   const scores = { ei, sn, tf, jp }
-  // 缓存键含模型标签：切换 provider/模型后旧缓存自然失效，不互相污染
-  const providerTag = AIGW_API_KEY
-    ? (context.env.AIGW_MODEL || AIGW_DEFAULT_MODEL)
-    : 'llama-3.2-3b'
+  // 缓存键含模型标签：切换 provider/模型后旧缓存自然失效，不互相污染。
+  // 指定通道时用该通道的模型；两通道模型同名则缓存互通（预热混跑的前提）
+  const providerTag = channel ? channel.model : 'llama-3.2-3b'
   const cacheKey = `${characterId}:${langName}:${bucketOf(ei)}${bucketOf(sn)}${bucketOf(tf)}${bucketOf(jp)}:${providerTag}`
   const wantFresh = raw.fresh === true
 
@@ -254,12 +294,18 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   let generated: string
   let usedModel: string
   try {
-    const result = await runModel(context.env, [
-      { role: 'system', content: system },
-      { role: 'user', content: user },
-    ])
+    const t0 = Date.now()
+    const result = await runModel(
+      context.env,
+      [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+      channel,
+    )
     generated = result.text
     usedModel = result.modelTag
+    console.log(`[insight] generated via ${channel?.name ?? 'binding/rest'} in ${Date.now() - t0}ms`)
   } catch (err) {
     console.error('Insight generation error:', err instanceof Error ? err.message : err)
     return json({ text: null, available: false, reason: 'generation-failed' })

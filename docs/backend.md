@@ -60,8 +60,11 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 | 优先级 | 条件 | 说明 |
 |:--|:--|:--|
 | 1 | 环境变量 `AIGW_API_KEY` | OpenAI 兼容网关（默认 saurlax 网关的 `step-3.7-flash`），中文质量最佳；`AIGW_BASE_URL` / `AIGW_MODEL` 可覆盖。注意网关上的推理模型先思考后成文，max_tokens 需给足（当前 4000） |
+| 1b | 环境变量 `AIGW2_API_KEY` | 第二网关通道（默认 stepfun 官方 `step_plan/v1`，模型同名 `step-3.7-flash`）：仅响应请求体 `provider: "aigw2"` 时启用，专供预热脚本双通道分流；线上常规请求永远走主通道。两通道模型同名 → 缓存键一致，生成结果互通 |
 | 2 | `wrangler.jsonc` 的 ai binding | 线上部署零配置零密钥，走 Workers AI 的 llama-3.2-3b |
 | 3 | `ACGTI_AI_TOKEN` + `ACGTI_AI_ACCOUNT_ID` | Cloudflare REST 直连，仅本地联调用（由 `dev:pages` 自动注入） |
+
+**网关并发实测（2026-08，每档 10 请求压测）**：stepfun 官方 2-32 并发全部成功、平均延迟 1.1-1.2s 无劣化（上限 ≥32）；saurlax 有效并发仅 ≈2——超发不报 429 而是排队挂起 20-60s，吞吐反而从 1.15 请求/秒跌到 0.2。预热脚本默认按此取 `aigw×2 + aigw2×10`。
 
 缓存键含模型标签（如 `:step-3.7-flash`），切换 provider 后旧缓存自然失效，不会互相污染。**密钥只放环境变量与 `.dev.vars`（已被 gitignore），绝不提交仓库。**
 
@@ -77,12 +80,15 @@ npm run dev:pages
 node scripts/prewarm-insights.mjs --dry-run            # 查看计划
 node scripts/prewarm-insights.mjs --langs zh-CN        # 按语言分批（推荐）
 node scripts/prewarm-insights.mjs --characters frieren,akemi-homura --buckets 1111,2112
+node scripts/prewarm-insights.mjs --concurrency 2,10   # 按通道设并发（aigw,aigw2）
 
 # 3. 部署后把本地预热结果推到线上库（INSERT OR IGNORE，幂等可重复）
 node scripts/prewarm-insights.mjs --push
 ```
 
-默认桶组合为常见强度画像（`1111/2112/1211/1121/1112`，依据反馈数据的得分分布）；全量 113 角色 × 4 语言 × 5 桶 ≈ 2260 条、串行约 6 小时，建议按语言分批。重跑幂等（已缓存直接命中并自增 hits）。
+默认桶组合为常见强度画像（`1111/2112/1211/1121/1112`，依据反馈数据的得分分布）；全量 113 角色 × 4 语言 × 5 桶 ≈ 2260 条。注意预热结果只落在**本地** D1（`.wrangler/state` 下的开发库），线上 Pages 读的是**远程** D1——想让它对线上生效必须执行 `--push`；若不预热，线上会惰性生成（首个命中该画像的用户等 9-15s，token 不限量时成本可忽略）。
+
+`.dev.vars` 同时配置 `AIGW_API_KEY` 与 `AIGW2_API_KEY` 时自动启用双通道：任务按各通道并发比例分流，默认 `aigw×2 + aigw2×10`（实测安全值，见上方压测结论），全量约 40 分钟。单网关配置则单池运行。偶发失败（热重载窗口/网络抖动）会自动补跑一轮，重跑幂等（已缓存直接命中并自增 hits）。
 
 ### 本地联调（受限网络环境）
 
@@ -90,7 +96,10 @@ node scripts/prewarm-insights.mjs --push
 
 为此 `npm run dev:pages`（`scripts/dev-pages.mjs`）提供本地联调模式：
 
-1. 临时剥离 `wrangler.jsonc` 的 ai binding（退出自动恢复）——本地远程绑定在受限网络下必崩，与用哪个 provider 无关；
+1. 临时剥离 `wrangler.jsonc` 的 ai binding（退出自动恢复）——本地远程绑定在受限网络下必崩，与用哪个 provider 无关。wrangler pages dev 不支持 `--config` 自定义配置路径（实测 4.83 报错），只能原地改写，配套三层防护：
+   - **崩溃自愈**：剥离前备份原文到 `.wrangler`（gitignored），强杀/崩溃后下次启动检测到备份即先还原；
+   - **端口清理**：自愈时顺带释放可能被残留 wrangler 占用的 8788 端口；
+   - **运行期守护**：同步软件等外部程序可能把运行中的 `wrangler.jsonc` 还原成原文，触发 wrangler 热重载（窗口内请求 503）。启动器每 2s 校验，被还原成启动时原文就立即重新剥离（实测本机存在此类外部改写，守护已在实战中触发并恢复）；
 2. 优先级识别：`.dev.vars` 手动配置了 `AIGW_API_KEY`（网关模式）时直接使用；否则注入 REST 凭据（`ACGTI_AI_TOKEN` / `ACGTI_AI_ACCOUNT_ID`，复用 wrangler 本地 OAuth 登录态，退出时按标记移除）；
 3. 注入 `scripts/wrangler-proxy-preload.cjs`：对 Node 侧三类出站路径（https.request 的 createConnection、https.Agent 原型、undici 全局 dispatcher）统一接管为代理 CONNECT 隧道——wrangler 自身的远程连接不遵守 `https_proxy` 环境变量，这是本地不崩的前提。
 
