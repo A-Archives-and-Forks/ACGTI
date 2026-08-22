@@ -11,10 +11,10 @@ const hiddenCharacterSeriesI18n: LocalizedText = {
 }
 
 const hiddenCharacterNoteI18n: LocalizedText = {
-  'zh-CN': '你命中了{label}。ACGTI 不会直接公开其角色名，结果页仅保留角色代码、形象和气质解读。',
-  'zh-TW': '你命中了{label}。ACGTI 不會直接公開其角色名，結果頁僅保留角色代碼、形象與氣質解讀。',
-  en: 'You hit {label}. ACGTI keeps the actual character name masked and only shows the code, image, and personality reading.',
-  ja: '{label} に命中しました。ACGTIでは実際のキャラ名は伏せたまま、コードとビジュアル、解説のみを表示します。',
+  'zh-CN': '你抽中了隐藏角色{label}——她的真名暂时保密，结果页只留下角色代码、形象和气质解读。',
+  'zh-TW': '你抽中了隱藏角色{label}——她的真名暫時保密，結果頁只留下角色代碼、形象與氣質解讀。',
+  en: 'You unlocked the hidden character {label}. Her real name stays masked — the result only shows the code, image, and personality reading.',
+  ja: '隠しキャラの{label} を引きました。本当の名前は伏せたまま、コードとビジュアル、解説のみ表示されます。',
 }
 
 const hiddenCharacterTagsI18n: Record<AppLocale, string[]> = {
@@ -650,7 +650,7 @@ const characterNameI18n: Record<string, LocalizedText> = {
     'zh-CN': '艾莉',
     'zh-TW': '艾莉亞',
     en: 'Alya Kujou',
-    ja: '久世政近の隣の席のロシアン彼女',
+    ja: '九条アーリャ',
   },
   'artoria-pendragon': {
     'zh-CN': '阿尔托莉雅',
