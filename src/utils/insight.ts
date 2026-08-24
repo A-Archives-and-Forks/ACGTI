@@ -14,8 +14,9 @@ export interface InsightResponse {
   reason?: string
 }
 
-// AI 解读接口可能长时间无响应，超时后按失败处理，避免结果页骨架屏无限显示
-const INSIGHT_TIMEOUT_MS = 10_000
+// AI 解读接口可能长时间无响应，超时后按失败处理，避免结果页骨架屏无限显示。
+// 口径：服务端推理模型（max_tokens 4000）先思考后成文，冷启动可能超 10 秒，放宽到 15 秒
+const INSIGHT_TIMEOUT_MS = 15_000
 
 export async function fetchAiInsight(
   characterCode: string,

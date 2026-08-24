@@ -98,6 +98,11 @@ export async function onRequestPost(context: any) {
   if (submissionId && !isValidUuid(submissionId)) {
     return new Response('Invalid submissionId', { status: 400 })
   }
+  // 与 submit.ts 对齐：可选的 predictedMbti 一旦携带就必须是合法格式，
+  // 防伪造 payload 写入非法 MBTI 污染校准数据
+  if (predictedMbti && !isValidMbti(predictedMbti)) {
+    return new Response('Invalid predictedMbti', { status: 400 })
+  }
   // 与 submit.ts 对齐：可选的 code 字段一旦携带就必须是合法格式，防脏数据入库
   if (archetypeCode && !isValidCode(archetypeCode)) {
     return new Response('Invalid archetype code', { status: 400 })

@@ -268,7 +268,7 @@ paths:
           description: 触发分钟级限流（单 IP 每分钟超过 5 次）。空响应体。
         '500':
           description: |
-            数据库写入失败（含自修复重试仍失败）。SQL 细节仅记录在服务端日志，
+            数据库写入失败。SQL 细节仅记录在服务端日志，
             对外只返回通用错误码。
           content:
             application/json:
@@ -290,6 +290,8 @@ paths:
         缓存：以「角色代码 + 语言 + 四维倾向分桶」为键写入 D1 缓存，
         相同画像全站共享一次生成结果。分桶规则：|score| >= 0.5 记为明显倾向、
         >= 0.2 记为中等、否则轻微，因此同一角色每种语言最多 81 种桶组合。
+        缓存键还含内容版本（BRIEF_VERSION）与模型标签，
+        多模型并存时缓存行数为 81×模型数。
 
         防滥用（多层）：
 
@@ -676,7 +678,7 @@ components:
 
     FeedbackOk:
       type: object
-      description: 反馈写入成功（含建表自修复后的重试成功）。
+      description: 反馈写入成功。
       required: [ok]
       properties:
         ok:
@@ -877,7 +879,7 @@ components:
           properties:
             totalSubmissions:
               type: integer
-              description: 总提交数（优先取快照，无快照时从聚合表实时求和）。
+              description: 总提交数。总量来自 overview 快照，快照未生成时为 0。
             sameCharacterCount:
               type: integer
               description: 与指定参数 character 相同的角色命中次数；未提供该参数时为 0。

@@ -121,6 +121,7 @@ src/
 ├── components/           # 可复用 UI 组件
 │   ├── home/             # 首页区块（Hero / 数据 / 推广 / 评价 / 更新弹窗）
 │   ├── AppIcon.vue
+│   ├── AiInsightCard.vue # AI 解读卡片（渐进增强，失败整卡隐藏）
 │   ├── SharePoster.vue   # 分享海报
 │   └── AdsenseSlot.vue
 ├── composables/          # Vue 组合式函数
@@ -136,7 +137,8 @@ src/
 │   ├── characters.json            # 角色资料库（自动生成）
 │   ├── characterVisuals.json      # 角色视觉配置（自动生成）
 │   ├── characterMessages.json     # 角色多语言文案（自动生成，按需异步加载）
-│   └── characterProbabilities.json # 角色命中概率先验
+│   ├── characterProbabilities.json # 角色命中概率先验
+│   └── socialIcons.ts             # 社交分享图标配置
 ├── i18n/                 # 国际化（简中/繁中/英/日）
 │   ├── messages.ts       # UI 文案与题目翻译
 │   ├── characters.ts     # 角色名/系列名翻译与隐藏角色处理
@@ -172,7 +174,7 @@ functions/                 # Cloudflare Pages Functions（后端 API + 全局中
 cron-worker/               # 独立 Cron Worker（统计快照重算与限流表清理）
 migrations/                # Cloudflare D1 数据库迁移（CI 会在全新库上干跑校验）
 scripts/                   # 数据校验 / 聚合构建 / E2E 冒烟等脚本
-tests/                     # Vitest 单元测试（评分引擎/颜色/存储）
+tests/                     # Vitest 单元测试（评分引擎/颜色/存储/答题状态机/后端端点与中间件）
 analysis/                  # 反馈数据分析与权重校准流水线（本地）
 docs/
 ├── adr/                   # 架构决策记录（MADR 格式，8 篇）
@@ -291,13 +293,13 @@ npm run dev:pages
 
 - **内部开发**：在 `dev` 分支上进行开发，稳定后向 `main` 发起 PR 合并
 - **外部贡献**：Fork 本仓库后，向 `dev` 分支提交 Pull Request
-- **CI 校验**：仓库已配置 GitHub Actions，会在 `push` 到 `main`/`dev` 和所有 PR 上自动执行数据校验、前后端类型检查、D1 迁移干跑与 `npm run build`
+- **CI 校验**：仓库已配置 GitHub Actions，会在 `push` 到 `main`/`dev` 和所有 PR 上自动执行数据校验、单元测试、前后端类型检查、D1 迁移干跑与 `npm run build`
 
 线上部署由 Cloudflare Pages 负责，后端 API 通过 Cloudflare Pages Functions 运行，数据存储在 Cloudflare D1 数据库中。
 
 ## 📦 持续集成与部署
 
-- **GitHub Actions**：在 `main`/`dev` 的 push 和 PR 上运行完整 CI 检查（数据校验、类型检查、构建）
+- **GitHub Actions**：在 `main`/`dev` 的 push 和 PR 上运行完整 CI 检查（数据校验、单元测试、类型检查、构建）
 - **Cloudflare Pages**：负责连接 GitHub 后的自动构建与部署，同时托管 Pages Functions 后端 API
 - **GitHub Release**：在推送 `v*` tag 时自动构建 `dist/`、打包为 zip，并创建 Release
 

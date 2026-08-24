@@ -541,15 +541,19 @@ function main() {
       } else if (char.series && char._i18n.series['zh-CN'] && char._i18n.series['zh-CN'] !== char.series) {
         warn(`${prefix} i18n.series.zh-CN（${char._i18n.series['zh-CN']}）与 meta.series（${char.series}）不一致，运行时以 meta.series 为准`)
       }
-      // title/note/tags 翻译完整性
+      // title/note/tags 翻译完整性：构建脚本读取 i18n[locale] 的三块生成
+      // characterMessages.json（ADR-0007 数据链路），缺失时对应语言回退中文。
+      // 当前全量非隐藏角色均已补齐三语翻译，因此按 error 级把关；
+      // 隐藏角色不对外展示，不做此要求
       for (const locale of ['zh-TW', 'en', 'ja']) {
+        if (char.hidden) continue
         const localeData = char._i18n[locale]
         if (!localeData) {
-          warn(`${prefix} 源文件中缺少 i18n.${locale} 翻译（title/note/tags）`)
+          error(`${prefix} 源文件中缺少 i18n.${locale} 翻译（title/note/tags）`)
         } else {
-          if (!localeData.title) warn(`${prefix} 源文件中缺少 i18n.${locale}.title`)
-          if (!localeData.note) warn(`${prefix} 源文件中缺少 i18n.${locale}.note`)
-          if (!localeData.tags) warn(`${prefix} 源文件中缺少 i18n.${locale}.tags`)
+          if (!localeData.title) error(`${prefix} 源文件中缺少 i18n.${locale}.title`)
+          if (!localeData.note) error(`${prefix} 源文件中缺少 i18n.${locale}.note`)
+          if (!localeData.tags) error(`${prefix} 源文件中缺少 i18n.${locale}.tags`)
         }
       }
     } else {

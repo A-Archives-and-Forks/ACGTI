@@ -202,6 +202,8 @@ const GW_ENV = {
 }
 const CHAR_ID = Object.keys(briefsJson)[0]
 // dimensionScores 全 0 → 四桶均为 0 → 桶段 '0000'
+// 前缀 v2 来自 functions/api/insight.ts 的 BRIEF_VERSION=2，bump 版本时需同步此处，
+// 不同步会让下方缓存相关用例变红以作提醒
 const INSIGHT_CACHE_KEY = `v2:${CHAR_ID}:zh-CN:0000:${GW_MODEL}`
 
 function makeInsightBody(overrides: Record<string, unknown> = {}) {

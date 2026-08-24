@@ -26,8 +26,8 @@ const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH'])
 
 /**
  * CSRF 防线：防跨站表单/fetch 对 /api/ 写接口的投毒。
- * - Origin 存在时：必须与请求自身同源；localhost / 127.0.0.1 任意端口视为
- *   本地联调（Vite dev server 与 pages dev 端口不同）放行
+ * - Origin 存在时：必须与请求自身同源；本地回环（localhost / 127.0.0.1 /
+ *   IPv6 [::1]）任意端口视为本地联调（Vite dev server 与 pages dev 端口不同）放行
  * - Sec-Fetch-Site: cross-site 直接判定跨站（现代浏览器都会携带该头）
  * - 两个头都没有（curl 等非浏览器客户端）放行，鉴权交由各端点自身逻辑
  */
@@ -41,7 +41,8 @@ function isCrossSiteWrite(request: Request, url: URL): boolean {
       // Origin 值无法解析，视为非法来源
       return true
     }
-    if (originUrl.hostname === 'localhost' || originUrl.hostname === '127.0.0.1') {
+    // [::1] 是 URL hostname 对 IPv6 回环的表示，裸 ::1 一并认可更稳妥
+    if (['localhost', '127.0.0.1', '[::1]', '::1'].includes(originUrl.hostname)) {
       return false
     }
     if (originUrl.origin !== url.origin) {

@@ -50,15 +50,21 @@ const buckets = (flagValue('--buckets') || DEFAULT_BUCKETS.join(',')).split(',')
 const charactersFilter = flagValue('--characters')
 const concRaw = flagValue('--concurrency')
 
-// 探测 .dev.vars 里已配置的网关通道（与服务端 gatewayChannels 对应）
+// 探测 .dev.vars 里已配置的网关通道（与服务端 gatewayChannels 对应）。
+// 服务端要求 KEY + BASE_URL + MODEL 三项齐备才启用通道，这里保持同一口径：
+// 只配 KEY 的残缺通道服务端不会启用，分流过去会整轮预热失败
 function detectChannels() {
   let vars = ''
   try {
     vars = readFileSync(DEV_VARS, 'utf-8')
   } catch {}
+  const complete = (prefix) =>
+    ['API_KEY', 'BASE_URL', 'MODEL'].every((suffix) =>
+      new RegExp(`^${prefix}_${suffix}\\s*=\\s*\\S`, 'm').test(vars),
+    )
   const list = []
-  if (/^AIGW_API_KEY\s*=\s*\S/m.test(vars)) list.push('aigw')
-  if (/^AIGW2_API_KEY\s*=\s*\S/m.test(vars)) list.push('aigw2')
+  if (complete('AIGW')) list.push('aigw')
+  if (complete('AIGW2')) list.push('aigw2')
   return list
 }
 

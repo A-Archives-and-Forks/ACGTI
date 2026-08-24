@@ -16,7 +16,7 @@ flowchart LR
 
   subgraph Pages["Cloudflare Pages（同仓库部署）"]
     Static["静态资产 dist/"]
-    Fns["Pages Functions<br/>submit / feedback / insight / stats / config"]
+    Fns["Pages Functions<br/>submit / feedback / insight / stats / config / ping"]
     Static -.-> UI
   end
 

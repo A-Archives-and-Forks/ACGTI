@@ -61,7 +61,7 @@ migrations/               # D1 迁移（CI 会在全新库上按序干跑，保�
 结果页的「AI 解读」卡片由多级回退的模型通道生成（网关 > Workers AI binding > REST，见下文），遵循四条硬约束：
 
 1. **隐私**：请求只包含角色代码、四维倾向分（-1~1）与语言，绝不包含逐题答案；提示词素材来自构建期生成的 `functions/api/_data/characterBrief.json`（角色名/系列/标签，随 `npm run generate:data` 自动同步）。
-2. **成本**：以「角色 + 四维倾向分桶（强/中/轻微，3⁴=81 桶）+ 语言」为缓存键写入 `ai_insight_cache`（迁移 0009），相同画像全站共享一次生成结果，免费额度（每日 10000 Neurons）下消耗与桶数同阶而非与流量同阶。前端「换一种说法」走 `fresh: true` 重新生成并覆盖缓存，同一结果限 3 次（sessionStorage 计数）。
+2. **成本**：以「角色 + 四维倾向分桶（强/中/轻微，3⁴=81 桶）+ 语言」为缓存键写入 `ai_insight_cache`（迁移 0009），相同画像全站共享一次生成结果，免费额度（每日 10000 Neurons）下消耗与桶数同阶而非与流量同阶。缓存键还含内容版本（`BRIEF_VERSION`）与模型标签，多模型并存时缓存行数为 81×模型数。前端「换一种说法」走 `fresh: true` 重新生成并覆盖缓存，同一结果限 3 次（sessionStorage 计数）。
 3. **降级**：未绑定任何通道、额度耗尽、超出每日熔断或生成失败一律返回 `{text:null, available:false}`（`reason` 区分 `daily-limit` 等原因），前端隐藏整卡，结果页静态解析不受影响。
 4. **防滥用**：单 IP 分钟限流 fail-closed（D1 不可用时拒绝而非放行）；`fresh` 有独立子限流（未鉴权 2 次/分/IP，超限降级读缓存）；未鉴权请求受全站每日真实生成总量熔断保护（默认 1000，`ACGTI_INSIGHT_DAILY_LIMIT` 可覆盖，缓存命中不计数）；`fresh` / `provider` 高权限字段仅对携带 `ACGTI_PREWARM_TOKEN`（恒定时间比较）的预热请求开放。
 
@@ -143,7 +143,7 @@ npx wrangler d1 migrations apply acgti-stats --remote
 1. 从聚合表重算 `overview` / `archetypes` / `characters` 三份快照写入 `stats_snapshot`；
 2. 清理 `_rate_limit` 表的过期行（该表只写不清会无限膨胀）。
 
-手动触发 `POST /trigger`：配置了 `CRON_TRIGGER_SECRET` 环境变量时要求 `Authorization: Bearer <secret>`，未配置则开放（仅建议本地）。部署：`cd cron-worker && npm run deploy`。
+手动触发 `POST /trigger`：必须配置 `CRON_TRIGGER_SECRET` 环境变量，并携带 `Authorization: Bearer <secret>`；未配置该变量时 `/trigger` 直接返回 403（fail-closed，仅本地建议通过 `.dev.vars` 配置后触发）。部署：`cd cron-worker && npm run deploy`。
 
 ## 可选配置：Turnstile 人机验证
 
