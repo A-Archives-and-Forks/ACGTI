@@ -133,11 +133,17 @@ function startPagesDev(extraEnv) {
 }
 
 const token = readWranglerToken()
-// 已手动配置任一网关 key（AIGW_API_KEY / AIGW2_API_KEY）时优先走网关模型，
-// 无需注入 wrangler 凭据
+// 已手动配置完整网关通道（KEY + BASE_URL + MODEL 三项齐备，与 insight.ts 的
+// 启用条件保持一致）时优先走网关模型，无需注入 wrangler 凭据；
+// 只配了残缺的 KEY 时不再剥离 ai binding，仍可走 REST 回退联调
 let gatewayConfigured = false
 try {
-  gatewayConfigured = /^AIGW2?_API_KEY\s*=\s*\S/m.test(readFileSync(DEV_VARS, 'utf-8'))
+  const devVars = readFileSync(DEV_VARS, 'utf-8')
+  gatewayConfigured = ['AIGW', 'AIGW2'].some((prefix) =>
+    ['API_KEY', 'BASE_URL', 'MODEL'].every((suffix) =>
+      new RegExp(`^${prefix}_${suffix}\\s*=\\s*\\S`, 'm').test(devVars),
+    ),
+  )
 } catch {}
 const accountId = token && !gatewayConfigured ? resolveAccountId() : null
 

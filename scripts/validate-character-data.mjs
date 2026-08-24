@@ -357,6 +357,86 @@ function validateEngineWeightSync() {
   }
 }
 
+/** 题目维度（四对轴）合法值，与 src/types/quiz.ts 的 DimensionPair 对齐 */
+const VALID_PAIR_DIMENSIONS = new Set(['E_I', 'S_N', 'T_F', 'J_P'])
+
+/** questions.json 自身结构校验：id 唯一、dimension 属于四对轴、sign 只能是 ±1 */
+function validateQuestionsStructure() {
+  const questionsPath = resolve(ROOT, 'src/data/questions.json')
+  if (!existsSync(questionsPath)) return
+  const questions = loadJSON('src/data/questions.json')
+
+  const seenIds = new Set()
+  for (const q of questions) {
+    const prefix = `[题目 ${q.id ?? '???'}]`
+    if (!q.id) {
+      error(`${prefix} 缺少 id`)
+      continue
+    }
+    if (seenIds.has(q.id)) {
+      error(`${prefix} id 重复`)
+    }
+    seenIds.add(q.id)
+
+    if (!VALID_PAIR_DIMENSIONS.has(q.dimension)) {
+      error(`${prefix} dimension 不合法: ${q.dimension}（应为 E_I/S_N/T_F/J_P 之一）`)
+    }
+    if (q.sign !== 1 && q.sign !== -1) {
+      error(`${prefix} sign 不合法: ${q.sign}（应为 1 或 -1）`)
+    }
+  }
+}
+
+/** 权重覆盖表引用的题目 id 必须真实存在，题库增删后覆盖表不允许静默失配 */
+function validateDimensionWeightsReferences() {
+  const weightsPath = resolve(ROOT, 'src/data/questionDimensionWeights.json')
+  const questionsPath = resolve(ROOT, 'src/data/questions.json')
+  if (!existsSync(weightsPath) || !existsSync(questionsPath)) return
+
+  const weights = loadJSON('src/data/questionDimensionWeights.json')
+  const questions = loadJSON('src/data/questions.json')
+  const questionIds = new Set(questions.map((q) => q.id))
+
+  for (const [qid, entry] of Object.entries(weights)) {
+    if (!questionIds.has(qid)) {
+      error(`questionDimensionWeights.json 引用了不存在的题目: ${qid}`)
+      continue
+    }
+    // 覆盖表是"整体替换"语义：键必须是四对轴、值必须是有限数字
+    for (const [dim, weight] of Object.entries(entry ?? {})) {
+      if (!VALID_PAIR_DIMENSIONS.has(dim)) {
+        error(`questionDimensionWeights.json[${qid}] 含非法维度键: ${dim}`)
+      }
+      if (typeof weight !== 'number' || !Number.isFinite(weight)) {
+        error(`questionDimensionWeights.json[${qid}].${dim} 权重非法: ${weight}`)
+      }
+    }
+  }
+}
+
+/** AI 解读档案的角色集合必须与 characters.json 完全一致（双向），缺条目或多条目都报错 */
+function validateCharacterBriefSync() {
+  const briefPath = resolve(ROOT, 'functions/api/_data/characterBrief.json')
+  const charactersPath = resolve(ROOT, 'src/data/characters.json')
+  if (!existsSync(briefPath) || !existsSync(charactersPath)) return
+
+  const briefs = loadJSON('functions/api/_data/characterBrief.json')
+  const characters = loadJSON('src/data/characters.json')
+  const characterIds = new Set(characters.map((c) => c.id))
+  const briefIds = new Set(Object.keys(briefs))
+
+  for (const id of characterIds) {
+    if (!briefIds.has(id)) {
+      error(`characterBrief.json 缺少角色档案: ${id}（insight 端点会对该角色直接降级）`)
+    }
+  }
+  for (const id of briefIds) {
+    if (!characterIds.has(id)) {
+      error(`characterBrief.json 含多余角色档案: ${id}（characters.json 中不存在该角色）`)
+    }
+  }
+}
+
 // ── 主逻辑 ──────────────────────────────────────────────────────────────────
 
 function main() {
@@ -497,6 +577,9 @@ function main() {
   validateImageAssets(visuals, characters, mode)
   validateMessageCountConstants(characters.length)
   validateEngineWeightSync()
+  validateQuestionsStructure()
+  validateDimensionWeightsReferences()
+  validateCharacterBriefSync()
 
   // 汇总
   console.log()

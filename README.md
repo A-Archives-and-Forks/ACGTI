@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://acgti.tianxingleo.top/">🌐 acgti.tianxingleo.top — ACGTI官网</a>
+  <a href="https://acgti.tianxingleo.top/">🌐 acgti.tianxingleo.top — ACGTI 官网</a>
 </p>
 
 <p align="center">
@@ -159,8 +159,16 @@ src/
 └── style.css              # 全局样式
 
 functions/                 # Cloudflare Pages Functions（后端 API + 全局中间件）
-├── api/insight.ts         # AI 结果解读（Workers AI + D1 分桶缓存）
-└── api/_data/             # 构建期生成的角色精简档案（AI 提示词素材）
+├── _middleware.ts         # 全局中间件：写接口跨站校验 + 安全响应头 + 首页追踪参数清洗
+├── api/
+│   ├── _shared.ts         # 校验 / 限流 / 恒定时间比较等共享工具
+│   ├── _data/             # 构建期生成的角色精简档案（AI 提示词素材）
+│   ├── config.ts          # 运行时配置（Turnstile 站点密钥下发）
+│   ├── ping.ts            # 健康检查
+│   ├── submit.ts          # 结果匿名上报（聚合自增 + 抽样明细）
+│   ├── feedback.ts        # MBTI 自评反馈收集
+│   ├── insight.ts         # AI 结果解读（多级回退 + D1 分桶缓存）
+│   └── stats/             # 统计查询（overview / archetypes / characters / result）
 cron-worker/               # 独立 Cron Worker（统计快照重算与限流表清理）
 migrations/                # Cloudflare D1 数据库迁移（CI 会在全新库上干跑校验）
 scripts/                   # 数据校验 / 聚合构建 / E2E 冒烟等脚本
@@ -170,7 +178,8 @@ docs/
 ├── adr/                   # 架构决策记录（MADR 格式，8 篇）
 ├── architecture.md        # 系统架构总览（数据流图 + 扩展指南）
 ├── backend.md             # 后端接口与数据库说明
-└── api.md                 # API 调用说明（规范文件见 public/api/openapi.yaml）
+├── api.md                 # API 调用说明（规范文件见 public/api/openapi.yaml）
+└── 新增角色流程.md         # 新增角色的完整操作指引
 ```
 
 后端 API、数据库迁移与 cron-worker 的详细说明见 [`docs/backend.md`](docs/backend.md)。
@@ -193,9 +202,9 @@ docs/
 ## 📰 时间线
 
 - **2026.4.18 12:00:** GitHub 仓库 ⭐ 数量达到 500，访问量达到 550 万
-- **2026.4.14 15:00:** [网站](https://acgti.tianxingleo.top/)访问量超过 400 万，发布复盘博客：[《从一晚上一米工位到 2 天 68w 人访问的网站，我做了什么》](https://tianxingleo.top/2026/04/12/%E4%BB%8E%E4%B8%80%E6%99%9A%E4%B8%8A%E4%B8%80%E7%B1%B3%E5%B7%A5%E4%BD%9C%E4%BD%8D%E5%88%B02%E5%A4%A968w%E4%BA%BA%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%EF%BC%8C%E6%88%91%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
+- **2026.4.14 15:00:** [网站](https://acgti.tianxingleo.top/)访问量超过 400 万
 - **2026.4.13 21:00:** [网站](https://acgti.tianxingleo.top/)访问人数达到 100 万，仓库 Star 数达到 300
-- **2026.4.12 8:00:** 访问人数达到 50 万
+- **2026.4.12 8:00:** 访问人数达到 50 万；发布复盘博客：[《从一晚上一米工位到 2 天 68w 人访问的网站，我做了什么》](https://tianxingleo.top/2026/04/12/%E4%BB%8E%E4%B8%80%E6%99%9A%E4%B8%8A%E4%B8%80%E7%B1%B3%E5%B7%A5%E4%BD%8C%E5%88%B02%E5%A4%A968w%E4%BA%BA%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%EF%BC%8C%E6%88%91%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
 - **2026.4.11 23:00:** 进入 [永雏塔菲](https://www.bilibili.com/video/BV11FDyBZEN1/?spm_id_from=333.337.search-card.all.click) 直播间
 - **2026.4.11 12:00:** 在校内 100 人 BanG Dream 群测试，首次公开
 - **2026.4.10:** 创建仓库
@@ -320,8 +329,9 @@ git push origin vX.Y.Z   # 推送 tag 触发 Release 工作流
 
 ### 知识产权与素材声明 ⚠️
 
-- 项目中使用的所有二次元角色名称、设定、图像资源（包含但不限于立绘、截图、图标等）的版权均属于其**原版权方或原作者**（如各大动画制作委员会、游戏开发商、插画师等）。
-- 本项目不主张对任何引用的角色 IP 拥有所有权，属于非营利的同人衍生交流，主张对引用素材构成合理使用（Fair Use）。如有侵权，请提交 Issue 或通过邮件联系，我们将第一时间配合下架并删除相关内容。
+- 项目中引用的所有二次元角色**名称与设定**（角色名、作品名、人格设定等）的权利归其**原版权方或原作者**（如各大动画制作委员会、游戏开发商等），本项目不主张对任何角色 IP 拥有所有权。
+- 本项目实际使用的**角色立绘 / 插图为 AI 生成或自绘的同人衍生创作**，**页面背景由 ChatGPT (DALL·E) 生成**，并非对原作官方图像的直接搬运；素材归属以 [NOTICE](NOTICE) 与实际素材来源为准。
+- 本项目属于非营利的同人衍生交流，主张对引用素材构成合理使用（Fair Use）。如有侵权，请提交 Issue 或通过邮件联系，我们将第一时间配合下架并删除相关内容。
 
 ### 隐私与数据安全
 
@@ -348,7 +358,7 @@ git push origin vX.Y.Z   # 推送 tag 触发 Release 工作流
 
 - **界面风格** — 参考了 [16personalities](https://www.16personalities.com/) 的扁平化设计与测评体验
 - **项目启发** — 受到开源项目 [UnluckyNinja/SBTI-test](https://github.com/UnluckyNinja/SBTI-test) 的启发
-- **视觉素材** — 项目中的角色立绘与背景图片由 **ChatGPT (DALL·E)** 生成
+- **视觉素材** — 角色立绘与插图为 AI 生成或自绘的同人衍生创作，背景由 **ChatGPT (DALL·E)** 生成
 - **特别鸣谢** — [saurlax](https://saurlax.com/) 提供 GPT-5.4 Token 支持
 
 ## 支持项目

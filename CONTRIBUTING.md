@@ -64,6 +64,8 @@ npm run build           # 类型检查 + 构建（内含数据校验）
 npm run test:e2e        # 可选：无头浏览器端到端冒烟（自动启动/清理本地 Pages 服务器）
 ```
 
+> `test:e2e` 目前仅支持在 **Windows 本机 + Edge** 环境下运行；其他环境可通过环境变量 `ACGTI_E2E_BROWSER` 显式指定浏览器可执行文件路径（如 macOS/Linux 下的 Chrome / Chromium）。不满足条件时跳过该步骤不影响 PR。
+
 ### 4. 提交 Pull Request
 
 - 目标分支选择 `dev`。

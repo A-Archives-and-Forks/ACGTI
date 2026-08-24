@@ -3,18 +3,61 @@
 // （启动前临时剥离 wrangler.jsonc 的 ai binding：本地网络到 Workers AI
 //  远程网关不可达时该 binding 会拖垮 workerd；测试结束自动恢复配置）。
 import { execSync, spawn } from 'node:child_process'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 import puppeteer from 'puppeteer-core'
 
-const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
 const BASE = 'http://127.0.0.1:8788'
 const WRANGLER_CONFIG = 'wrangler.jsonc'
 
 const results = []
 const consoleErrors = []
 function pass(name) { results.push(['PASS', name]); console.log('  ✅', name) }
-function fail(name, detail) { results.push(['FAIL', name]); console.error('  ❌', name, detail ?? '') }
+function fail(name, detail) {
+  results.push(['FAIL', name])
+  console.error('  ❌', name, detail ?? '')
+  // 任何失败都必须让进程以非零码退出，否则 CI 拿到"假绿"
+  process.exitCode = 1
+}
+
+// ── 浏览器可执行文件解析 ──
+// 优先级：环境变量 ACGTI_E2E_BROWSER > 按平台探测常见安装位置。
+// 都找不到时给出明确的配置说明后非零退出（服务器可能已自启，需先清理）。
+const BROWSER_CANDIDATES =
+  process.platform === 'win32'
+    ? [
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+      ]
+    : process.platform === 'darwin'
+      ? [
+          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+          '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+        ]
+      : [
+          '/usr/bin/google-chrome',
+          '/usr/bin/google-chrome-stable',
+          '/usr/bin/chromium',
+          '/usr/bin/chromium-browser',
+        ]
+
+function resolveBrowserExecutable() {
+  const fromEnv = process.env.ACGTI_E2E_BROWSER
+  if (fromEnv) {
+    if (existsSync(fromEnv)) return fromEnv
+    console.error(`ACGTI_E2E_BROWSER 指定的浏览器不存在: ${fromEnv}`)
+    console.error('请检查路径是否正确（应为浏览器可执行文件，如 msedge.exe / chrome），')
+    console.error('Windows 路径示例: set ACGTI_E2E_BROWSER="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"')
+    return null
+  }
+  const found = BROWSER_CANDIDATES.find((p) => existsSync(p))
+  if (found) return found
+  console.error('未找到可用的浏览器（puppeteer-core 不自带 Chromium）。已尝试以下位置:')
+  BROWSER_CANDIDATES.forEach((p) => console.error(`  - ${p}`))
+  console.error('请安装 Chrome / Edge / Chromium，或通过环境变量显式指定:')
+  console.error('  ACGTI_E2E_BROWSER=<浏览器可执行文件路径> node scripts/e2e-smoke.mjs')
+  return null
+}
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 
@@ -72,13 +115,20 @@ async function text(page, selector) {
   return page.$eval(selector, el => el.textContent?.trim() ?? '').catch(() => null)
 }
 
-const browser = await puppeteer.launch({
-  executablePath: EDGE,
-  headless: 'new',
-  args: ['--no-sandbox', '--disable-gpu', '--window-size=1280,900'],
-})
+const browserPath = resolveBrowserExecutable()
+if (!browserPath) {
+  cleanupServer()
+  process.exit(1)
+}
 
+let browser = null
 try {
+  browser = await puppeteer.launch({
+    executablePath: browserPath,
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-gpu', '--window-size=1280,900'],
+  })
+
   const page = await browser.newPage()
   await page.setViewport({ width: 1280, height: 900 })
   page.on('console', (msg) => {
@@ -161,10 +211,13 @@ try {
   heroCode ? pass('角色代码: ' + heroCode) : fail('角色代码缺失')
   await page.screenshot({ path: 'scripts/e2e-result.png', fullPage: false })
 
-  // 结果页统计卡片（来自 /api/stats/result）
+  // 结果页统计卡片（来自 /api/stats/result）：必须真的命中至少一个统计词，
+  // 否则说明统计卡片未渲染或文案缺失（此前空数组也被当 pass 的假绿）
   await sleep(1000)
   const liveStatsText = await page.evaluate(() => document.body.innerText.match(/测过|人测过|命中率|同角色/g)?.slice(0, 4) ?? [])
-  pass('结果页统计词命中: ' + JSON.stringify(liveStatsText))
+  liveStatsText.length >= 1
+    ? pass('结果页统计词命中: ' + JSON.stringify(liveStatsText))
+    : fail('结果页统计词未命中（统计卡片缺失或未渲染）')
 
   // AI 解读卡片降级：后端不可用时整卡隐藏、不留空白
   const aiCard = await page.$('.ai-insight-section')
@@ -182,12 +235,41 @@ try {
     fail('导出按钮缺失')
   }
 
-  // ── 6. 反馈表单（填自评 MBTI 并提交到本地 API） ──
-  const fbSection = await page.evaluate(() => {
-    const labels = [...document.querySelectorAll('select, [role="radiogroup"], button')]
-    return labels.length
+  // ── 6. 反馈表单（真实交互：选自评 MBTI + 置信度，提交到本地 API） ──
+  // 此前只数元素个数就 pass：这里校验控件齐备、按钮禁用态流转、提交成功态
+  const fbControls = await page.evaluate(() => ({
+    dimBtns: document.querySelectorAll('.feedback-section .dim-btn').length,
+    confidenceBtns: document.querySelectorAll('.feedback-section .confidence-btn').length,
+    inputs: document.querySelectorAll('.feedback-section .feedback-input').length,
+    submitBtns: document.querySelectorAll('.feedback-section .feedback-submit-btn').length,
+    submitDisabled: document.querySelector('.feedback-section .feedback-submit-btn')?.disabled ?? null,
+  }))
+  fbControls.dimBtns >= 8 && fbControls.confidenceBtns === 5 && fbControls.inputs === 1 && fbControls.submitBtns === 1
+    ? pass(`反馈表单控件齐备（dim=${fbControls.dimBtns} confidence=${fbControls.confidenceBtns} input=${fbControls.inputs}）`)
+    : fail('反馈表单控件缺失', JSON.stringify(fbControls))
+  fbControls.submitDisabled === true
+    ? pass('反馈提交按钮初始为禁用态')
+    : fail('反馈提交按钮初始态异常（应为禁用）', JSON.stringify(fbControls))
+
+  // 依次点选 E / S / T / J（第 1/3/5/7 个 dim-btn）与置信度 4，按钮应解禁
+  for (const idx of [0, 2, 4, 6]) {
+    await page.evaluate((i) => {
+      document.querySelectorAll('.feedback-section .dim-btn')[i]?.click()
+    }, idx)
+  }
+  await page.evaluate(() => {
+    document.querySelectorAll('.feedback-section .confidence-btn')[3]?.click()
   })
-  pass('反馈区交互元素数: ' + fbSection)
+  await sleep(400)
+  const submitEnabled = await page.evaluate(() => {
+    const btn = document.querySelector('.feedback-section .feedback-submit-btn')
+    return btn ? !btn.disabled : false
+  })
+  submitEnabled ? pass('反馈表单填写完整后提交按钮解禁') : fail('反馈表单填写后按钮仍禁用')
+
+  await page.evaluate(() => document.querySelector('.feedback-section .feedback-submit-btn')?.click())
+  const feedbackDone = await page.waitForSelector('.feedback-done', { timeout: 8000 }).then(() => true).catch(() => false)
+  feedbackDone ? pass('反馈提交成功（本地 API 写入 200）') : fail('反馈提交后未出现成功态')
 
   // ── 7. 角色库 ──
   await page.goto(BASE + '/characters', { waitUntil: 'domcontentloaded' })
@@ -218,7 +300,11 @@ try {
   const navText = await text(page, '.site-nav')
   enBtn && navText && /Characters|Stats|About/.test(navText) ? pass('语言切换为英文生效: ' + navText.slice(0, 40)) : fail('语言切换', navText ?? '')
   const seoTitle = await page.title()
-  pass('英文 SEO 标题: ' + seoTitle)
+  // 此前无条件 pass：这里真正校验标题已切换为英文（含英文字母且不含中文字符）
+  const isEnglishTitle = /[A-Za-z]/.test(seoTitle) && !/[\u4e00-\u9fff]/.test(seoTitle)
+  isEnglishTitle
+    ? pass('英文 SEO 标题: ' + seoTitle)
+    : fail('SEO 标题未切换为英文', seoTitle)
 
   // ── 10. 分享链接直达结果页（?character=） ──
   await page.goto(BASE + '/result?character=frieren', { waitUntil: 'domcontentloaded' })
@@ -231,11 +317,54 @@ try {
   await sleep(800)
   page.url().endsWith('/') || page.url().includes('/#') ? pass('未知路由重定向首页') : fail('未知路由', page.url())
 
+  // ── 12. 移动端视口（375x812）核心冒烟 ──
+  // 复用同一个 page：切换视口即可触发 <=768px 的移动端布局
+  await page.setViewport({ width: 375, height: 812 })
+  await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 30000 })
+  await sleep(800)
+  const mobileTitle = await page.title()
+  mobileTitle.includes('ACGTI') ? pass('移动端首页标题: ' + mobileTitle) : fail('移动端首页标题', mobileTitle)
+  await page.screenshot({ path: 'scripts/e2e-mobile-home.png' })
+
+  // 汉堡菜单：仅移动端显示，点击展开 .site-nav.is-open，再点收起
+  const toggleVisible = await page.$eval('.mobile-nav-toggle', (el) => getComputedStyle(el).display !== 'none').catch(() => false)
+  toggleVisible ? pass('移动端汉堡菜单按钮可见') : fail('移动端汉堡菜单按钮不可见')
+  await page.evaluate(() => document.querySelector('.mobile-nav-toggle')?.click())
+  await sleep(400)
+  const navOpen = await page.$eval('.site-nav', (el) => el.classList.contains('is-open')).catch(() => false)
+  navOpen ? pass('移动端导航菜单展开（is-open）') : fail('移动端导航菜单未展开')
+  await page.evaluate(() => document.querySelector('.mobile-nav-toggle')?.click())
+  await sleep(400)
+  const navClosed = await page.$eval('.site-nav', (el) => !el.classList.contains('is-open')).catch(() => true)
+  navClosed ? pass('移动端导航菜单可收起') : fail('移动端导航菜单二次点击未收起')
+
+  // 移动端答题页：进入并选一题，验证触控布局下作答可用
+  await page.goto(BASE + '/quiz', { waitUntil: 'domcontentloaded', timeout: 30000 })
+  await page.waitForSelector('.question-block', { timeout: 15000 })
+  await sleep(500)
+  const mobileAnswered = await page.evaluate(() => {
+    const btn = document.querySelector('.question-block .scale-btn')
+    if (!btn) return false
+    btn.click()
+    return true
+  })
+  mobileAnswered ? pass('移动端答题页进入并点击选项') : fail('移动端答题页选项点击失败')
+  await sleep(500)
+  const mobileChecked = await page.$$eval('.question-block:nth-child(1) .scale-btn[aria-checked="true"]', (els) => els.length).catch(() => 0)
+  mobileChecked === 1 ? pass('移动端选项选中态生效') : fail('移动端选项选中态异常', String(mobileChecked))
+  const mobileProgress = await text(page, '.progress-hint')
+  mobileProgress && mobileProgress.includes('1 / 39')
+    ? pass('移动端进度提示: ' + mobileProgress)
+    : fail('移动端进度提示异常', mobileProgress ?? '')
+  await page.screenshot({ path: 'scripts/e2e-mobile-quiz.png' })
+
   // ── 汇总 ──
   const failed = results.filter(r => r[0] === 'FAIL')
   console.log('\n════════ E2E 结果 ════════')
   console.log(`通过 ${results.length - failed.length} / ${results.length}`)
   if (failed.length) {
+    // fail() 里已逐项设置，这里再兜底一次，确保任何失败都不会以 0 退出
+    process.exitCode = 1
     console.log('失败项:')
     failed.forEach(f => console.log(' -', f[1]))
   }
@@ -243,6 +372,7 @@ try {
   console.log(`页面 console 错误（过滤广告后）: ${realErrors.length}`)
   realErrors.slice(0, 10).forEach(e => console.log('  [console]', e.slice(0, 200)))
 } finally {
-  await browser.close()
+  // 浏览器启动失败（browser 为 null）时也要恢复 wrangler 配置与服务器
+  if (browser) await browser.close().catch(() => {})
   cleanupServer()
 }
