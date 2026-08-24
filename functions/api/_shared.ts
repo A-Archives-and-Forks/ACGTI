@@ -100,11 +100,15 @@ export async function verifyTurnstile(
  * 简易分钟级限流：基于 CF-Connecting-IP
  * 使用 D1 做轻量计数（每分钟归零，由 cron-worker 定期清理过期行）
  * 适用于低流量场景；高流量应改用 Cloudflare Rate Limiting API
+ *
+ * strict 模式供付费生成路径使用：D1 不可用时拒绝请求而非放行，
+ * 防止攻击者刻意打满 D1 写入配额让限流失效后刷穿上游额度
  */
 export async function checkRateLimit(
   DB: D1Database,
   ip: string,
   limit = 10,
+  strict = false,
 ): Promise<boolean> {
   const windowKey = `rl:${ip}:${Math.floor(Date.now() / 60000)}`
   try {
@@ -117,7 +121,58 @@ export async function checkRateLimit(
 
     return (row?.cnt ?? 0) <= limit
   } catch {
+    if (strict) return false
     // 表不存在或 D1 抖动时降级放行：统计类端点的可用性优先于严格限流
     return true
   }
+}
+
+/**
+ * 每日计数熔断：复用 _rate_limit 表（键按 UTC 日切换，exp 两天后由 cron 清理）。
+ * 单 IP 限流挡不住 IP 池轮换，全站每日总量是付费生成路径的最后一道硬顶。
+ * 计数先增后判：被拒请求同样计数，只会让拒绝状态更稳固，不影响正常流量。
+ */
+export async function bumpDailyCounter(
+  DB: D1Database,
+  name: string,
+  limit: number,
+  strict = false,
+): Promise<boolean> {
+  const dayKey = `day:${name}:${new Date().toISOString().slice(0, 10)}`
+  try {
+    const row = await DB.prepare(
+      `INSERT INTO _rate_limit (k, cnt, exp) VALUES (?, 1, ?)
+       ON CONFLICT(k) DO UPDATE SET cnt = cnt + 1
+       RETURNING cnt`
+    ).bind(dayKey, Math.floor(Date.now() / 1000) + 172800).first<{ cnt: number }>()
+
+    return (row?.cnt ?? 0) <= limit
+  } catch {
+    if (strict) return false
+    return true
+  }
+}
+
+/**
+ * 恒定时间字符串比较，用于预热口子的 Bearer 令牌校验，
+ * 避免普通 === 的短路逐字符比较泄漏令牌前缀。
+ * Workers 运行时提供 crypto.subtle.timingSafeEqual 扩展；
+ * 其他环境（本地 Node 测试）无此扩展时回退普通比较。
+ */
+export async function tokenEquals(a: string, b: string): Promise<boolean> {
+  if (!a || !b || a.length !== b.length) return false
+  try {
+    const enc = new TextEncoder()
+    // timingSafeEqual 是 Workers 的非标准扩展，以可选成员探测，
+    // 兼容无此扩展的类型环境（DOM lib）与运行时（Node）
+    const subtle = crypto.subtle as SubtleCrypto & {
+      timingSafeEqual?: (x: BufferSource, y: BufferSource) => boolean
+    }
+    if (typeof subtle.timingSafeEqual === 'function') {
+      return subtle.timingSafeEqual(enc.encode(a), enc.encode(b))
+    }
+  } catch {
+    // 比较异常时回退普通比较
+  }
+  return a === b
 }

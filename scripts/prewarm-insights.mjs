@@ -9,6 +9,8 @@
 // 前提：
 //   1. npm run build && npm run dev:pages 已启动（网关模式，见 scripts/dev-pages.mjs）
 //   2. 预热会大量请求：先在 .dev.vars 加 ACGTI_INSIGHT_RATE_LIMIT=600 并重启 dev:pages
+//   3. .dev.vars 配置 ACGTI_PREWARM_TOKEN=<高熵随机串> 并重启 dev:pages：
+//      fresh/provider 高权限口子仅对携带该令牌的请求开放（防外部刷量）
 //
 // 用法：
 //   node scripts/prewarm-insights.mjs --dry-run              # 只列计划
@@ -60,6 +62,16 @@ function detectChannels() {
   return list
 }
 
+// 读取 .dev.vars 的单个变量值（预热口子鉴权用，与服务端环境变量同名）
+function readDevVar(name) {
+  try {
+    const m = readFileSync(DEV_VARS, 'utf-8').match(new RegExp(`^${name}\\s*=\\s*(\\S+)`, 'm'))
+    return m ? m[1] : null
+  } catch {
+    return null
+  }
+}
+
 // 各通道并发：默认取实测安全值；--concurrency 传 N 全通道同值、传 N1,N2 按通道。
 // 上限 32 仅对确认高并发的通道有意义；stepfun 在途长请求硬上限 10，aigw2 取 9
 const DEFAULT_CONCURRENCY = { aigw: 2, aigw2: 9 }
@@ -90,6 +102,13 @@ if (dryRun) {
   )
   console.log(`  预计耗时 ≈ 条数 × 9s ÷ ${totalConc || 1}`)
   process.exit(0)
+}
+
+// ── 预热令牌：fresh/provider 高权限口子需要与服务端一致的 Bearer 令牌 ──
+const prewarmToken = readDevVar('ACGTI_PREWARM_TOKEN')
+if (!prewarmToken) {
+  console.error('缺少 ACGTI_PREWARM_TOKEN：请在 .dev.vars 配置高熵随机串并重启 dev:pages 后重试')
+  process.exit(1)
 }
 
 // ── 健康检查 ──
@@ -146,7 +165,10 @@ async function postInsight(payload, label) {
   for (let attempt = 0; ; attempt++) {
     const resp = await fetch(BASE + '/api/insight', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${prewarmToken}`,
+      },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(120000),
     })

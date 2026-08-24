@@ -6,11 +6,15 @@
 //   全站共享一次生成结果，Neurons 消耗与桶数（≤ 113 × 81 × 4）同阶
 // - 降级：未绑定 AI / 额度耗尽 / 生成失败一律返回 available:false，
 //   前端隐藏卡片，结果页静态解析文案不受影响
+// - 防滥用：fresh/provider 是高权限口子，仅对携带 ACGTI_PREWARM_TOKEN
+//   的预热请求开放；外部请求的 fresh 受独立子限流约束，真实生成计入
+//   全站每日熔断（挡 IP 池轮换），生成路径限流全部 fail-closed（D1
+//   不可用时拒绝），避免"打满 D1 写入配额让限流失效"的组合攻击
 // - 一致性：低温度 + 提示词只允许改写仓库自有的角色档案，禁止引入
 //   档案之外的作品名与人名，输出经截断清洗后落缓存
 
 import briefs from './_data/characterBrief.json'
-import { checkRateLimit, isValidCode, num, str } from './_shared'
+import { bumpDailyCounter, checkRateLimit, isValidCode, num, str, tokenEquals } from './_shared'
 
 const MODEL_ID = '@cf/meta/llama-3.2-3b-instruct'
 // OpenAI 兼容网关（如 saurlax AI 网关）：配置 AIGW_API_KEY 即启用，
@@ -23,6 +27,12 @@ const AIGW_DEFAULT_MODEL = 'step-3.7-flash'
 const AIGW2_DEFAULT_BASE = 'https://api.stepfun.com/step_plan/v1'
 // 单 IP 每分钟最多解读次数（生成路径比查询路径重，收紧到 10）
 const INSIGHT_RATE_LIMIT = 10
+// 未鉴权请求每分钟最多强制新生成（fresh）次数：前端"换一个"单结果页
+// 最多 3 次（sessionStorage 限制），2 次/分对正常用户无感、对脚本有效
+const INSIGHT_FRESH_RATE_LIMIT = 2
+// 未鉴权请求每日真实生成全站上限（UTC 日）：缓存未命中才计数，超限后
+// 未命中请求一律降级隐藏卡片；这是挡 IP 池轮换的最后一道硬顶
+const INSIGHT_DAILY_LIMIT = 1000
 const LANGUAGES: Record<string, string> = {
   'zh-CN': '简体中文',
   'zh-TW': '繁體中文',
@@ -46,6 +56,11 @@ type Env = {
   ACGTI_AI_ACCOUNT_ID?: string
   // 限流覆盖（本地预热/联调用；线上保持默认 10 次/分/IP）
   ACGTI_INSIGHT_RATE_LIMIT?: string
+  // 预热口子鉴权：配置后 Authorization: Bearer <token> 的预热请求才能
+  // 使用 fresh/provider 高权限字段并豁免每日熔断；未配置则全部视为普通请求
+  ACGTI_PREWARM_TOKEN?: string
+  // 每日生成熔断上限覆盖（本地联调用；线上保持默认 1000）
+  ACGTI_INSIGHT_DAILY_LIMIT?: string
 }
 
 type ChatMessage = { role: 'system' | 'user'; content: string }
@@ -226,11 +241,20 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   const { DB, AI, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
   const channels = gatewayChannels(context.env)
 
+  // ── 预热鉴权：fresh/provider 高权限口子仅对带 Bearer 令牌的预热脚本开放。
+  // 未配置 ACGTI_PREWARM_TOKEN 时所有请求一律按普通请求处理（最安全默认），
+  // 令牌比对走恒定时间比较，不泄漏前缀 ──
+  const prewarmSecret = context.env.ACGTI_PREWARM_TOKEN
+  const authHeader = context.request.headers.get('Authorization') || ''
+  const bearerToken = (authHeader.match(/^Bearer\s+(\S+)$/i) || [])[1] || ''
+  const isPrewarm = !!prewarmSecret && (await tokenEquals(bearerToken, prewarmSecret))
+
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
   const rateLimit = Number(context.env.ACGTI_INSIGHT_RATE_LIMIT) > 0
     ? Number(context.env.ACGTI_INSIGHT_RATE_LIMIT)
     : INSIGHT_RATE_LIMIT
-  const allowed = await checkRateLimit(DB, ip, rateLimit)
+  // strict：本端点触发付费生成，D1 不可用时拒绝而非放行
+  const allowed = await checkRateLimit(DB, ip, rateLimit, true)
   if (!allowed) {
     return json({ text: null, available: false, reason: 'rate-limited' }, 429)
   }
@@ -267,8 +291,9 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     return json({ text: null, available: false, reason: 'no-binding' })
   }
 
-  // 预热脚本可指定网关通道（双通道并发分流）；非法值或未指定回落主通道
-  const providerRaw = str(raw.provider, 8)
+  // 预热脚本可指定网关通道（双通道并发分流）；外部请求一律走主通道，
+  // 防止第三方指定 aigw2 通道消耗独立的第二网关额度
+  const providerRaw = isPrewarm ? str(raw.provider, 8) : ''
   const channel = channels.find((c) => c.name === providerRaw) ?? channels[0]
 
   const scores = { ei, sn, tf, jp }
@@ -276,7 +301,14 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   // 指定通道时用该通道的模型；两通道模型同名则缓存互通（预热混跑的前提）
   const providerTag = channel ? channel.model : 'llama-3.2-3b'
   const cacheKey = `${characterId}:${langName}:${bucketOf(ei)}${bucketOf(sn)}${bucketOf(tf)}${bucketOf(jp)}:${providerTag}`
-  const wantFresh = raw.fresh === true
+
+  // 未鉴权请求的 fresh 受独立子限流约束（正常用户"换一个"无感）；
+  // 超限时降级为读缓存而非报错，攻击者也拿不到额外生成
+  let wantFresh = raw.fresh === true
+  if (wantFresh && !isPrewarm) {
+    const freshAllowed = await checkRateLimit(DB, `fresh:${ip}`, INSIGHT_FRESH_RATE_LIMIT, true)
+    if (!freshAllowed) wantFresh = false
+  }
 
   // 缓存读取失败不阻塞生成路径
   if (!wantFresh) {
@@ -293,6 +325,20 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
       }
     } catch {
       // 缓存表可能不存在（迁移未执行），继续走生成
+    }
+  }
+
+  // ── 每日生成熔断（仅未鉴权请求）：单 IP 限流挡不住 IP 池轮换，
+  // 全站每日真实生成总量是额度安全的最后硬顶；缓存命中不计数，
+  // 预热请求豁免（自己的脚本，单日生成量按预热计划走） ──
+  if (!isPrewarm) {
+    const dailyLimit = Number(context.env.ACGTI_INSIGHT_DAILY_LIMIT) > 0
+      ? Number(context.env.ACGTI_INSIGHT_DAILY_LIMIT)
+      : INSIGHT_DAILY_LIMIT
+    const withinDaily = await bumpDailyCounter(DB, 'insight-gen', dailyLimit, true)
+    if (!withinDaily) {
+      console.warn(`[insight] daily generation limit reached (${dailyLimit}), serving cache-only`)
+      return json({ text: null, available: false, reason: 'daily-limit' })
     }
   }
 
