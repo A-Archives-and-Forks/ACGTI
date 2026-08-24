@@ -86,6 +86,14 @@ docs/排行榜优化方案.md
 docs/internal-ops.md
 docs/d1-backup.md
 
+# Technical docs (local only, not tracked in git)
+# 整个 docs 目录为技术文档，仅本地留存，不进入版本控制
+docs/
+# OpenAPI 规范为技术文档
+public/api/openapi.yaml
+# 本地分析报告与中间产物已在上方忽略，补充显式规则防止误提交
+analysis/calibration-*.md
+
 # Legacy root scripts / data dumps (early prototypes, superseded by scripts/)
 /generateData.ts
 /generateQuestions.ts
