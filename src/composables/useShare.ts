@@ -47,12 +47,36 @@ function createShareText(result: QuizResult) {
   ].filter(line => line !== null).join('\n')
 }
 
+// 海报文件命名（下载与系统分享共用同一规则）
+function posterFileName(archetypeId: string) {
+  return `acgti-${archetypeId}.png`
+}
+
+// 海报渲染公共流程：懒加载 html-to-image、等待字体就绪后导出 PNG Blob；失败返回 null
+async function renderPoster(target: HTMLElement): Promise<Blob | null> {
+  try {
+    htmlToImageLoader ??= import('html-to-image')
+    const { toBlob } = await htmlToImageLoader
+    // 等待字体就绪，避免导出图片出现字体回退；同源资源关闭 cacheBust，
+    // 避免每次导出都绕过缓存重新拉取图片。
+    await document.fonts.ready
+    return await toBlob(target, {
+      pixelRatio: 2,
+      backgroundColor: '#ffffff',
+    })
+  } catch {
+    return null
+  }
+}
+
 export function useShare() {
   const isExporting = ref(false)
   const feedback = ref('')
 
   async function exportPoster(target: HTMLElement | null, result: QuizResult) {
     if (!target || isExporting.value) {
+      // 早退也清空提示，避免残留上一次的成功文案
+      feedback.value = ''
       return
     }
 
@@ -60,23 +84,20 @@ export function useShare() {
     feedback.value = ''
 
     try {
-      htmlToImageLoader ??= import('html-to-image')
-      const { toPng } = await htmlToImageLoader
-      // 等待字体就绪，避免导出图片出现字体回退；同源资源关闭 cacheBust，
-      // 避免每次导出都绕过缓存重新拉取图片。
-      await document.fonts.ready
-      const dataUrl = await toPng(target, {
-        pixelRatio: 2,
-        backgroundColor: '#ffffff',
-      })
+      const blob = await renderPoster(target)
+      if (!blob) {
+        feedback.value = t('app.common.exportFail')
+        return
+      }
 
+      // 通过对象 URL 触发下载，用完立即释放
+      const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
-      link.href = dataUrl
-      link.download = `acgti-${result.archetype.id}.png`
+      link.href = url
+      link.download = posterFileName(result.archetype.id)
       link.click()
+      URL.revokeObjectURL(url)
       feedback.value = t('app.common.exportSuccess')
-    } catch {
-      feedback.value = t('app.common.exportFail')
     } finally {
       isExporting.value = false
     }
@@ -98,9 +119,12 @@ export function useShare() {
   // 由调用方回落到「下载图片」路径。
   async function sharePosterFile(target: HTMLElement | null, result: QuizResult): Promise<boolean> {
     if (!target || isExporting.value) {
+      // 早退也清空提示，避免残留上一次的成功文案
+      feedback.value = ''
       return false
     }
     if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
+      feedback.value = ''
       return false
     }
 
@@ -108,19 +132,16 @@ export function useShare() {
     feedback.value = ''
 
     try {
-      htmlToImageLoader ??= import('html-to-image')
-      const { toBlob } = await htmlToImageLoader
-      await document.fonts.ready
-      const blob = await toBlob(target, {
-        pixelRatio: 2,
-        backgroundColor: '#ffffff',
-      })
+      const blob = await renderPoster(target)
       if (!blob) {
+        // 海报渲染失败是确定性失败，直接给出失败提示
+        feedback.value = t('app.common.exportFail')
         return false
       }
 
-      const file = new File([blob], `acgti-${result.archetype.id}.png`, { type: 'image/png' })
+      const file = new File([blob], posterFileName(result.archetype.id), { type: 'image/png' })
       if (!navigator.canShare({ files: [file] })) {
+        // 文件不可分享：反馈交给回落到「下载图片」的流程设置，这里保持已清空状态
         return false
       }
 
@@ -136,6 +157,7 @@ export function useShare() {
       if (err instanceof DOMException && err.name === 'AbortError') {
         return true
       }
+      // 其他失败保持反馈为空（已清空），由调用方的回落流程给出最终提示
       return false
     } finally {
       isExporting.value = false

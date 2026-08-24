@@ -40,20 +40,30 @@ describe('checkRateLimit（分钟级 IP 限流）', () => {
   it('同一 IP 在限额内放行、超限后拒绝', async () => {
     const db = makeDb()
     const results: boolean[] = []
-    for (let i = 0; i < 4; i++) results.push(await checkRateLimit(db, '1.2.3.4', 3))
+    for (let i = 0; i < 4; i++) results.push(await checkRateLimit(db, 'submit', '1.2.3.4', 3))
     expect(results).toEqual([true, true, true, false])
   })
 
   it('不同 IP 计数互相独立', async () => {
     const db = makeDb()
-    expect(await checkRateLimit(db, '1.1.1.1', 1)).toBe(true)
-    expect(await checkRateLimit(db, '2.2.2.2', 1)).toBe(true)
-    expect(await checkRateLimit(db, '1.1.1.1', 1)).toBe(false)
+    expect(await checkRateLimit(db, 'submit', '1.1.1.1', 1)).toBe(true)
+    expect(await checkRateLimit(db, 'submit', '2.2.2.2', 1)).toBe(true)
+    expect(await checkRateLimit(db, 'submit', '1.1.1.1', 1)).toBe(false)
+  })
+
+  it('不同端点 scope 计数互相独立，互不挤占额度', async () => {
+    const db = makeDb()
+    expect(await checkRateLimit(db, 'submit', '1.1.1.1', 1)).toBe(true)
+    expect(await checkRateLimit(db, 'insight', '1.1.1.1', 1)).toBe(true)
+    expect(await checkRateLimit(db, 'feedback', '1.1.1.1', 1)).toBe(true)
+    // 各端点第 2 次请求才被各自的限额拒绝
+    expect(await checkRateLimit(db, 'submit', '1.1.1.1', 1)).toBe(false)
+    expect(await checkRateLimit(db, 'insight', '1.1.1.1', 1)).toBe(false)
   })
 
   it('D1 异常时：统计端点降级放行，strict 生成路径拒绝', async () => {
-    expect(await checkRateLimit(makeDb({ fail: true }), '1.2.3.4', 10)).toBe(true)
-    expect(await checkRateLimit(makeDb({ fail: true }), '1.2.3.4', 10, true)).toBe(false)
+    expect(await checkRateLimit(makeDb({ fail: true }), 'submit', '1.2.3.4', 10)).toBe(true)
+    expect(await checkRateLimit(makeDb({ fail: true }), 'insight', '1.2.3.4', 10, true)).toBe(false)
   })
 })
 

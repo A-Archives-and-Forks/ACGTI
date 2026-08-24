@@ -30,7 +30,7 @@
 // 依据反馈数据中维度得分多集中于 0.3-0.7 的分布，取常见强度组合；
 // 全量 113 角色 × 4 语言 × 5 桶 ≈ 2260 条，双通道合计并发 12 时约 40 分钟。
 import { execSync } from 'node:child_process'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
 const BASE = 'http://127.0.0.1:8788'
 const DEV_VARS = '.dev.vars'
@@ -247,7 +247,10 @@ if (push && ok > 0) {
     console.error('未在本地 D1 读到缓存行（检查 .wrangler/state 下的 sqlite）')
     process.exit(1)
   }
-  const sqlFile = 'tmp-prewarm-insights.sql'
+  // SQL 中转文件写进 .wrangler/tmp/（已被 .gitignore 覆盖），
+  // 避免在仓库根目录留下未忽略的临时文件
+  const sqlFile = '.wrangler/tmp/tmp-prewarm-insights.sql'
+  mkdirSync('.wrangler/tmp', { recursive: true })
   writeFileSync(sqlFile, buildInsertSql(rows), 'utf-8')
   console.log(`已生成 ${sqlFile}（${rows.length} 行），开始写入远程 D1…`)
   execSync(`npx wrangler d1 execute acgti-stats --remote --file ${sqlFile}`, { stdio: 'inherit' })

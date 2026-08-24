@@ -74,7 +74,7 @@ export const messages = {
           feedback: '如果你希望新增角色，或想改进题目、现有角色与结果文案，欢迎直接提',
           issue: 'Issue',
           saurlaxCreditBefore: '特别鸣谢 ',
-          saurlaxCreditAfter: ' 提供 GPT-5.4 Token 支持',
+          saurlaxCreditAfter: ' 提供 step-3.7-flash 模型额度支持',
           sowieeeCreditBefore: '感谢台湾网友 ',
           sowieeeCreditAfter: ' 协助修正 zh-TW 文案',
         },
@@ -90,7 +90,7 @@ export const messages = {
       updateBadge: {
         tag: '角色数量更新',
         title: `角色数量已达到 ${CHARACTER_COUNT} 位`,
-        text: '欢迎回来再测一次。最近新增了很多角色，这次命中的角色代码可能和你之前完全不同。主播流量太高被刷欠费了，没法回血，求给个 star 支持一下 ❤',
+        text: '欢迎回来再测一次。最近新增了很多角色，这次命中的角色代码可能和你之前完全不同。服务器成本压力有点大，欢迎用 star 或赞助帮项目回血 ❤',
         link: '开始测试 / 重新测试',
         dismiss: '关闭更新公告',
       },
@@ -105,7 +105,6 @@ export const messages = {
       relayFeedback: '测试链接已复制，去发给朋友看看。',
       privacyTitle: '说明',
       privacyCopy: '测试答案仅保存在当前浏览器，完成时匿名上报最终结果用于统计。',
-      privacyLinkLabel: '欢迎试玩 ACGTI 二创“ARKTI”',
       stats: [
         { value: '600W+', label: '访问量（截至 2026.4.18）', color: '#4899a3' },
         { value: '16', label: 'MBTI 类型', color: '#e5b540' },
@@ -253,12 +252,6 @@ export const messages = {
       share: '分享结果',
       shareCard: 'ACG 类型指标',
       testNote: '你的社交白皮书',
-      publicService: {
-        label: '公益广告',
-        copy: '祝2026届高考生金榜题名，欢迎报考大连理工喵，报考大连理工谢谢喵',
-        meta: '大连理工大学77岁生日快乐！',
-        alt: '大连理工大学校徽',
-      },
       personaBasisBadge: '圈层印象映射',
       personaBasisTip: '这个角色官方没给过明确的人格设定，映射主要参考社区印象和二创形象，图一乐就好。',
       creatorLinks: {
@@ -317,6 +310,10 @@ export const messages = {
         T_F: ['理性', '情感'],
         J_P: ['判断', '感知'],
       },
+    },
+    // AI 解读的独立兜底提示：结果页「换一种说法」失败时使用
+    ai: {
+      regenerateFailed: '生成失败，已保留之前的解读。',
     },
     archetypes: {
       'luminous-lead': {
@@ -482,6 +479,17 @@ export const messages = {
         ['结果分享', '测完可以保存身份卡图片，或者复制文字发给别人。'],
         ['多语言', '支持简体中文、繁体中文、英文、日文四种语言。'],
       ],
+      relatedProjects: {
+        title: '相关项目',
+        description: 'ARKTI 是基于 ACGTI 的二次创作人格测试，由社区朋友继续扩展玩法，感兴趣的话可以去玩玩看。',
+        linkLabel: '前往体验',
+      },
+      collegeGreeting: {
+        title: '来自作者的碎碎念',
+        copy: '祝 2026 届高考生金榜题名，欢迎报考大连理工喵，报考大连理工谢谢喵',
+        meta: '大连理工大学 77 岁生日快乐！',
+        alt: '大连理工大学校徽',
+      },
     },
     sponsor: {
       seoTitle: '支持 ACGTI - 赞助项目维护',
@@ -537,6 +545,8 @@ export const messages = {
     title: '全网人格分布',
     subtitle: '基于所有匿名测试结果的统计，每 15 分钟更新一次',
     retry: '重试',
+    loadError: '统计数据暂时无法加载。',
+    loadErrorHint: '请稍后重试。',
     overview: {
       total: '总测试次数',
       today: '今日测试',
@@ -622,7 +632,7 @@ export const messages = {
           feedback: '如果你希望新增角色，或想改進題目、現有角色與結果文案，歡迎直接提',
           issue: 'Issue',
           saurlaxCreditBefore: '特別感謝 ',
-          saurlaxCreditAfter: ' 提供 GPT-5.4 Token 支持',
+          saurlaxCreditAfter: ' 提供 step-3.7-flash 模型額度支持',
           sowieeeCreditBefore: '感謝台灣朋友 ',
           sowieeeCreditAfter: ' 協助修正 zh-TW 文案',
         },
@@ -635,8 +645,8 @@ export const messages = {
     home: {
       updateBadge: {
         tag: '角色數量更新',
-        title: '角色數量已達到 110 位',
-        text: '歡迎回來再測一次。最近新增了很多角色，這次命中的角色代碼可能和你之前完全不同。主播流量太高被刷欠費了，沒法回血，求給個 star 支持一下 ❤',
+        title: `角色數量已達到 ${CHARACTER_COUNT} 位`,
+        text: '歡迎回來再測一次。最近新增了很多角色，這次命中的角色代碼可能和你之前完全不同。伺服器成本壓力有點大，歡迎用 star 或贊助幫專案回血 ❤',
         link: '開始測試 / 重新測試',
         dismiss: '關閉更新公告',
       },
@@ -651,7 +661,6 @@ export const messages = {
       relayFeedback: '測試連結已複製，現在就可以轉發出去。',
       privacyTitle: '說明',
       privacyCopy: '測試紀錄僅保存在目前瀏覽器，完成時匿名上報最終結果用於統計。',
-      privacyLinkLabel: '歡迎試玩 ACGTI 二創「ARKTI」',
       stats: [
         { value: '600W+', label: '訪問量（截至 2026.4.18）', color: '#4899a3' },
         { value: '16', label: 'MBTI 類型', color: '#e5b540' },
@@ -723,7 +732,7 @@ export const messages = {
       dimensions: ['外向 / 內向', '實感 / 直覺', '理性 / 情感', '判斷 / 感知'],
     },
     quiz: {
-        questions: ["看到針對我喜歡的小圈子的引戰或刻板印象言論，我會感到憤怒並想要反擊或舉報。","我的人生格言是「能躺著絕不坐著，能擺爛絕不內捲」。","追番時看到「前方高能」彈幕，我非但不會提前迴避，反而會更加聚精會神地期待接下來的刺激內容。","我認為「電子陽痿」不是病，是steam裡遊戲堆滿收藏庫後的高級型態。","面對喜歡的創作者索求互動或支持（如「三連」），我常常會習慣性地「下次一定」。","如果沒有開掛般的主角光環作保障，我穿越到「廁紙」番劇裡異世界的第一件事絕不是去當勇者。","我覺得「戰力廚」為了誰更強吵上300樓，是一種行為藝術。","我不愛刻意整理電腦桌面或文件，就算看起來很亂我也懶得管。","我經常在深夜emo。","我覺得「三無」屬性根本不是高冷，是懶得營業。","在現實生活中被別人用「二次元」相關的詞彙調侃時，我會感到有些尷尬或反感。","我能在漫展上和陌生人無縫對話「老師老師你是一個香香軟軟的...」。","我認為「黨爭」是ACG最偉大的發明。","遊戲卡關時，我不介意直接開風靈月影。","我覺得「動漫婆羅門」就是一群閒得蛋疼的人給自己的牌坊。","我會因為一首OP好聽而追完整部屎一樣的番。","看完劇情沉重或「致鬱」的作品後，我必須看點輕鬆搞笑的內容來緩解情緒。","面對抽卡，我更傾向於相信玄學儀式或即時情緒體驗，而不是嚴格計算保底並囤積資源。","看到一部長篇或深愛的番劇終於『完結撒花』時，我會感到強烈的失落和空虛感。","我非常反感ACG圈裡拉踩、控評、打榜等「飯圈化」行為。","我常常控制不住地購買打折的遊戲或二次元週邊，哪怕買回來後根本沒時間玩或拆封（即「倉鼠症」）。","我對喜歡的Vtuber或角色投入了很深的感情，如果他們『畢業』或退圈，我會難過很久。","在沒人的時候，我依然會經常在腦海裡幻想自己擁有超能力的宏大場景，建構屬於自己的世界，甚至會念出中二台詞。","雖然明知有些作品劇情薄弱像“工業糖精”，但我還是會因為人設可愛而看得津津有味。","如果在奇幻冒險的世界裡能確保自身安全，我更願意作為隊伍中不需要操心計劃和戰鬥的「躺贏」角色。","我能在海量的表情包圖庫中極快地篩選出最貼切當下的回應，並在聊天中熟練地拋出它們。","對於前期設定宏大但結局極草率甚至「餵屎」的作品，我認為作者應該給讀者「磕頭謝罪」。","我理想中的退休生活是：宅家、打遊戲、看番、擼貓，拒絕任何無意義的泛社交，只保留極少數的私密社交。","我很喜歡看那些有些缺德、冒犯性的‘地獄笑話’，並且經常能毫無心理負擔地get到笑話。","我會去看「骨科」題材的作品。","我會只是為了抽到或看到某個喜歡的角色，去下載嘗試一款我本來毫無興趣的遊戲。","我覺得「社恐」不是缺陷，而是一種高級人設。","為了跳過拖沓的內容或無聊的水分，我經常習慣開啟倍速播放來看番或實況影片。","如果自己的留言區出現無意義的「爛梗」，我會進行屏蔽或封鎖清理。","相較於傳統的「王道、元氣」人設，我更容易被性格帶有缺陷、偏執或有些黑深殘的角色（如病嬌、重力、腹黑）吸引。","我認為「二次元」是我的精神避難所，可以在這裡發瘋。","看番或玩遊戲時，我熱衷於去挖掘背後的隱藏設定、世界觀隱喻，甚至逐幀分析細節。","我玩遊戲會清完所有支線和地圖問號。","遇到喜歡的新番，我會立刻分享給群友進行安麗。"],
+        questions: ["看到針對我喜歡的小圈子的引戰或刻板印象言論，我會感到憤怒並想要反擊或舉報。","我的人生格言是「能躺著絕不坐著，能擺爛絕不內捲」。","追番時看到「前方高能」彈幕，我非但不會提前迴避，反而會更加聚精會神地期待接下來的刺激內容。","我認為「電子陽痿」不是病，是 Steam 遊戲庫堆滿之後進化出的高級形態。","面對喜歡的創作者索求互動或支持（如「三連」），我常常會習慣性地「下次一定」。","穿越到「廁紙」異世界番裡，要是沒有開掛級的主角光環，我第一件事絕對不是去當勇者。","我覺得「戰力廚」為了誰更強吵上300樓，是一種行為藝術。","我不愛刻意整理電腦桌面或文件，就算看起來很亂我也懶得管。","我經常在深夜emo。","我覺得「三無」屬性根本不是高冷，是懶得營業。","在現實生活中被別人用「二次元」相關的詞彙調侃時，我會感到有些尷尬或反感。","我能在漫展上和陌生人無縫對話「老師老師你是一個香香軟軟的...」。","我認為「黨爭」是ACG最偉大的發明。","遊戲卡關時，我不介意直接開風靈月影。","我覺得「動漫婆羅門」就是一群閒得蛋疼的人給自己的牌坊。","我會因為一首OP好聽而追完整部屎一樣的番。","看完劇情沉重或「致鬱」的作品後，我必須看點輕鬆搞笑的內容來緩解情緒。","面對抽卡，我更傾向於相信玄學儀式或即時情緒體驗，而不是嚴格計算保底並囤積資源。","看到一部長篇或深愛的番劇終於『完結撒花』時，我會感到強烈的失落和空虛感。","我非常反感ACG圈裡拉踩、控評、打榜等「飯圈化」行為。","我常常控制不住地購買打折的遊戲或二次元週邊，哪怕買回來後根本沒時間玩或拆封（即「倉鼠症」）。","我對喜歡的Vtuber或角色投入了很深的感情，如果他們『畢業』或退圈，我會難過很久。","在沒人的時候，我依然會經常在腦海裡幻想自己擁有超能力的宏大場景，建構屬於自己的世界，甚至會念出中二台詞。","雖然明知有些作品劇情薄弱像“工業糖精”，但我還是會因為人設可愛而看得津津有味。","如果在奇幻冒險的世界裡能確保自身安全，我更願意作為隊伍中不需要操心計劃和戰鬥的「躺贏」角色。","我能在海量的表情包圖庫中極快地篩選出最貼切當下的回應，並在聊天中熟練地拋出它們。","對於前期設定宏大但結局極草率甚至「餵屎」的作品，我認為作者應該給讀者「磕頭謝罪」。","我理想中的退休生活是：宅家、打遊戲、看番、擼貓，拒絕任何無意義的泛社交，只保留極少數的私密社交。","我很喜歡看那些有些缺德、冒犯性的‘地獄笑話’，並且經常能毫無心理負擔地get到笑話。","我會去看「骨科」題材的作品。","我會只是為了抽到或看到某個喜歡的角色，去下載嘗試一款我本來毫無興趣的遊戲。","我覺得「社恐」不是缺陷，而是一種高級人設。","為了跳過拖沓的內容或無聊的水分，我經常習慣開啟倍速播放來看番或實況影片。","如果自己的留言區出現無意義的「爛梗」，我會進行屏蔽或封鎖清理。","相較於傳統的「王道、元氣」人設，我更容易被性格帶有缺陷、偏執或有些黑深殘的角色（如病嬌、重力、腹黑）吸引。","我認為「二次元」是我的精神避難所，可以在這裡發瘋。","看番或玩遊戲時，我熱衷於去挖掘背後的隱藏設定、世界觀隱喻，甚至逐幀分析細節。","我玩遊戲會清完所有支線和地圖問號。","遇到喜歡的新番，我會立刻分享給群友進行安麗。"],
       heroTitle: '免費角色原型測試',
       steps: [
         ['STEP 1', '完成測試', `${QUESTION_COUNT} 道情境題，憑第一直覺作答就好。`],
@@ -799,12 +808,6 @@ export const messages = {
       share: '分享結果',
       shareCard: 'ACG 類型指標',
       testNote: '你的社交白皮書',
-      publicService: {
-        label: '公益廣告',
-        copy: '歡迎報考大連理工喵，歡迎報考大連理工謝謝喵',
-        meta: '大連理工大學77歲生日快樂',
-        alt: '大連理工大學校徽',
-      },
       personaBasisBadge: '圈層印象映射',
       personaBasisTip: '這個角色官方沒給過明確的人格設定，映射主要參考社群印象和二創形象，圖一樂就好。',
       creatorLinks: {
@@ -863,6 +866,10 @@ export const messages = {
         T_F: ['理性', '情感'],
         J_P: ['判斷', '感知'],
       },
+    },
+    // AI 解讀的獨立兜底提示：結果頁「換一種說法」失敗時使用
+    ai: {
+      regenerateFailed: '生成失敗，已保留先前的解讀。',
     },
     archetypes: {
       'luminous-lead': {
@@ -1083,6 +1090,17 @@ export const messages = {
         ['結果分享', '測完可以保存身份卡圖片，或者複製文字發給別人。'],
         ['多語言', '支援簡體中文、繁體中文、英文、日文四種語言。'],
       ],
+      relatedProjects: {
+        title: '相關專案',
+        description: 'ARKTI 是基於 ACGTI 的二次創作人格測試，由社群朋友繼續擴展玩法，有興趣的話可以去玩玩看。',
+        linkLabel: '前往體驗',
+      },
+      collegeGreeting: {
+        title: '來自作者的碎碎念',
+        copy: '歡迎報考大連理工喵，歡迎報考大連理工謝謝喵',
+        meta: '大連理工大學 77 歲生日快樂！',
+        alt: '大連理工大學校徽',
+      },
     },
     sponsor: {
       seoTitle: '支持 ACGTI - 贊助專案維護',
@@ -1138,6 +1156,8 @@ export const messages = {
     title: '全網人格分佈',
     subtitle: '基於所有匿名測試結果的統計，每 15 分鐘更新一次',
     retry: '重試',
+    loadError: '統計資料目前無法載入。',
+    loadErrorHint: '請稍後重試。',
     overview: {
       total: '總測試次數',
       today: '今日測試',
@@ -1223,7 +1243,7 @@ export const messages = {
           feedback: 'Want a new character added, or improvements to questions, current characters, or result copy? Open an',
           issue: 'issue',
           saurlaxCreditBefore: 'Special thanks to ',
-          saurlaxCreditAfter: ' for GPT-5.4 Token support',
+          saurlaxCreditAfter: ' for providing step-3.7-flash model credits',
           sowieeeCreditBefore: 'Thanks to Taiwan contributor ',
           sowieeeCreditAfter: ' for helping revise the zh-TW copy',
         },
@@ -1236,8 +1256,8 @@ export const messages = {
     home: {
       updateBadge: {
         tag: 'Character Count Update',
-        title: 'The library now has 110 characters',
-        text: 'Come back and take it again. A lot of new characters were added recently, so the character code you hit this time could be totally different. The stream traffic ran the server bill way up with no recovering it — a star would really help ❤',
+        title: `The library now has ${CHARACTER_COUNT} characters`,
+        text: 'Come back and take it again. A lot of new characters were added recently, so the character code you hit this time could be totally different. Server costs are piling up — a star or a sponsorship would help a lot ❤',
         link: 'Start / Retake',
         dismiss: 'Dismiss update notice',
       },
@@ -1252,7 +1272,6 @@ export const messages = {
       relayFeedback: 'Quiz link copied. Send it to someone.',
       privacyTitle: 'Note',
       privacyCopy: 'Your quiz record stays in this browser only. The final result is anonymously reported for statistics.',
-      privacyLinkLabel: 'Try the ACGTI fan project "ARKTI"',
       stats: [
         { value: '6M+', label: 'Visits (as of 2026.4.18)', color: '#4899a3' },
         { value: '16', label: 'MBTI types', color: '#e5b540' },
@@ -1324,7 +1343,7 @@ export const messages = {
       dimensions: ['Extraversion / Introversion', 'Sensing / Intuition', 'Thinking / Feeling', 'Judging / Perceiving'],
     },
     quiz: {
-        questions: ["I get angry when I see trolls or stereotypes directed at people in my favorite clique and want to fight back or report them.","My motto in life is \"Never sit down if you can lie down, never get involved if you can make a mess\".","When I see the \"High Energy Ahead\" barrage while following up, instead of avoiding it in advance, I will be more attentive in looking forward to the next exciting content.","I think \"electronic impotence\" is not a disease, but an advanced form after the warehouse of games on Steam is full.","Faced with a favorite creator asking for engagement or support (like a \"triple combo\"), I habitually promise \"next time for sure.\"","Without cheat-level plot armor as a guarantee, the first thing I would do after being isekai’d into one of those \"toilet paper\" anime worlds is definitely not to become the hero.","I think \"Zhanli Chef\" going up to the 300th floor to argue about who is stronger is a kind of performance art.","I don't like to deliberately organize my computer desktop or files, even if it looks messy, I don't bother to do it.","I often get emo late at night.","I think the \"three noes\" attributes are not cold at all, but rather too lazy to do business.","In real life, I feel a little embarrassed or disgusted when others use \"two-dimensional\" related words to tease me.","I can have a seamless conversation with strangers at comic exhibitions, \"Teacher, teacher, you are a sweet and soft person...\".","I think \"party struggle\" is the greatest invention of ACG.","When the game is stuck, I don’t mind just playing Wind Spirit Moon Shadow.","I think \"anime Brahmins\" are just the arches that a group of idle people set up for themselves.","I will follow the entire shitty series just because one OP sounds good.","After watching a work with a heavy plot or a \"depressing\" one, I have to watch something light and funny to lighten my mood.","When it comes to gacha pulls, I lean toward good-luck rituals and the mood of the moment, rather than strictly calculating pity and hoarding resources.","When I see a long-running or beloved drama finally come to an end, I feel a strong sense of loss and emptiness.","I am very disgusted with the \"fan circle\" behaviors in the ACG circle such as trolling, criticizing, and ranking.","I often can’t help but buy discounted games or two-dimensional peripherals, even if I don’t have time to play or unpack them after buying them (that is, “hamster syndrome”).","I have deep feelings for my favorite Vtubers or characters, and I will be sad for a long time if they \"graduate\" or withdraw from the industry.","When nobody is around, I still often stage grand superpower daydreams in my head, build a whole world of my own, and even mutter chuunibyou lines out loud.","Although I know that some works have weak plots and are like \"industrial saccharine\", I still enjoy watching them because of the cute characters.","If my safety were guaranteed in a fantasy adventure world, I would rather be the \"get carried to victory\" party member who does not need to worry about planning or fighting.","I can quickly sift through the vast library of emoticons to find the most appropriate responses to the moment, and skillfully throw them out in the chat.","For works that open with grand setups but end in a careless, even \"shit-fed\" finale, I think the author should kowtow to the readers in apology.","My ideal retirement life is staying home, gaming, watching anime, petting cats, turning down all meaningless shallow socializing, and keeping only a tiny circle of private connections.","I really like to watch those \"hell jokes\" that are somewhat wicked and offensive, and I can often get the laughs without any psychological burden.","I would go to see works with \"orthopedic\" themes.","I will download and try a game that I have no interest in just to draw or see a character I like.","I think \"social fear\" is not a flaw, but an advanced character design.","To skip dragged-out pacing or boring filler, I often watch anime or gameplay videos at increased playback speed.","If pointless, stale memes show up in my own comment section, I clean them up by hiding or blocking.","Compared with the traditional \"kingly, energetic\" characters, I am more attracted to characters with flaws, paranoia, or some dark and cruel characters (such as yandere, gravity, and sinister).","I consider the “second dimension” to be my spiritual refuge, a place where I can go crazy.","When watching movies or playing games, I am keen to dig out the hidden settings and worldview metaphors behind them, and even analyze the details frame by frame.","When I play a game, I clear every side quest and every question mark on the map.","When I come across a new anime I love, I instantly share it with my group chat and start evangelizing it."],
+        questions: ["When someone trolls my favorite niche fandom or pins stereotype labels on it, I get mad enough to wade into the fight myself.","My life motto is \"never sit if you can lie down, never grind if you can slack off.\"","When a \"brace yourselves\" warning pops up in the danmaku while I'm watching an anime, I don't look away — I stare harder, waiting for the epic scene.","I believe \"backlog burnout\" isn't a disorder — it's the advanced form you evolve into once your Steam library overflows.","When a creator I like asks for the like-comment-subscribe combo, I reflexively say \"next video for sure\" — and it stays next video forever.","If I were dropped into one of those trash-tier isekai worlds without god-mode plot armor, becoming the hero would be the last thing on my list.","To me, watching power-level debaters stack 300 replies arguing over who's stronger is a form of performance art.","I don't bother organizing my desktop or files — no matter how messy it gets, I leave it alone.","I often get emo late at night.","I think the \"kuudere\" type isn't actually aloof — they just can't be bothered to put on a social act.","When friends in real life tease me with words like \"weeb,\" I feel a bit awkward or annoyed.","At anime cons I can strike up conversations with total strangers without missing a beat — \"Excuse me, you're literally the softest, sweetest thing here...\"","I believe ship wars are the anime fandom's greatest invention.","When I'm stuck in a game, I don't mind firing up a cheat engine at all.","I think \"anime elitists\" are just bored people building themselves a pedestal to stand on.","I will finish an absolutely terrible anime just because the OP is a banger.","After finishing something heavy or soul-crushing, I have to watch something light and funny to recover.","With gacha pulls I go by gut feeling and lucky rituals — I never seriously crunch pity numbers or hoard resources.","When a series I've followed forever finally wraps, I feel hollow for a good while.","I'm thoroughly sick of idol-fandom tactics leaking into anime circles — comparison baiting, comment control, chart pushing.","I keep buying games and merch on sale even though they just pile up unopened — textbook hoarder behavior.","I get deeply attached to my favorite Vtubers and characters; if they \"graduate\" or retire, I'm down for a long time.","When nobody's around, I still run superpower daydreams in my head, sometimes muttering chuunibyou lines out loud.","I know some shows are basically manufactured fluff with a watered-down plot, but cute character designs still keep me watching happily.","In a fantasy adventure party, as long as my safety is guaranteed, I'd rather be the one who gets carried — no route planning, no combat to worry about.","I can pick the perfect reaction meme for any chat moment in a split second, and I deploy it with flawless timing.","For series that open big and end in a rushed trainwreck, I honestly believe the author owes the readers a groveling apology.","My ideal retirement: staying home, gaming, watching anime, petting cats — skipping the pointless socializing and keeping only the few people I truly click with.","I love wicked, borderline-offensive dark jokes, and I can laugh at them with zero guilt every single time.","I would watch a story built around a brother-sister romance.","I'll download and try a game I had zero interest in, purely to pull or see one character I love.","I think social anxiety isn't a flaw — it's a premium character trait.","I habitually watch anime and let's-plays at increased speed, skipping filler wherever it drags.","If pointless, beaten-to-death memes show up in my comment section, I delete or block without a second thought.","Compared with classic plucky, upbeat protagonists, I'm more drawn to flawed, obsessive, or scheming characters — yandere, clingy, quietly conniving types with a dark streak.","The 2D world is my openly claimed spiritual home.","When watching anime or playing games, I love digging into hidden lore and worldbuilding metaphors — sometimes analyzing scenes frame by frame.","When I play a game, I clear every side quest and every question mark on the map.","The moment I find a new anime I love, I push it on my group chat immediately."],
       heroTitle: 'Free Character Archetype Test',
       steps: [
         ['STEP 1', 'Take the test', `${QUESTION_COUNT} situational questions — go with your first instinct.`],
@@ -1400,12 +1419,6 @@ export const messages = {
       share: 'Share result',
       shareCard: 'ACG TYPE INDICATOR',
       testNote: 'Your social profile',
-      publicService: {
-        label: 'Public Service Message',
-        copy: 'You are warmly welcome to apply to Dalian University of Technology.',
-        meta: 'Happy 77th Birthday to Dalian University of Technology',
-        alt: 'Emblem of Dalian University of Technology',
-      },
       personaBasisBadge: 'Fandom Impression',
       personaBasisTip: 'This character has no official personality canon — the mapping mostly follows community impressions and fan depictions. Just for fun.',
       creatorLinks: {
@@ -1464,6 +1477,10 @@ export const messages = {
         T_F: ['Thinking', 'Feeling'],
         J_P: ['Judging', 'Perceiving'],
       },
+    },
+    // Fallback notice for the AI insight card when "Regenerate" fails
+    ai: {
+      regenerateFailed: 'Generation failed — your previous insight is still there.',
     },
     archetypes: {
       'luminous-lead': {
@@ -1654,6 +1671,17 @@ export const messages = {
         ['Sharing', 'Save your identity card image after the test, or copy the text and send it around.'],
         ['Languages', 'Simplified Chinese, Traditional Chinese, English, and Japanese.'],
       ],
+      relatedProjects: {
+        title: 'Related Projects',
+        description: 'ARKTI is a fan-made personality test built on ACGTI, extending the idea with its own twists. Give it a try if you are curious.',
+        linkLabel: 'Check it out',
+      },
+      collegeGreeting: {
+        title: 'A Note from the Author',
+        copy: 'Best of luck to the class of 2026 — Dalian University of Technology welcomes you. Meow.',
+        meta: 'Happy 77th birthday to Dalian University of Technology!',
+        alt: 'Emblem of Dalian University of Technology',
+      },
     },
     sponsor: {
       seoTitle: 'Support ACGTI - Help Keep the Project Running',
@@ -1709,6 +1737,8 @@ export const messages = {
     title: 'Global Personality Distribution',
     subtitle: 'Stats based on all anonymous test results, updated every 15 minutes',
     retry: 'Retry',
+    loadError: 'Stats are temporarily unavailable.',
+    loadErrorHint: 'Please try again later.',
     overview: {
       total: 'Total Tests',
       today: 'Today',
@@ -1794,7 +1824,7 @@ export const messages = {
           feedback: '追加してほしいキャラや、問題文・既存キャラ・結果文案の改善案があれば、',
           issue: 'Issue',
           saurlaxCreditBefore: '',
-          saurlaxCreditAfter: ' さんによる GPT-5.4 Token サポートに感謝',
+          saurlaxCreditAfter: 'さんによる step-3.7-flash モデル提供に感謝',
           sowieeeCreditBefore: '台湾の協力者 ',
           sowieeeCreditAfter: ' さんによる zh-TW 文案修正への協力に感謝',
         },
@@ -1807,8 +1837,8 @@ export const messages = {
     home: {
       updateBadge: {
         tag: 'キャラ数更新',
-        title: 'キャラ数が 110 体に到達',
-        text: '久しぶりにもう一度遊んでみてください。最近たくさんの新キャラが追加され、今回命中するキャラコードは以前とまったく違うかもしれません。配信トラフィックでサーバー料金が赤字になり、回復のめども立ちません。Star で応援してもらえると嬉しいです ❤',
+        title: `キャラ数が ${CHARACTER_COUNT} 体に到達`,
+        text: '久しぶりにもう一度遊んでみてください。最近たくさんの新キャラが追加され、今回命中するキャラコードは以前とまったく違うかもしれません。サーバー費用の負担が大きくなってきました。Star やスポンサーで応援してもらえると嬉しいです ❤',
         link: 'テスト開始 / もう一度',
         dismiss: '更新告知を閉じる',
       },
@@ -1823,7 +1853,6 @@ export const messages = {
       relayFeedback: '診断リンクをコピーしました。すぐ共有できます。',
       privacyTitle: '補足',
       privacyCopy: '回答記録はこのブラウザ内にのみ保存され、完了時に匿名で統計用に報告されます。',
-      privacyLinkLabel: 'ACGTI二次創作「ARKTI」もぜひお試しください',
       stats: [
         { value: '600万+', label: 'アクセス数（2026.4.18 時点）', color: '#4899a3' },
         { value: '16', label: 'MBTI タイプ', color: '#e5b540' },
@@ -1895,7 +1924,7 @@ export const messages = {
       dimensions: ['外向 / 内向', '感覚 / 直観', '思考 / 感情', '判断 / 知覚'],
     },
     quiz: {
-        questions: ["私は、自分の好きな派閥の人々に向けられた荒らしや固定観念を見ると腹が立ち、反撃したり通報したくなります。","私の人生のモットーは「横になれるなら座らない、散らかしてもいいなら絶対に関わらない」です。","フォロー中に「High Energy Ahead」の連発を目にすると、事前に回避するのではなく、次のエキサイティングなコンテンツを期待して注意を払うようになります。","「電子的インポテンス」は病気ではなく、Steam のゲーム倉庫がいっぱいになった後の進行形だと思います。","好きなクリエイターにインタラクションや応援（例えば「三連」）を求められたとき、私は習慣的に「次は必ず」と答えてしまいます。","チート級の主人公補正が保障されないなら、「トイレットペーパー」異世界ものに転生したとき、私がまずやることは絶対に勇者になることではありません。","「ザンリシェフ」が300階まで行ってどちらが強いかを議論するのは一種のパフォーマンスアートだと思います。","私はコンピューターのデスクトップやファイルを意図的に整理するのが好きではありません。たとえ乱雑に見えても、わざわざ整理することはありません。","私は深夜によくエモい気分になります。","「3つのノー」属性は決して冷たいのではなく、むしろビジネスをするのに怠けすぎるのだと思います。","実生活でも、他人から「二次元」関連の言葉でからかわれると、少し恥ずかしかったり嫌悪感を感じたりします。","漫画展示会などで見知らぬ人とも「先生、先生、優しくて柔らかい人ですね…」とシームレスに会話できる。","私は「党派闘争」がACG最大の発明だと思っています。","ゲームに行き詰まったときは、『風霊月影』をプレイするだけでも構いません。","「アニメのバラモン」は、怠惰な人々の集団が自分たちのために立てたアーチにすぎないと思います。","1 つの OP が良いという理由だけで、クソシリーズ全体をフォローします。","重いストーリーや「憂鬱な」作品を見た後は、気分を軽くするために軽くて面白いものを見なければなりません。","ガチャについては、天井を厳密に計算してリソースを貯めるよりも、開運儀式やその場の気分を信じて引いてしまうタイプです。","長く続いたドラマや愛されたドラマがついに終了するのを見ると、強い喪失感と虚無感を感じます。","私はACGサークルにおける荒らし、批判、ランキングなどの「ファンサークル」行為に非常に嫌悪感を持っています。","たとえ、購入後にプレイしたり開梱したりする時間がなくても、割引価格のゲームや 2 次元の周辺機器を買わずにはいられないことがよくあります (つまり、「ハムスター症候群」)。","大好きなVtuberやキャラクターには思い入れが深いので、もし彼らが「卒業」したり業界から撤退したりすると、ずっと悲しいです。","誰もいないとき、私は今でもよく頭の中で超能力を手に入れた壮大な場面を空想し、自分だけの世界を構築して、中二病のセリフをつぶやいたりします。","作品によってはストーリーが弱くて「業界の甘ったるい」ような作品もあるのは承知していますが、キャラクターが可愛いので楽しく観ています。","ファンタジー冒険の世界で自分の身の安全が保証されるなら、計画や戦闘を気にする必要のない、パーティーで「寝て勝つ」枠のキャラでいる方を選びます。","顔文字の膨大なライブラリをすばやく調べて、その瞬間に最も適切な応答を見つけて、それらをチャットに巧みに投げかけることができます。","序盤に壮大な設定を広げたくせに結末が杜撰、いわば読者に「クソを食わせる」ような作品については、作者は読者に土下座して謝罪すべきだと思います。","私の理想的な退職後の生活は、家にこもってゲームやアニメを楽しんで猫を撫でること。無意味な浅い付き合いは断って、ごく少数の親しい人との交流だけを残します。","私は、ちょっと邪悪で不快な「地獄のジョーク」を見るのが大好きで、心理的な負担なく笑いを得ることができます。","「整形外科」をテーマにした作品を観に行ったりしていました。","好きなキャラクターを描いたり見たりするためだけに、興味のないゲームをダウンロードして試してみます。","「社会的恐怖」は欠点ではなく、高度なキャラクターデザインだと思います。","ダラダラした展開や退屈な水増し部分を飛ばすため、アニメや実況動画を倍速再生で見るのが習慣になっています。","自分のコメント欄に無意味な使い古されたネタが出てきたら、非表示やブロックで片付けます。","従来の「王らしく、元気な」キャラクターと比較して、私は欠陥、パラノイア、またはいくつかの暗くて残酷なキャラクター（ヤンデレ、重力、邪悪なキャラクターなど）を持ったキャラクターにもっと惹かれます。","私は「二次元」を精神的な避難場所、夢中になれる場所だと考えています。","映画を見たりゲームをしたりするとき、その背後に隠された設定や世界観のメタファーを掘り出し、さらにはフレームごとに詳細を分析することに熱心です。","ゲームをプレイするとき、私はすべてのサブクエストとマップのクエスチョンマークをやり切ります。","好きな新作アニメに出会ったら、すぐにグループチャットの仲間に共有して布教します。"],
+        questions: ["好きなマイナー界隈に荒らしやステレオタイプのレッテル貼りを見かけると、腹が立って自分も議論に割って入りたくなります。","私の人生訓は「座れるなら横になる、頑張れるなら手を抜く」です。","アニメ視聴中に「ここから神シーン」系の警告コメントが流れてくると、飛ばすどころか画面に釘付けになって、名場面を心待ちにしてしまいます。","「積みゲー疲れ」は病気ではなく、Steam のライブラリが満杯になった後に進化する高等な形態だと思っています。","応援しているクリエイターに高評価や登録をお願いされると、癖のように「次の動画で必ず」と答えてしまい、そのまま次の動画でも言ってしまいます。","量産型異世界ものに転生したとしても、チート級の主人公補正が保証されていないなら、私が最初にやることは絶対に勇者になることではありません。","「戦力厨」が誰が強いかで300レスも言い合うのは、一種のパフォーマンスアートだと思います。","デスクトップやファイルの整理はあまり好きではなく、どれだけ散らかって見えても放っておきます。","深夜によくエモい気分になります。","「クーデレ」属性は決してクールなのではなく、単に人付き合いの営業が面倒なだけだと思います。","現実の友達に面と向かって「オタク」扱いされるようなからかいをされると、少し気まずさや不快感を覚えます。","イベント会場では見知らぬ人にも物怖じせず、「それかわいい…！中の人も絶対かわいい…」とスムーズに話しかけられます。","「推し戦争」は ACG 最大の発明だと思います。","ゲームで詰まったとき、チートツールを起動することにはまったく抵抗がありません。","「アニメ界のエリート気取り」は、暇を持てあました人たちが自分のために立てた見せ札にすぎないと思います。","OP曲が良いだけで、中身が残念なアニメでも最後まで見てしまいます。","重いストーリーや鬱な作品を見た後は、気分を立て直すために軽くて面白いものを見なければ気が済みません。","ガチャは勢いと開運儀式任せで、天井計算やリソース備蓄を真面目にやったことはありません。","長く追っていた作品がついに完結を迎えると、しばらく虚無感に襲われます。","アニメ界隈に持ち込まれる、比較煽り・コメント統制・ランキング稼ぎといった「アイドル飯」的な手法には強い嫌悪感を覚えます。","セールでゲームやグッズをつい買い込んでしまい、買ったまま開封すらされないことがよくあります——典型のコレクター体質です。","大好きなVtuberやキャラには深く感情移入していて、「卒業」や引退を聞いたら長いこと落ち込んでしまいます。","誰もいないとき、今でも頭の中で超能力の壮大なシミュレーションをして、中二病のセリフを小声で呟いてしまいます。","「工場生産の甘さ」みたいにストーリーが薄いのは分かっていても、キャラがかわいければ楽しく観てしまいます。","ファンタジー冒険の世界で身の安全が保証されるなら、計画も戦闘も気にしない、パーティーに寄生して勝たせてもらう枠を選びます。","膨大なスタンプのライブラリから、その場にいちばん合う一枚を瞬時に選んで、完璧なタイミングで投げられます。","序盤は壮大なくせに結末が杜撰な作品については、作者は読者に土下座して謝罪すべきだと思います。","理想の引退後の生活は、家でゲームをしてアニメを観て猫を撫でること。無意味な付き合いは断ち、本当に気が合う少数とのみ付き合います。","ちょっと悪意があって攻撃的な「ブラックジョーク」を見るのが大好きで、毎回心理的負担ゼロで笑えてしまいます。","兄妹などの近親恋愛を扱った作品を、私は普通に観ます。","好きなキャラクターが一人いるだけで、本来まったく興味のなかったゲームをダウンロードして始めてしまいます。","「人見知り」は欠点ではなく、高度なキャラ設定だと思います。","だらだらした展開や水増し部分を飛ばすため、アニメや実況動画を倍速再生で見るのが習慣になっています。","自分のコメント欄に意味のない使い古されたネタが現れたら、非表示やブロックで片付けます。","従来の王道で元気なキャラクターより、欠陥や偏執を抱えた、どこか闇のあるキャラクター（ヤンデレ、重い系、腹黒など）の方が惹かれます。","二次元は、私が公言する心の故郷です。","アニメやゲームを楽しむとき、裏設定や世界観のメタファーを掘り下げて、コマ送りで細部を分析するまで熱中してしまいます。","ゲームをプレイするときは、すべてのサブクエストとマップのクエスチョンマークをやり切ります。","好きな新作アニメに出会ったら、すぐにグループチャットの仲間に布教します。"],
       heroTitle: '無料キャラ原型テスト',
       steps: [
         ['STEP 1', 'テストを受ける', `${QUESTION_COUNT} 問のシチュエーション問題。第一感覚で答えて大丈夫。`],
@@ -1971,12 +2000,6 @@ export const messages = {
       share: '結果を共有',
       shareCard: 'ACGタイプ指標',
       testNote: 'あなたのソーシャルプロフィール',
-      publicService: {
-        label: '公共案内',
-        copy: '大連理工大学への出願を歓迎します。',
-        meta: '大連理工大学77周年おめでとうございます',
-        alt: '大連理工大学の校章',
-      },
       personaBasisBadge: 'ファンダム印象マッピング',
       personaBasisTip: 'このキャラには公式の性格設定がなく、マッピングは主にコミュニティの印象と二次創作のイメージを参考にしています。楽しむためのものと思ってください。',
       creatorLinks: {
@@ -2035,6 +2058,10 @@ export const messages = {
         T_F: ['思考', '感情'],
         J_P: ['判断', '知覚'],
       },
+    },
+    // AI 解説の兜底通知：結果ページの「言い換える」が失敗したときに使用
+    ai: {
+      regenerateFailed: '生成に失敗したため、前の解説をそのまま表示しています。',
     },
     archetypes: {
       'luminous-lead': {
@@ -2225,6 +2252,17 @@ export const messages = {
         ['結果の共有', 'テスト後にアイデンティティカード画像を保存したり、テキストをコピーして誰かに送ったりできます。'],
         ['多言語', '簡体字中国語、繁体字中国語、英語、日本語の 4 言語に対応しています。'],
       ],
+      relatedProjects: {
+        title: '関連プロジェクト',
+        description: 'ARKTI は ACGTI をベースにした二次創作の性格テストです。コミュニティの仲間が遊び心を加えて展開しています。気になったらぜひ遊んでみてください。',
+        linkLabel: '遊んでみる',
+      },
+      collegeGreeting: {
+        title: '作者からのひとこと',
+        copy: '大連理工大学への出願を歓迎しますにゃ。',
+        meta: '大連理工大学 77 周年おめでとうございます！',
+        alt: '大連理工大学の校章',
+      },
     },
     sponsor: {
       seoTitle: 'ACGTI を応援 - プロジェクト運営をサポート',
@@ -2280,6 +2318,8 @@ export const messages = {
     title: '全世界の性格分布',
     subtitle: 'すべての匿名テスト結果に基づく統計。15 分ごとに更新',
     retry: '再試行',
+    loadError: '統計データを読み込めません。',
+    loadErrorHint: 'しばらくしてからもう一度お試しください。',
     overview: {
       total: '総テスト数',
       today: '今日のテスト',

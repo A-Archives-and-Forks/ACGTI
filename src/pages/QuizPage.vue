@@ -1,6 +1,6 @@
 <template>
   <div class="quiz-page-16p">
-    <div class="quiz-progress-rail" role="progressbar" :aria-valuenow="answeredCount" :aria-valuemax="questions.length" aria-label="Quiz progress">
+    <div class="quiz-progress-rail" role="progressbar" :aria-valuenow="answeredCount" :aria-valuemin="0" :aria-valuemax="questions.length" aria-label="答题进度">
       <div
         v-for="(answer, i) in state.answers"
         :key="i"
@@ -15,7 +15,7 @@
       </section>
 
       <section class="step-cards" aria-label="测试步骤">
-        <article v-for="(item, i) in tm<string[][]>('quiz.steps')" :key="i" class="step-card" :class="i === 0 ? 'step-teal' : i === 1 ? 'step-green' : 'step-purple'">
+        <article v-for="(item, i) in tm<string[][]>('quiz.steps') ?? []" :key="i" class="step-card" :class="i === 0 ? 'step-teal' : i === 1 ? 'step-green' : 'step-purple'">
           <span class="step-pill">{{ item[0] }}</span>
           <h3>{{ item[1] }}</h3>
           <p>{{ item[2] }}</p>
@@ -159,10 +159,12 @@ onMounted(async () => {
   await ensureData()
   showResumeNotice.value = answeredCount.value > 0 && !isComplete.value
   window.addEventListener('beforeunload', handleBeforeUnload)
+  window.addEventListener('keydown', handleNumberKeydown)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
+  window.removeEventListener('keydown', handleNumberKeydown)
 })
 
 // 进度虽已持久化，仍保留浏览器原生确认，拦截误触刷新/关闭
@@ -183,7 +185,8 @@ const pendingUnansweredIndex = ref<number | null>(null)
 let unansweredHighlightTimer: ReturnType<typeof setTimeout> | null = null
 
 const scaleOptions = computed<ScaleOption[]>(() => {
-  const scaleTitles = tm<string[]>('quiz.scale')
+  // tm 在语言包缺失该键时可能返回空值，兜底为空数组避免取到 undefined 标签
+  const scaleTitles = tm<string[]>('quiz.scale') ?? []
   return [
     { value: 3, label: scaleTitles[0], side: 'agree', sizeClass: 'size-xl' },
     { value: 2, label: scaleTitles[1], side: 'agree', sizeClass: 'size-lg' },
@@ -194,6 +197,25 @@ const scaleOptions = computed<ScaleOption[]>(() => {
     { value: -3, label: scaleTitles[6], side: 'disagree', sizeClass: 'size-xl' },
   ]
 })
+
+// 数字键 1-7 快捷答题（16personalities 同款体验）：
+// 映射到「当前题」（第一道未作答的题目）的 7 档刻度，行为与点击按钮完全一致
+function handleNumberKeydown(event: KeyboardEvent) {
+  // 焦点在输入类控件或可编辑区域时不拦截，避免干扰正常输入
+  const target = event.target instanceof HTMLElement ? event.target : null
+  if (target?.closest('input, textarea, select, [contenteditable="true"]')) return
+
+  const num = Number.parseInt(event.key, 10)
+  if (!Number.isInteger(num) || num < 1 || num > scaleOptions.value.length) return
+
+  // 全部答完时（firstUnansweredIndex 为 -1）没有「当前题」，直接忽略
+  const questionIndex = firstUnansweredIndex.value
+  if (questionIndex < 0 || questionIndex >= questions.value.length) return
+
+  event.preventDefault()
+  const option = scaleOptions.value[num - 1]
+  if (option) onSelect(questionIndex, option.value)
+}
 
 function onSelect(questionIndex: number, value: number) {
   selectOptionAt(questionIndex, value)

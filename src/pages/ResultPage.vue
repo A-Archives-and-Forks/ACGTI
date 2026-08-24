@@ -11,11 +11,13 @@ import { useSeo } from '../composables/useSeo'
 import { useQuiz } from '../composables/useQuiz'
 import { socialIcons, type SocialIconBrand } from '../data/socialIcons'
 import { ensureCharacterMessages, useI18n } from '../i18n'
-import { getHiddenCharacterNote, getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
+import { getHiddenCharacterLabel, getHiddenCharacterNote, getHiddenCharacterTags, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
+import type { QuizResult } from '../types/quiz'
 import { hexToRgb, readableTextColorOn, relativeLuminance } from '../utils/color'
 import { normalizeCharacterImagePath } from '../utils/characterVisuals'
 import { formatCharacterProbability } from '../utils/characterProbability'
 import { normalizeMbtiCode } from '../utils/quizEngine'
+import { DEFAULT_ACCENT } from '../utils/themeDefaults'
 import { reportResultInBackground, submitFeedback, fetchResultStats, type ResultStats } from '../utils/statsReporter'
 
 // SharePoster 只在用户点击"导出图片"时才加载和挂载
@@ -30,6 +32,16 @@ const isCharacterImageBroken = ref(false)
 const share = useShare()
 const posterRef = ref<{ rootEl: HTMLElement | null; waitReady: () => Promise<void> } | null>(null)
 const shouldMountPoster = ref(false)
+
+// 等待 SharePoster 首次挂载的 Promise：由其 ready 事件解除等待（事件驱动，替代旧的轮询忙等）
+let posterMountedResolve: (() => void) | null = null
+const posterMounted = new Promise<void>((resolve) => {
+  posterMountedResolve = resolve
+})
+
+function handlePosterReady() {
+  posterMountedResolve?.()
+}
 const { locale, t, tm } = useI18n()
 const resultAdSlot = String(import.meta.env.VITE_ADSENSE_SLOT_RESULT ?? '').trim()
 const liveStats = ref<ResultStats | null>(null)
@@ -57,14 +69,10 @@ function formatCount(n: number): string {
 
 const heroQuote = computed(() => {
   if (!result.value) return ''
-  
-  let seed = 0
+
   const code = result.value.code || result.value.mbtiCode || ''
-  for (let i = 0; i < code.length; i++) {
-    seed += code.charCodeAt(i)
-  }
-  // Add matchScore to salt the quote so the same trait but different score varies the string
-  seed += Math.floor(result.value.matchScore)
+  // 用角色代码加匹配分做随机种子：同一特质不同分数也能拿到不同语录
+  const seed = [...code].reduce((sum, ch) => sum + ch.charCodeAt(0), Math.floor(result.value.matchScore))
 
   const rawLiners = tm(`archetypes.${result.value.archetype.id}.oneLiners`)
   const arr = Array.isArray(rawLiners) && rawLiners.length > 0
@@ -74,6 +82,13 @@ const heroQuote = computed(() => {
   if (arr.length === 0) return ''
   return arr[seed % arr.length]
 })
+
+// 结果缺失（含 debug 参数无效）时统一回测试页，onMounted 初始化与 query 变化共用
+function redirectIfNoResult() {
+  if (!result.value) {
+    void router.replace('/quiz')
+  }
+}
 
 // 结果页需要数据来处理 debug 查询和角色匹配
 onMounted(async () => {
@@ -88,7 +103,7 @@ onMounted(async () => {
   // })
 
   if (!result.value) {
-    void router.replace('/quiz')
+    redirectIfNoResult()
     return
   }
 
@@ -130,12 +145,14 @@ onMounted(async () => {
 
 async function exportPosterImage() {
   if (!result.value) return
-  // 首次导出时才挂载 SharePoster 异步组件
+  // 首次导出时才挂载 SharePoster 异步组件：等待其 ready 事件（挂载完成），
+  // 事件驱动替代轮询忙等；4s 超时兜底避免异步组件加载异常时导出流程永久挂起
   if (!shouldMountPoster.value) {
     shouldMountPoster.value = true
-    for (let i = 0; i < 40 && !posterRef.value; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 50))
-    }
+    await Promise.race([
+      posterMounted,
+      new Promise((resolve) => setTimeout(resolve, 4000)),
+    ])
   }
   const poster = posterRef.value
   if (!poster?.rootEl) return
@@ -156,10 +173,7 @@ watch(
   () => [route.query.type, route.query.character],
   () => {
     applyDebugResultFromRoute()
-
-    if (!result.value) {
-      void router.replace('/quiz')
-    }
+    redirectIfNoResult()
   },
 )
 
@@ -224,7 +238,7 @@ const displayTags = computed(() => {
 })
 const displayCode = computed(() => result.value?.code ?? result.value?.mbtiCode ?? '')
 const displayProbability = computed(() => formatCharacterProbability(result.value?.matchProbability ?? 0))
-const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? result.value?.archetype.accent ?? '#e2ad3b')
+const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? result.value?.archetype.accent ?? DEFAULT_ACCENT)
 // 浅色 accent（如 #F5E6E8）上白字不可读，切换为深色文字方案
 const heroIsLight = computed(() => relativeLuminance(hexToRgb(resultThemeColor.value)) > 0.45)
 const heroReadableColor = computed(() => readableTextColorOn(resultThemeColor.value))
@@ -306,7 +320,7 @@ const strongestTrait = computed(() => {
     return null
   }
 
-  return traits.value.reduce((strongest, trait) => {
+  return traits.value.reduce<StrongestTraitEntry | null>((strongest, trait) => {
     const currentScore = result.value!.scores[trait.id]
 
     if (!strongest || currentScore.percentage > strongest.score.percentage) {
@@ -317,7 +331,7 @@ const strongestTrait = computed(() => {
     }
 
     return strongest
-  }, null as { trait: (typeof traits.value)[number]; score: (typeof result.value.scores)[TraitDimension] } | null)
+  }, null)
 })
 
 watch(primaryCharacterImage, () => {
@@ -326,13 +340,20 @@ watch(primaryCharacterImage, () => {
 
 type TraitDimension = 'E_I' | 'S_N' | 'T_F' | 'J_P'
 
+// 最强维度条目：维度元数据与其对应得分的组合（strongestTrait 的 reduce 元素类型）
+type StrongestTraitEntry = {
+  trait: (typeof traits.value)[number]
+  score: QuizResult['scores'][TraitDimension]
+}
+
 const traits = computed(() => {
+  // tm 在语言包缺失该键时运行时会得到 undefined，逐维 ?? [] 兜底避免取下标报错
   const tDims = tm<Record<string, string[]>>('result.dimensions');
   return [
-    { id: 'E_I' as const, leftCode: 'E', leftLabel: tDims.E_I[0], rightCode: 'I', rightLabel: tDims.E_I[1], color: '#4298B4' },
-    { id: 'S_N' as const, leftCode: 'S', leftLabel: tDims.S_N[0], rightCode: 'N', rightLabel: tDims.S_N[1], color: '#E4AE3A' },
-    { id: 'T_F' as const, leftCode: 'T', leftLabel: tDims.T_F[0], rightCode: 'F', rightLabel: tDims.T_F[1], color: '#33A474' },
-    { id: 'J_P' as const, leftCode: 'J', leftLabel: tDims.J_P[0], rightCode: 'P', rightLabel: tDims.J_P[1], color: '#88619A' },
+    { id: 'E_I' as const, leftCode: 'E', leftLabel: (tDims.E_I ?? [])[0], rightCode: 'I', rightLabel: (tDims.E_I ?? [])[1], color: '#4298B4' },
+    { id: 'S_N' as const, leftCode: 'S', leftLabel: (tDims.S_N ?? [])[0], rightCode: 'N', rightLabel: (tDims.S_N ?? [])[1], color: '#E4AE3A' },
+    { id: 'T_F' as const, leftCode: 'T', leftLabel: (tDims.T_F ?? [])[0], rightCode: 'F', rightLabel: (tDims.T_F ?? [])[1], color: '#33A474' },
+    { id: 'J_P' as const, leftCode: 'J', leftLabel: (tDims.J_P ?? [])[0], rightCode: 'P', rightLabel: (tDims.J_P ?? [])[1], color: '#88619A' },
   ];
 })
 
@@ -412,11 +433,12 @@ function buildSubmitPayload() {
     archetypeCode: r.archetype?.id || 'unknown-archetype',
     characterCode: r.code || r.mbtiCode || 'UNKN',
     predictedMbti: r.mbtiCode && /^[EI][SN][TF][JP]$/i.test(r.mbtiCode) ? r.mbtiCode : undefined,
+    // 引擎保证四维得分必存在且 percentage 落在 50-99 区间，直接读取即可
     dimensionScores: {
-      ei: typeof scores.E_I?.percentage === 'number' ? Math.max(0, Math.min(100, scores.E_I.percentage)) : 50,
-      sn: typeof scores.S_N?.percentage === 'number' ? Math.max(0, Math.min(100, scores.S_N.percentage)) : 50,
-      tf: typeof scores.T_F?.percentage === 'number' ? Math.max(0, Math.min(100, scores.T_F.percentage)) : 50,
-      jp: typeof scores.J_P?.percentage === 'number' ? Math.max(0, Math.min(100, scores.J_P.percentage)) : 50,
+      ei: scores.E_I.percentage,
+      sn: scores.S_N.percentage,
+      tf: scores.T_F.percentage,
+      jp: scores.J_P.percentage,
     },
     durationMs,
     answers: answerList,
@@ -424,10 +446,10 @@ function buildSubmitPayload() {
 }
 
 function collectAnswerList() {
+  // 答案类型即 number[]（localStorage 数据已在 storage.ts 入口校验），无需重复 Array.isArray
   const record = quiz.state.latestRecord
-  const recordAnswers = Array.isArray(record?.answers) ? record.answers : []
-  const stateAnswers = Array.isArray(quiz.state.answers) ? quiz.state.answers : []
-  const rawAnswers = recordAnswers.length > 0 ? recordAnswers : stateAnswers
+  const recordAnswers = record?.answers ?? []
+  const rawAnswers = recordAnswers.length > 0 ? recordAnswers : quiz.state.answers
   return rawAnswers
     .map((val: number, idx: number) => {
       if (!Number.isFinite(val) || val < -3 || val > 3) {
@@ -499,7 +521,7 @@ async function handleFeedbackSubmit() {
           <p class="hero-caption">{{ t('result.heroCaption') }}</p>
           <div class="hero-title-wrap">
             <h1 class="hero-title">{{ primaryCharacter ? getLocalizedCharacterName(primaryCharacter, locale, { revealHidden: true }) : t('archetypes.' + result.archetype.id + '.name', undefined, result.archetype.name) }}</h1>
-            <span v-if="primaryCharacter && isHiddenCharacter(primaryCharacter)" class="hero-hidden-badge">{{ getHiddenCharacterTitle(locale, primaryCharacter) }}</span>
+            <span v-if="primaryCharacter && isHiddenCharacter(primaryCharacter)" class="hero-hidden-badge">{{ getHiddenCharacterLabel(primaryCharacter, locale) }}</span>
           </div>
           <div class="hero-badge-wrap">
             <span class="hero-code">{{ displayCode }}</span>
@@ -549,7 +571,7 @@ async function handleFeedbackSubmit() {
                 {{ t('result.sponsorHero') }}
               </RouterLink>
               <a href="https://github.com/tianxingleo/ACGTI" target="_blank" rel="noopener noreferrer" class="action-btn ghost" style="text-decoration: none;">
-                <svg style="width: 18px; height: 18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                <AppIcon name="github" style="width: 18px; height: 18px;" />
                 GitHub Star
               </a>
             </div>
@@ -638,25 +660,6 @@ async function handleFeedbackSubmit() {
             </div>
           </div>
         </section>
-
-        <a
-          class="public-service-card public-service-card-link"
-          href="https://www.dlut.edu.cn/"
-          target="_blank"
-          rel="noopener noreferrer"
-          v-reveal
-        >
-          <div class="public-service-icon-shell">
-            <div class="public-service-icon-ring">
-              <img class="public-service-emblem" src="/dlut-emblem.png" :alt="t('result.publicService.alt')" />
-            </div>
-          </div>
-          <div class="public-service-content">
-            <p class="public-service-label">{{ t('result.publicService.label') }}</p>
-            <p class="public-service-copy">{{ t('result.publicService.copy') }}</p>
-            <p class="public-service-meta">{{ t('result.publicService.meta') }}</p>
-          </div>
-        </a>
 
         <section class="traits-section" id="traits-section" v-reveal>
           <div class="section-title-wrap">
@@ -777,7 +780,7 @@ async function handleFeedbackSubmit() {
         </section>
 
 <div class="poster-capture-wrapper">
-  <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" />
+  <SharePosterAsync v-if="shouldMountPoster" ref="posterRef" :result="result" @ready="handlePosterReady" />
 </div>
 
         <!-- 用户反馈卡片 -->
@@ -882,7 +885,7 @@ async function handleFeedbackSubmit() {
         <div class="sidebar-card profile-card">
           <p class="small-title">{{ t('result.hitCharacter') }}</p>
           <h3>{{ primaryCharacter ? getLocalizedCharacterName(primaryCharacter, locale, { revealHidden: true }) : t('archetypes.' + result.archetype.id + '.name', undefined, result.archetype.name) }}</h3>
-          <p v-if="primaryCharacter && isHiddenCharacter(primaryCharacter)" class="profile-hidden-flag">{{ getHiddenCharacterTitle(locale, primaryCharacter) }}</p>
+          <p v-if="primaryCharacter && isHiddenCharacter(primaryCharacter)" class="profile-hidden-flag">{{ getHiddenCharacterLabel(primaryCharacter, locale) }}</p>
           <p class="profile-code">{{ displayCode }}</p>
           <p class="profile-rarity">
             <span class="rarity-pill rarity-pill--sidebar" :style="[rarityTierStyle, rarityFontSizeStyle]">{{ rarityTierLabel }}</span>
@@ -948,7 +951,7 @@ async function handleFeedbackSubmit() {
             {{ t('result.ossCopy') }}
           </p>
           <a href="https://github.com/tianxingleo/ACGTI" target="_blank" rel="noopener noreferrer" class="project-link" style="display: flex; align-items: center; justify-content: center; gap: 6px; background: #3ba17c; color: white; border-radius: 20px; padding: 6px 12px; font-weight: 600; text-decoration: none;">
-            <svg style="width: 14px; height: 14px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            <AppIcon name="github" style="width: 14px; height: 14px;" />
             {{ t('result.ossButton') }}
           </a>
           <p class="project-cta">
@@ -1060,7 +1063,7 @@ async function handleFeedbackSubmit() {
   }
 
   .hero-copy {
-    margin-top: 0; /* Changed from 30px */
+    margin-top: 0;
   }
 }
 
@@ -1756,97 +1759,6 @@ async function handleFeedbackSubmit() {
   margin-top: 24px;
 }
 
-.public-service-card {
-  margin-bottom: 24px;
-  padding: 16px 18px;
-  border: 1px solid #d9ece4;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #f3fbf7 0%, #ffffff 100%);
-  box-shadow: 0 10px 22px rgba(59, 161, 124, 0.07);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.public-service-card-link {
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-}
-
-.public-service-card-link:hover {
-  transform: translateY(-2px);
-  border-color: #b8ddd0;
-  box-shadow: 0 14px 28px rgba(59, 161, 124, 0.1);
-}
-
-.public-service-card-link:focus-visible {
-  outline: 3px solid rgba(66, 152, 180, 0.22);
-  outline-offset: 3px;
-}
-
-.public-service-icon-shell {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.public-service-icon-shell::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(66, 152, 180, 0.18) 0%, rgba(66, 152, 180, 0) 72%);
-}
-
-.public-service-icon-ring {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(180deg, #ffffff 0%, #eef7f9 100%);
-  border: 1px solid rgba(66, 152, 180, 0.18);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 18px rgba(66, 152, 180, 0.12);
-}
-
-.public-service-emblem {
-  width: 52px;
-  height: 52px;
-  object-fit: contain;
-}
-
-.public-service-content {
-  min-width: 0;
-}
-
-.public-service-label {
-  margin: 0 0 6px;
-  color: #33a474;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.public-service-copy {
-  margin: 0;
-  color: #2f3a45;
-  font-size: 15px;
-  line-height: 1.6;
-  font-weight: 700;
-}
-
-.public-service-meta {
-  margin: 8px 0 0;
-  color: #6f7a83;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .result-sidebar {
   position: relative;
 }
@@ -2249,25 +2161,6 @@ async function handleFeedbackSubmit() {
     line-height: 1.7;
   }
 
-  .public-service-card {
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .public-service-icon-ring {
-    width: 62px;
-    height: 62px;
-  }
-
-  .public-service-emblem {
-    width: 46px;
-    height: 46px;
-  }
-
-  .public-service-copy {
-    font-size: 14px;
-  }
-
   .section-title-wrap {
     gap: 10px;
     margin-bottom: 12px;
@@ -2360,16 +2253,6 @@ async function handleFeedbackSubmit() {
 
   .result-body {
     gap: 14px;
-  }
-
-  .public-service-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 14px;
-  }
-
-  .public-service-icon-shell {
-    align-self: flex-start;
   }
 
   .trait-labels {

@@ -8,6 +8,7 @@ import {
   isValidCode,
   isValidUuid,
   isValidMbti,
+  validateAnswers,
   checkRateLimit,
 } from './_shared'
 
@@ -15,6 +16,10 @@ import {
 const SAMPLE_RATE = 0.02
 // answers 最少条数，低于此值视为无效提交
 const MIN_ANSWERS = 20
+// answers 最多条数，超过视为恶意投递（正常题量远低于此）
+const MAX_ANSWERS = 100
+// answers 序列化后的体积上限：清洗后的合法答案远小于此，超限直接拒绝
+const MAX_ANSWERS_JSON_BYTES = 64 * 1024
 // 单 IP 每分钟最多提交次数（正常用户一次测试远低于此，只拦脚本刷数）
 const SUBMIT_RATE_LIMIT = 30
 
@@ -23,7 +28,7 @@ export async function onRequestPost(context: any) {
 
   // --- 限流：保护不可逆的聚合计数 ---
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
-  const allowed = await checkRateLimit(DB, ip, SUBMIT_RATE_LIMIT)
+  const allowed = await checkRateLimit(DB, 'submit', ip, SUBMIT_RATE_LIMIT)
   if (!allowed) {
     return new Response(null, { status: 429 })
   }
@@ -71,8 +76,22 @@ export async function onRequestPost(context: any) {
     return new Response(null, { status: 204 })
   }
 
-  // answers 校验：没有完整答案的提交不写库
-  if (!Array.isArray(raw.answers) || raw.answers.length < MIN_ANSWERS) {
+  // answers 校验：没有完整答案、条数超限或逐条内容非法的提交不写库。
+  // 原始数组不可直接落库：巨型 payload 会污染 2% 抽样与 D1 存储
+  if (
+    !Array.isArray(raw.answers) ||
+    raw.answers.length < MIN_ANSWERS ||
+    raw.answers.length > MAX_ANSWERS
+  ) {
+    return new Response(null, { status: 204 })
+  }
+  const validatedAnswers = validateAnswers(raw.answers)
+  if (!validatedAnswers) {
+    return new Response(null, { status: 204 })
+  }
+  // 只落清洗后的白名单字段，且序列化后超过 64KB 直接拒绝
+  const answersJson = JSON.stringify(validatedAnswers)
+  if (answersJson.length > MAX_ANSWERS_JSON_BYTES) {
     return new Response(null, { status: 204 })
   }
 
@@ -137,7 +156,7 @@ export async function onRequestPost(context: any) {
           `INSERT OR IGNORE INTO submission_answers_blob
            (submission_id, answers_json)
            VALUES (?, ?)`
-        ).bind(submissionId, JSON.stringify(raw.answers)),
+        ).bind(submissionId, answersJson),
       ])
     }
 

@@ -1,3 +1,5 @@
+import charactersData from '../data/characters.json' with { type: 'json' }
+
 import type { CharacterMatch } from '../types/quiz'
 import type { AppLocale } from './types'
 
@@ -24,7 +26,12 @@ const hiddenCharacterTagsI18n: Record<AppLocale, string[]> = {
   ja: ['隠し結果', '低確率ヒット', '特殊な気配'],
 }
 
-const HIDDEN_CHARACTER_IDS = ['phrolova', 'kasugano-sora'] as const
+// 隐藏角色顺序表从角色数据派生（characters.json 的 hidden 字段是唯一事实源），
+// 新增隐藏角色时只需在数据里标记 hidden，这里不会再漏改导致静默退化。
+// 顺序取角色数据中的出现顺序，用于生成「隐藏角色 N」的编号。
+const HIDDEN_CHARACTER_IDS: string[] = (charactersData as Array<{ id: string; hidden?: boolean }>)
+  .filter((character) => character.hidden)
+  .map((character) => character.id)
 
 const hiddenCharacterLabelPrefixI18n: LocalizedText = {
   'zh-CN': '隐藏角色',
@@ -1139,7 +1146,7 @@ export function isHiddenCharacter(character: Pick<CharacterMatch, 'hidden'> | nu
 }
 
 export function getHiddenCharacterOrder(character: Pick<CharacterMatch, 'id'> | null | undefined) {
-  const index = character ? HIDDEN_CHARACTER_IDS.indexOf(character.id as (typeof HIDDEN_CHARACTER_IDS)[number]) : -1
+  const index = character ? HIDDEN_CHARACTER_IDS.indexOf(character.id) : -1
   return index >= 0 ? index + 1 : Number.MAX_SAFE_INTEGER
 }
 
@@ -1151,19 +1158,7 @@ export function getHiddenCharacterLabel(
   if (order === Number.MAX_SAFE_INTEGER) {
     return locale === 'en' ? 'Hidden Character' : hiddenCharacterLabelPrefixI18n[locale]
   }
-
-  if (locale === 'en') {
-    return `${hiddenCharacterLabelPrefixI18n[locale]}${order}`
-  }
-
   return `${hiddenCharacterLabelPrefixI18n[locale]}${order}`
-}
-
-export function getHiddenCharacterTitle(
-  locale: AppLocale,
-  character?: Pick<CharacterMatch, 'id'> | null,
-) {
-  return getHiddenCharacterLabel(character, locale)
 }
 
 export function getHiddenCharacterNote(
@@ -1183,14 +1178,14 @@ export function getLocalizedCharacterName(
   locale: AppLocale,
   options?: { revealHidden?: boolean },
 ) {
-  if (isHiddenCharacter(character as CharacterMatch) && !options?.revealHidden) {
+  if (isHiddenCharacter(character) && !options?.revealHidden) {
     return getHiddenCharacterLabel(character, locale)
   }
   return resolveLocalizedText(characterNameI18n, character.id, locale, character.name)
 }
 
 export function getLocalizedCharacterSeries(character: Pick<CharacterMatch, 'series' | 'hidden'>, locale: AppLocale) {
-  if (isHiddenCharacter(character as CharacterMatch)) {
+  if (isHiddenCharacter(character)) {
     return hiddenCharacterSeriesI18n[locale]
   }
   return resolveLocalizedText(seriesI18n, character.series, locale, character.series)

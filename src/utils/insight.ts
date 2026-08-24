@@ -14,12 +14,19 @@ export interface InsightResponse {
   reason?: string
 }
 
+// AI 解读接口可能长时间无响应，超时后按失败处理，避免结果页骨架屏无限显示
+const INSIGHT_TIMEOUT_MS = 10_000
+
 export async function fetchAiInsight(
   characterCode: string,
   scores: InsightScores,
   lang: string,
   fresh = false,
 ): Promise<InsightResponse | null> {
+  // AbortController 控制超时：到时中断请求，异常统一走现有失败路径
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), INSIGHT_TIMEOUT_MS)
+
   try {
     const resp = await fetch('/api/insight', {
       method: 'POST',
@@ -30,6 +37,7 @@ export async function fetchAiInsight(
         lang,
         fresh,
       }),
+      signal: controller.signal,
     })
 
     if (!resp.ok && resp.status !== 429) {
@@ -43,5 +51,7 @@ export async function fetchAiInsight(
     return data
   } catch {
     return null
+  } finally {
+    clearTimeout(timer)
   }
 }

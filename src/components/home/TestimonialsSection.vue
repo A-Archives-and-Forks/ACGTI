@@ -1,44 +1,87 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { useI18n } from '../../i18n'
+import { useI18n, type AppLocale } from '../../i18n'
 
-const { t, tm } = useI18n()
+const { locale, t, tm } = useI18n()
 
-const testimonialBase = [
+// 评价引用的四个原型（id 对应 src/data/archetypes.json）
+type TestimonialArchetypeId = 'shadow-strategist' | 'oathbound-captain' | 'moonlit-guardian' | 'chaos-spark'
+
+// 匿名社区昵称：按语言本地化的轻口味署名，不做真人感伪装
+const NICKNAMES: Record<AppLocale, string[]> = {
+  'zh-CN': ['某个路过的 I 人', '拉全群来测的 E 人', '深夜补测试的旅人', '晒角色代码的群友'],
+  'zh-TW': ['某個路過的 I 人', '拉全群來測的 E 人', '深夜補測試的旅人', '曬角色代碼的群友'],
+  'en': ['passing introvert', 'the one who dragged the group in', 'night-shift tester', 'group-chat showoff'],
+  'ja': ['通りすがりのI型', 'グループを巻き込んだE型', '深夜に受験した旅人', 'キャラコード自慢の住人'],
+}
+
+// 角色标签用 ACGTI 自己的原型体系，替代 16personalities 的官方角色名（名称按语言本地化）
+const ARCHETYPE_LABELS: Record<AppLocale, Record<TestimonialArchetypeId, string>> = {
+  'zh-CN': {
+    'shadow-strategist': '影面策士',
+    'oathbound-captain': '誓约队长',
+    'moonlit-guardian': '月下守护者',
+    'chaos-spark': '混沌火花',
+  },
+  'zh-TW': {
+    'shadow-strategist': '影面策士',
+    'oathbound-captain': '誓約隊長',
+    'moonlit-guardian': '月下守護者',
+    'chaos-spark': '混沌火花',
+  },
+  'en': {
+    'shadow-strategist': 'Shadow Strategist',
+    'oathbound-captain': 'Oathbound Captain',
+    'moonlit-guardian': 'Moonlit Guardian',
+    'chaos-spark': 'Chaos Spark',
+  },
+  'ja': {
+    'shadow-strategist': '影の策士',
+    'oathbound-captain': '誓約の隊長',
+    'moonlit-guardian': '月夜の守護者',
+    'chaos-spark': '混沌の火花',
+  },
+}
+
+// 视觉字段（配色/头像渐变）保持原有卡片风格，仅替换署名与角色标签
+const testimonialBase: Array<{
+  archetypeId: TestimonialArchetypeId
+  type: string
+  color: string
+  avatar: string
+}> = [
   {
-    name: "Benny",
-    role: "ARCHITECT",
-    type: "INTJ",
-    color: "#8a609d",
-    avatar: "linear-gradient(135deg, #f7b2b2 0%, #f3d3d3 100%)",
+    archetypeId: 'shadow-strategist',
+    type: 'INTJ',
+    color: '#8a609d',
+    avatar: 'linear-gradient(135deg, #f7b2b2 0%, #f3d3d3 100%)',
   },
   {
-    name: "Nicole",
-    role: "ADVOCATE",
-    type: "INFJ",
-    color: "#3ba17c",
-    avatar: "linear-gradient(135deg, #b8d7ff 0%, #d6e6ff 100%)",
+    archetypeId: 'oathbound-captain',
+    type: 'ENTJ',
+    color: '#3ba17c',
+    avatar: 'linear-gradient(135deg, #b8d7ff 0%, #d6e6ff 100%)',
   },
   {
-    name: "Caroline",
-    role: "DEFENDER",
-    type: "ISFJ",
-    color: "#4298b4",
-    avatar: "linear-gradient(135deg, #bdebc9 0%, #dff5e6 100%)",
+    archetypeId: 'moonlit-guardian',
+    type: 'INFJ',
+    color: '#4298b4',
+    avatar: 'linear-gradient(135deg, #bdebc9 0%, #dff5e6 100%)',
   },
   {
-    name: "Marta",
-    role: "COMMANDER",
-    type: "ENTJ",
-    color: "#8a609d",
-    avatar: "linear-gradient(135deg, #ffe6a8 0%, #fff1cb 100%)",
+    archetypeId: 'chaos-spark',
+    type: 'ENTP',
+    color: '#8a609d',
+    avatar: 'linear-gradient(135deg, #ffe6a8 0%, #fff1cb 100%)',
   },
 ]
 
 const testimonials = computed(() =>
   testimonialBase.map((item, index) => ({
     ...item,
+    name: NICKNAMES[locale.value][index] ?? '',
+    role: ARCHETYPE_LABELS[locale.value][item.archetypeId],
     quote: tm<string[]>('home.testimonials')[index] ?? '',
   })),
 )
@@ -52,7 +95,7 @@ const testimonials = computed(() =>
       <h2 class="testimonial-title">{{ t('home.testimonialsTitle') }}</h2>
 
       <div class="testimonial-track">
-        <article v-for="item in testimonials" :key="item.name" class="testimonial-card">
+        <article v-for="item in testimonials" :key="item.archetypeId" class="testimonial-card">
           <div class="card-top" :style="{ backgroundColor: item.color }"></div>
           <div class="card-body">
             <div class="profile-row">

@@ -10,10 +10,6 @@ export interface QuizProgress {
 }
 
 export function loadLastRecord(): QuizRecord | null {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
   const raw = window.localStorage.getItem(STORAGE_KEY)
 
   if (!raw) {
@@ -29,34 +25,18 @@ export function loadLastRecord(): QuizRecord | null {
 }
 
 export function saveLastRecord(record: QuizRecord) {
-  if (typeof window === 'undefined') {
-    return
-  }
-
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(record))
 }
 
 export function clearLastRecord() {
-  if (typeof window === 'undefined') {
-    return
-  }
-
   window.localStorage.removeItem(STORAGE_KEY)
 }
 
 export function saveQuizProgress(progress: QuizProgress) {
-  if (typeof window === 'undefined') {
-    return
-  }
-
   window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress))
 }
 
 export function loadQuizProgress(): QuizProgress | null {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
   const raw = window.localStorage.getItem(PROGRESS_KEY)
   if (!raw) {
     return null
@@ -78,10 +58,6 @@ export function loadQuizProgress(): QuizProgress | null {
 }
 
 export function clearQuizProgress() {
-  if (typeof window === 'undefined') {
-    return
-  }
-
   window.localStorage.removeItem(PROGRESS_KEY)
 }
 

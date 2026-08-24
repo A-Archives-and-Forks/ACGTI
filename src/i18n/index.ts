@@ -45,7 +45,8 @@ function detectSystemLocale(): AppLocale {
 }
 
 export function initI18n() {
-  currentLocale.value = readStoredLocale() ?? detectSystemLocale() ?? DEFAULT_LOCALE
+  // detectSystemLocale 返回值恒非空（内部已兜底 DEFAULT_LOCALE），这里无需再叠加一层
+  currentLocale.value = readStoredLocale() ?? detectSystemLocale()
   applyDocumentLanguage(currentLocale.value)
 }
 
@@ -82,7 +83,9 @@ export function t(key: string, params?: Record<string, string | number>, default
 }
 
 export function tm<T>(key: string): T {
-  return (deepGet(messages[currentLocale.value], key) ?? deepGet(messages[DEFAULT_LOCALE], key)) as T
+  // 兜底：当前语言与回退语言都取不到时返回空数组，
+  // 避免调用方直接对 undefined 做 length / map 之类的操作而崩溃
+  return (deepGet(messages[currentLocale.value], key) ?? deepGet(messages[DEFAULT_LOCALE], key) ?? []) as T
 }
 
 export function useI18n() {

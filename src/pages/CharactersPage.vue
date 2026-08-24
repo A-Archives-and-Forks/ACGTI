@@ -5,8 +5,8 @@ import { useQuiz } from '../composables/useQuiz'
 import { ensureCharacterMessages, useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
 import {
+  getHiddenCharacterLabel,
   getHiddenCharacterOrder,
-  getHiddenCharacterTitle,
   getLocalizedCharacterName,
   getLocalizedCharacterSeries,
   isHiddenCharacter,
@@ -296,7 +296,7 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
           <h2 class="card-name">{{ getLocalizedCharacterName(character, locale) }}</h2>
           <p class="card-source">{{ getLocalizedCharacterSeries(character, locale) }}</p>
           <p class="card-title">
-            {{ isHiddenCharacter(character) ? getHiddenCharacterTitle(locale, character) : t('characters.' + character.id + '.title', undefined, character.title) }}
+            {{ isHiddenCharacter(character) ? getHiddenCharacterLabel(character, locale) : t('characters.' + character.id + '.title', undefined, character.title) }}
           </p>
         </div>
       </component>

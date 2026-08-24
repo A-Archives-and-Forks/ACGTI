@@ -33,6 +33,8 @@ out/
 
 # Wrangler local state
 .wrangler/
+# 脚本生成的临时产物统一放 .wrangler/tmp/（如 prewarm SQL 中转文件），显式忽略防回归
+.wrangler/tmp/
 .wrangler-pages-func-build/
 
 # Environment files

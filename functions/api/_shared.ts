@@ -1,4 +1,4 @@
-// _shared.ts — API 层共享的安全校验工具
+// _shared.ts — API 层共享的安全校验与响应工具
 
 /**
  * 从原始 payload 中安全提取字符串字段，防止多余字段注入
@@ -101,16 +101,21 @@ export async function verifyTurnstile(
  * 使用 D1 做轻量计数（每分钟归零，由 cron-worker 定期清理过期行）
  * 适用于低流量场景；高流量应改用 Cloudflare Rate Limiting API
  *
+ * scope 为端点命名空间（submit / feedback / insight 等）：各端点独立计数，
+ * 避免同一用户一次完整流程（1 submit + 数次 insight + 1 feedback）在同分钟
+ * 互相挤占额度被误伤 429
+ *
  * strict 模式供付费生成路径使用：D1 不可用时拒绝请求而非放行，
  * 防止攻击者刻意打满 D1 写入配额让限流失效后刷穿上游额度
  */
 export async function checkRateLimit(
   DB: D1Database,
+  scope: string,
   ip: string,
   limit = 10,
   strict = false,
 ): Promise<boolean> {
-  const windowKey = `rl:${ip}:${Math.floor(Date.now() / 60000)}`
+  const windowKey = `rl:${scope}:${ip}:${Math.floor(Date.now() / 60000)}`
   try {
     // 单条原子 UPSERT + RETURNING：并发请求各自拿到自增后的计数，避免"先读后写"竞态超限
     const row = await DB.prepare(
@@ -175,4 +180,45 @@ export async function tokenEquals(a: string, b: string): Promise<boolean> {
     // 比较异常时回退普通比较
   }
   return a === b
+}
+
+/**
+ * 统一 JSON 响应 helper：Content-Type 统一带 charset，
+ * 避免各 handler 手写响应头时中文内容缺少编码声明
+ */
+export function json(data: unknown, status = 200, cacheControl?: string): Response {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json; charset=utf-8' }
+  if (cacheControl) headers['Cache-Control'] = cacheControl
+  return new Response(JSON.stringify(data), { status, headers })
+}
+
+/** 判断 D1 错误是否为"表不存在"（迁移未执行的新环境） */
+function isTableMissing(err: unknown, table: string): boolean {
+  const msg = err instanceof Error ? err.message : String(err)
+  return new RegExp(`no such table:\\s*${table}`, 'i').test(msg)
+}
+
+/**
+ * 读取 stats_snapshot 快照表（cron-worker 每 15 分钟更新）：
+ * - 有快照 → 返回解析后的 JSON 与 updated_at
+ * - 无该行或表缺失（迁移未执行的新环境）→ 返回 fallbackData 与 null，
+ *   由调用方决定空数据的形状
+ * - 其他错误（D1 故障等）→ 原样抛出，由调用方统一返回 500
+ */
+export async function readSnapshot<T>(
+  DB: D1Database,
+  key: string,
+  fallbackData: T,
+): Promise<{ data: T; updatedAt: string | null }> {
+  let snapshot: { value_json: string; updated_at: string } | null
+  try {
+    snapshot = await DB.prepare(
+      'SELECT value_json, updated_at FROM stats_snapshot WHERE key = ?'
+    ).bind(key).first<{ value_json: string; updated_at: string }>()
+  } catch (err) {
+    if (isTableMissing(err, 'stats_snapshot')) return { data: fallbackData, updatedAt: null }
+    throw err
+  }
+  if (!snapshot) return { data: fallbackData, updatedAt: null }
+  return { data: JSON.parse(snapshot.value_json) as T, updatedAt: snapshot.updated_at ?? null }
 }

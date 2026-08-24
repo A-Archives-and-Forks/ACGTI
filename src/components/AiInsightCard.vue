@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // AI 结果解读卡片：进入结果页自动请求 /api/insight，
-// 后端未绑定 Workers AI 或生成失败时整卡隐藏（渐进增强，不占版面）。
+// 首次加载失败（后端未绑定 Workers AI / 额度耗尽等）时整卡隐藏（渐进增强，不占版面）；
+// 重生成失败则保留旧文案，仅在按钮旁给出轻提示。
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 import { useI18n } from '../i18n'
 import { fetchAiInsight } from '../utils/insight'
+import { DEFAULT_AI_ACCENT } from '../utils/themeDefaults'
 
 const props = defineProps<{
   characterCode: string
@@ -35,6 +37,31 @@ const prefersReducedMotion =
 
 let streamTimer: ReturnType<typeof setInterval> | null = null
 
+// 请求序号守卫：语言/角色快速切换会并发发起请求，
+// await 返回后序号不匹配说明已被更新的请求取代，本次结果直接丢弃
+let loadSeq = 0
+
+// 重生成失败的提示文案与自动清除计时器（几秒后消失，或随下次请求清除）
+const regenError = ref('')
+let regenErrorTimer: ReturnType<typeof setTimeout> | null = null
+
+function showRegenError() {
+  regenError.value = t('ai.regenerateFailed')
+  if (regenErrorTimer) clearTimeout(regenErrorTimer)
+  regenErrorTimer = setTimeout(() => {
+    regenError.value = ''
+    regenErrorTimer = null
+  }, 4000)
+}
+
+function clearRegenError() {
+  if (regenErrorTimer) {
+    clearTimeout(regenErrorTimer)
+    regenErrorTimer = null
+  }
+  regenError.value = ''
+}
+
 function stopStream() {
   if (streamTimer) {
     clearInterval(streamTimer)
@@ -61,18 +88,37 @@ function playStream() {
   }, 32)
 }
 
-onBeforeUnmount(stopStream)
+onBeforeUnmount(() => {
+  stopStream()
+  clearRegenError()
+})
 
 async function load(fresh = false) {
   if (!props.characterCode) {
     phase.value = 'hidden'
     return
   }
+  // 是否从未成功展示过文案，用于区分两种失败路径（见下方失败分支）
+  const isFirstLoad = fullText.value === ''
+  clearRegenError()
+  stopStream()
   phase.value = 'loading'
+  const seq = ++loadSeq
   const data = await fetchAiInsight(props.characterCode, props.scores, locale.value, fresh)
+  // 旧请求已过期：丢弃结果，避免覆盖新角色/新语言请求回来的文案
+  if (seq !== loadSeq) return
   if (!data?.available || !data.text) {
-    // 后端未绑定 AI / 额度耗尽 / 请求失败：隐藏整卡，页面其他内容不受影响
-    phase.value = 'hidden'
+    // 两种失败路径的区别：
+    // 1) 首次加载失败（从未展示过文案）：后端未绑定 AI / 额度耗尽 / 请求失败，
+    //    整卡隐藏（渐进增强，不占版面）；
+    // 2) 重生成失败（已有展示中的文案）：保留旧解读不清空，仅提示本次换一种说法失败。
+    if (isFirstLoad) {
+      phase.value = 'hidden'
+      return
+    }
+    displayCount.value = fullText.value.length
+    phase.value = 'done'
+    showRegenError()
     return
   }
   fullText.value = data.text
@@ -104,7 +150,7 @@ watch(
 load()
 
 const displayText = computed(() => fullText.value.slice(0, displayCount.value))
-const accentColor = computed(() => props.accent || '#33a474')
+const accentColor = computed(() => props.accent || DEFAULT_AI_ACCENT)
 </script>
 
 <template>
@@ -138,6 +184,8 @@ const accentColor = computed(() => props.accent || '#33a474')
             >
               {{ isRegenerating ? t('result.aiInsight.regenerating') : t('result.aiInsight.regenerate') }}
             </button>
+            <!-- 重生成失败提示：保留旧解读，仅在此处提示，几秒后自动消失 -->
+            <span v-if="regenError" class="ai-insight-regen-error" role="alert">{{ regenError }}</span>
           </div>
         </div>
       </template>
@@ -268,6 +316,13 @@ const accentColor = computed(() => props.accent || '#33a474')
 .ai-insight-regen-btn:disabled {
   opacity: 0.55;
   cursor: default;
+}
+
+/* 重生成失败提示：与缓存徽标同规格的小字提示，融入 footer 操作区 */
+.ai-insight-regen-error {
+  font-size: 12px;
+  color: #e26666;
+  font-weight: 600;
 }
 
 @media (prefers-reduced-motion: reduce) {

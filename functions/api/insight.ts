@@ -17,14 +17,16 @@ import briefs from './_data/characterBrief.json'
 import { bumpDailyCounter, checkRateLimit, isValidCode, num, str, tokenEquals } from './_shared'
 
 const MODEL_ID = '@cf/meta/llama-3.2-3b-instruct'
-// OpenAI 兼容网关（如 saurlax AI 网关）：配置 AIGW_API_KEY 即启用，
-// 模型与端点可覆盖。网关上的推理模型（如 step-3.7-flash）会先输出
-// 思考过程再出正文，max_tokens 需给足推理余量。
-const AIGW_DEFAULT_BASE = 'https://aigw.saurlax.com/v1'
-const AIGW_DEFAULT_MODEL = 'step-3.7-flash'
-// 第二网关通道：与 AIGW_* 独立的并发额度，专供预热脚本分流提速
-// （两通道模型同名时缓存键一致，可混跑互通）。线上默认仍走主通道。
-const AIGW2_DEFAULT_BASE = 'https://api.stepfun.com/step_plan/v1'
+// OpenAI 兼容网关（自建或第三方）：key、base、model 三项全部显式配置才启用，
+// 不设任何默认端点/模型——避免他人部署时请求打到作者私人网关。
+// 网关上的推理模型（如 step-3.7-flash）会先输出思考过程再出正文，
+// max_tokens 需给足推理余量。
+// 第二网关通道（AIGW2_*）：与主通道独立的并发额度，专供预热脚本分流提速
+// （两通道模型同名时缓存键一致，可混跑互通）。
+// 角色档案内容版本：characterBrief.json 的档案文案/标签有实质更新，或调整
+// 生成提示词/清洗规则后，应 bump 此值——缓存键随之变化，旧缓存自然失效，
+// 否则老解读会永久命中。当前缓存里的存量键视为 v1，故初始值为 2。
+const BRIEF_VERSION = 2
 // 单 IP 每分钟最多解读次数（生成路径比查询路径重，收紧到 10）
 const INSIGHT_RATE_LIMIT = 10
 // 未鉴权请求每分钟最多强制新生成（fresh）次数：前端"换一个"单结果页
@@ -43,11 +45,11 @@ const LANGUAGES: Record<string, string> = {
 type Env = {
   DB: D1Database
   AI?: Ai
-  // OpenAI 兼容网关（优先级最高；配置后 AIGW_MODEL/AIGW_BASE_URL 可选覆盖）
+  // OpenAI 兼容网关（优先级最高；启用需 KEY + BASE_URL + MODEL 三项齐备）
   AIGW_API_KEY?: string
   AIGW_BASE_URL?: string
   AIGW_MODEL?: string
-  // 第二网关通道（预热双通道分流用，见 runModel）
+  // 第二网关通道（预热双通道分流用，见 runModel；同样三项齐备才启用）
   AIGW2_API_KEY?: string
   AIGW2_BASE_URL?: string
   AIGW2_MODEL?: string
@@ -70,23 +72,25 @@ class RateLimitError extends Error {}
 
 type GatewayChannel = { name: 'aigw' | 'aigw2'; key: string; base: string; model: string }
 
-// 收集已配置的网关通道（顺序即优先级，主通道在前）
+// 收集已配置的网关通道（顺序即优先级，主通道在前）。
+// key / base / model 缺一即视为未配置该通道，走后续降级链
+// （AI binding → REST），不回落到任何硬编码端点
 function gatewayChannels(env: Env): GatewayChannel[] {
   const channels: GatewayChannel[] = []
-  if (env.AIGW_API_KEY) {
+  if (env.AIGW_API_KEY && env.AIGW_BASE_URL && env.AIGW_MODEL) {
     channels.push({
       name: 'aigw',
       key: env.AIGW_API_KEY,
-      base: (env.AIGW_BASE_URL || AIGW_DEFAULT_BASE).replace(/\/+$/, ''),
-      model: env.AIGW_MODEL || AIGW_DEFAULT_MODEL,
+      base: env.AIGW_BASE_URL.replace(/\/+$/, ''),
+      model: env.AIGW_MODEL,
     })
   }
-  if (env.AIGW2_API_KEY) {
+  if (env.AIGW2_API_KEY && env.AIGW2_BASE_URL && env.AIGW2_MODEL) {
     channels.push({
       name: 'aigw2',
       key: env.AIGW2_API_KEY,
-      base: (env.AIGW2_BASE_URL || AIGW2_DEFAULT_BASE).replace(/\/+$/, ''),
-      model: env.AIGW2_MODEL || AIGW_DEFAULT_MODEL,
+      base: env.AIGW2_BASE_URL.replace(/\/+$/, ''),
+      model: env.AIGW2_MODEL,
     })
   }
   return channels
@@ -237,7 +241,7 @@ function json(data: unknown, status = 200) {
   })
 }
 
-export async function onRequestPost(context: { env: Env; request: Request }) {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { DB, AI, ACGTI_AI_TOKEN, ACGTI_AI_ACCOUNT_ID } = context.env
   const channels = gatewayChannels(context.env)
 
@@ -254,7 +258,7 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     ? Number(context.env.ACGTI_INSIGHT_RATE_LIMIT)
     : INSIGHT_RATE_LIMIT
   // strict：本端点触发付费生成，D1 不可用时拒绝而非放行
-  const allowed = await checkRateLimit(DB, ip, rateLimit, true)
+  const allowed = await checkRateLimit(DB, 'insight', ip, rateLimit, true)
   if (!allowed) {
     return json({ text: null, available: false, reason: 'rate-limited' }, 429)
   }
@@ -269,7 +273,7 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   const characterId = str(raw.characterCode, 32)
   const lang = str(raw.lang, 8)
   // Object.hasOwn 防原型链键（toString 等）绕过白名单混入缓存键与提示词
-  const langName = Object.hasOwn(LANGUAGES, lang) ? lang : 'zh-CN'
+  const langCode = Object.hasOwn(LANGUAGES, lang) ? lang : 'zh-CN'
 
   const ds = raw.dimensionScores
   const ei = num(ds?.ei, -1, 1)
@@ -297,16 +301,17 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
   const channel = channels.find((c) => c.name === providerRaw) ?? channels[0]
 
   const scores = { ei, sn, tf, jp }
-  // 缓存键含模型标签：切换 provider/模型后旧缓存自然失效，不互相污染。
-  // 指定通道时用该通道的模型；两通道模型同名则缓存互通（预热混跑的前提）
+  // 缓存键含内容版本与模型标签：档案/提示词更新（BRIEF_VERSION bump）或切换
+  // provider/模型后旧缓存自然失效，不互相污染。指定通道时用该通道的模型；
+  // 两通道模型同名则缓存互通（预热混跑的前提）
   const providerTag = channel ? channel.model : 'llama-3.2-3b'
-  const cacheKey = `${characterId}:${langName}:${bucketOf(ei)}${bucketOf(sn)}${bucketOf(tf)}${bucketOf(jp)}:${providerTag}`
+  const cacheKey = `v${BRIEF_VERSION}:${characterId}:${langCode}:${bucketOf(ei)}${bucketOf(sn)}${bucketOf(tf)}${bucketOf(jp)}:${providerTag}`
 
   // 未鉴权请求的 fresh 受独立子限流约束（正常用户"换一个"无感）；
   // 超限时降级为读缓存而非报错，攻击者也拿不到额外生成
   let wantFresh = raw.fresh === true
   if (wantFresh && !isPrewarm) {
-    const freshAllowed = await checkRateLimit(DB, `fresh:${ip}`, INSIGHT_FRESH_RATE_LIMIT, true)
+    const freshAllowed = await checkRateLimit(DB, 'insight-fresh', `fresh:${ip}`, INSIGHT_FRESH_RATE_LIMIT, true)
     if (!freshAllowed) wantFresh = false
   }
 
@@ -318,9 +323,13 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
       ).bind(cacheKey).first<{ text: string }>()
 
       if (cached?.text) {
-        DB.prepare(
-          'UPDATE ai_insight_cache SET hits = hits + 1, updated_at = ? WHERE cache_key = ?'
-        ).bind(new Date().toISOString(), cacheKey).run()
+        // hits 只是统计性写入，不应阻塞本次响应；但 Workers 对响应后遗留的
+        // 未 await Promise 不保证执行，必须用 waitUntil 托管，否则计数大量丢失
+        context.waitUntil(
+          DB.prepare(
+            'UPDATE ai_insight_cache SET hits = hits + 1, updated_at = ? WHERE cache_key = ?'
+          ).bind(new Date().toISOString(), cacheKey).run()
+        )
         return json({ text: cached.text, cached: true, available: true })
       }
     } catch {
@@ -335,6 +344,9 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     const dailyLimit = Number(context.env.ACGTI_INSIGHT_DAILY_LIMIT) > 0
       ? Number(context.env.ACGTI_INSIGHT_DAILY_LIMIT)
       : INSIGHT_DAILY_LIMIT
+    // 计数在生成前递增、且不因后续网关失败回滚：即使网关故障，被"烧掉"的
+    // 当日额度也只影响可用性（降级隐藏卡片），不会造成额度被刷穿。这是
+    // "偏向绝对安全"的有意取舍——先扣额后生成，宁可少生成不可被刷量
     const withinDaily = await bumpDailyCounter(DB, 'insight-gen', dailyLimit, true)
     if (!withinDaily) {
       console.warn(`[insight] daily generation limit reached (${dailyLimit}), serving cache-only`)
@@ -342,7 +354,7 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
     }
   }
 
-  const { system, user } = buildPrompt(brief, scores, LANGUAGES[langName])
+  const { system, user } = buildPrompt(brief, scores, LANGUAGES[langCode])
 
   let generated: string
   let usedModel: string
@@ -381,7 +393,7 @@ export async function onRequestPost(context: { env: Env; request: Request }) {
        ON CONFLICT(cache_key) DO UPDATE SET
          text = excluded.text, model = excluded.model,
          hits = 0, updated_at = excluded.updated_at`
-    ).bind(cacheKey, text, usedModel, langName, new Date().toISOString(), new Date().toISOString()).run()
+    ).bind(cacheKey, text, usedModel, langCode, new Date().toISOString(), new Date().toISOString()).run()
   } catch {
     // 缓存写入失败不影响本次返回
   }

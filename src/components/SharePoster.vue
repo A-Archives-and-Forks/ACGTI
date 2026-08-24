@@ -3,10 +3,11 @@ import { computed, ref, watch } from 'vue'
 
 import { useCharacterRarity } from '../composables/useCharacterRarity'
 import { useI18n } from '../i18n'
-import { getHiddenCharacterTags, getHiddenCharacterTitle, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
+import { getHiddenCharacterLabel, getHiddenCharacterTags, getLocalizedCharacterName, getLocalizedCharacterSeries, isHiddenCharacter } from '../i18n/characters'
 import type { QuizResult } from '../types/quiz'
 import { ensureReadableOnLight } from '../utils/color'
 import { normalizeCharacterImagePath } from '../utils/characterVisuals'
+import { DEFAULT_ACCENT } from '../utils/themeDefaults'
 import AppIcon from './AppIcon.vue'
 
 const props = defineProps<{
@@ -41,13 +42,13 @@ defineExpose({
 })
 
 const primaryCharacter = computed(() => props.result.characterMatches[0] ?? null)
-const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? props.result.archetype.accent ?? '#e2ad3b')
+const resultThemeColor = computed(() => primaryCharacter.value?.accent ?? props.result.archetype.accent ?? DEFAULT_ACCENT)
 // 浅色 accent 在海报浅底上不可读，混合加深以保住对比度
 const posterTitleColor = computed(() => ensureReadableOnLight(resultThemeColor.value))
 const posterSubtitle = computed(() => {
   if (primaryCharacter.value) {
     if (isHiddenCharacter(primaryCharacter.value)) {
-      return getHiddenCharacterTitle(locale.value, primaryCharacter.value)
+      return getHiddenCharacterLabel(primaryCharacter.value, locale.value)
     }
 
     return t(`characters.${primaryCharacter.value.id}.title`, undefined, primaryCharacter.value.title)

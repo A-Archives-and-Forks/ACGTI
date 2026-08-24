@@ -1,10 +1,7 @@
 // /api/stats/result — 结果页专用统计接口
 // 直接从聚合表和快照表读取，返回当前角色/原型的站内统计数据
 
-function isStatsSnapshotTableMissing(err: unknown): boolean {
-  const msg = err instanceof Error ? err.message : String(err)
-  return /no such table:\s*stats_snapshot/i.test(msg)
-}
+import { json, readSnapshot } from '../_shared'
 
 export async function onRequestGet(context: any) {
   const { DB } = context.env as { DB: D1Database }
@@ -14,160 +11,88 @@ export async function onRequestGet(context: any) {
   const archetypeCode = (url.searchParams.get('archetype') ?? '').trim()
 
   if (!characterCode && !archetypeCode) {
-    return new Response(JSON.stringify({ error: 'missing character or archetype param' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return json({ error: 'missing character or archetype param' }, 400)
   }
 
   try {
     // 1. 从 overview 快照拿 totalSubmissions 与快照更新时间
-    const overviewSnapshot = await DB.prepare(
-      'SELECT value_json, updated_at FROM stats_snapshot WHERE key = ?'
-    ).bind('overview').first<{ value_json: string; updated_at: string }>()
+    const overview = await readSnapshot<{ totalSubmissions?: number }>(
+      DB,
+      'overview',
+      { totalSubmissions: 0 },
+    )
+    const totalSubmissions = overview.data.totalSubmissions ?? 0
+    const snapshotUpdatedAt = overview.updatedAt
 
-    let totalSubmissions = 0
-    let snapshotUpdatedAt: string | null = null
-    if (overviewSnapshot) {
-      const overviewData = JSON.parse(overviewSnapshot.value_json)
-      totalSubmissions = overviewData.totalSubmissions ?? 0
-      snapshotUpdatedAt = overviewSnapshot.updated_at ?? null
-    }
-
-    // 如果快照没有数据，尝试从聚合表直接计算
-    if (totalSubmissions === 0) {
+    // 角色与原型两段统计逻辑完全对称（仅表名/列名/快照键不同），
+    // 提取局部函数去重：聚合计数 → 百分比 → 快照排行算排名。
+    // 表名/列名是字面量联合类型而非用户输入，拼 SQL 无注入风险
+    async function queryEntityStats(
+      countsTable: 'character_counts' | 'archetype_counts',
+      codeColumn: 'character_code' | 'archetype_code',
+      snapshotKey: 'characters' | 'archetypes',
+      code: string,
+    ): Promise<{ count: number; percent: number; rank: number | null }> {
+      // 直接从聚合表读 count（表不存在时保持 0）
+      let count = 0
       try {
-        const totalResult = await DB.prepare(
-          'SELECT COALESCE(SUM(cnt), 0) AS cnt FROM archetype_counts'
-        ).first<{ cnt: number }>()
-        totalSubmissions = totalResult?.cnt ?? 0
-      } catch {
-        // 聚合表不存在，保持 0
-      }
-    }
-
-    // 2. 查角色数据：从 character_counts 聚合表 + 快照排行算排名
-    let sameCharacterCount = 0
-    let sameCharacterPercent = 0
-    let characterRank: number | null = null
-
-    if (characterCode) {
-      // 直接从聚合表读 count
-      try {
-        const charRow = await DB.prepare(
-          'SELECT cnt FROM character_counts WHERE character_code = ?'
-        ).bind(characterCode).first<{ cnt: number }>()
-        sameCharacterCount = charRow?.cnt ?? 0
+        const row = await DB.prepare(
+          `SELECT cnt FROM ${countsTable} WHERE ${codeColumn} = ?`
+        ).bind(code).first<{ cnt: number }>()
+        count = row?.cnt ?? 0
       } catch {
         // 表不存在
       }
 
-      if (totalSubmissions > 0 && sameCharacterCount > 0) {
-        sameCharacterPercent = Math.round((sameCharacterCount / totalSubmissions) * 10000) / 100
-      }
+      const percent = totalSubmissions > 0 && count > 0
+        ? Math.round((count / totalSubmissions) * 10000) / 100
+        : 0
 
       // 从快照排行算 rank（快照只存 top 200，超出则为 null）
-      if (sameCharacterCount > 0) {
+      let rank: number | null = null
+      if (count > 0) {
         try {
-          const charSnapshot = await DB.prepare(
+          const snapshot = await DB.prepare(
             'SELECT value_json FROM stats_snapshot WHERE key = ?'
-          ).bind('characters').first<{ value_json: string }>()
+          ).bind(snapshotKey).first<{ value_json: string }>()
 
-          if (charSnapshot) {
-            const charData = JSON.parse(charSnapshot.value_json)
-            const items: Array<{ code: string }> = charData.items ?? []
-            const idx = items.findIndex((item) => item.code === characterCode)
-            characterRank = idx >= 0 ? idx + 1 : null
+          if (snapshot) {
+            const items: Array<{ code: string }> = JSON.parse(snapshot.value_json).items ?? []
+            const idx = items.findIndex((item) => item.code === code)
+            rank = idx >= 0 ? idx + 1 : null
           }
         } catch {
           // 快照不存在
         }
       }
+
+      return { count, percent, rank }
     }
 
-    // 3. 查原型数据：从 archetype_counts 聚合表 + 快照排行算排名
-    let sameArchetypeCount = 0
-    let sameArchetypePercent = 0
-    let archetypeRank: number | null = null
-
-    if (archetypeCode) {
-      try {
-        const archRow = await DB.prepare(
-          'SELECT cnt FROM archetype_counts WHERE archetype_code = ?'
-        ).bind(archetypeCode).first<{ cnt: number }>()
-        sameArchetypeCount = archRow?.cnt ?? 0
-      } catch {
-        // 表不存在
-      }
-
-      if (totalSubmissions > 0 && sameArchetypeCount > 0) {
-        sameArchetypePercent = Math.round((sameArchetypeCount / totalSubmissions) * 10000) / 100
-      }
-
-      // 从快照排行算 rank
-      if (sameArchetypeCount > 0) {
-        try {
-          const archSnapshot = await DB.prepare(
-            'SELECT value_json FROM stats_snapshot WHERE key = ?'
-          ).bind('archetypes').first<{ value_json: string }>()
-
-          if (archSnapshot) {
-            const archData = JSON.parse(archSnapshot.value_json)
-            const items: Array<{ code: string }> = archData.items ?? []
-            const idx = items.findIndex((item) => item.code === archetypeCode)
-            archetypeRank = idx >= 0 ? idx + 1 : null
-          }
-        } catch {
-          // 快照不存在
-        }
-      }
-    }
+    // 2/3. 查角色与原型数据（两维度独立，未指定的维度返回零值）
+    const EMPTY_STATS = { count: 0, percent: 0, rank: null as number | null }
+    const charStats = characterCode
+      ? await queryEntityStats('character_counts', 'character_code', 'characters', characterCode)
+      : EMPTY_STATS
+    const archStats = archetypeCode
+      ? await queryEntityStats('archetype_counts', 'archetype_code', 'archetypes', archetypeCode)
+      : EMPTY_STATS
 
     // updatedAt 返回快照的真实更新时间（无快照时为 null），不再用响应生成时间冒充
-    const updatedAt = snapshotUpdatedAt
-
-    return new Response(JSON.stringify({
+    return json({
       data: {
         totalSubmissions,
-        sameCharacterCount,
-        sameCharacterPercent,
-        sameArchetypeCount,
-        sameArchetypePercent,
-        characterRank,
-        archetypeRank,
+        sameCharacterCount: charStats.count,
+        sameCharacterPercent: charStats.percent,
+        sameArchetypeCount: archStats.count,
+        sameArchetypePercent: archStats.percent,
+        characterRank: charStats.rank,
+        archetypeRank: archStats.rank,
       },
-      updatedAt,
-    }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300',
-      },
-    })
+      updatedAt: snapshotUpdatedAt,
+    }, 200, 'public, max-age=300')
   } catch (err) {
-    if (isStatsSnapshotTableMissing(err)) {
-      return new Response(JSON.stringify({
-        data: {
-          totalSubmissions: 0,
-          sameCharacterCount: 0,
-          sameCharacterPercent: 0,
-          sameArchetypeCount: 0,
-          sameArchetypePercent: 0,
-          characterRank: null,
-          archetypeRank: null,
-        },
-        updatedAt: null,
-      }), {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300',
-        },
-      })
-    }
-
     console.error('Stats result error:', err)
-    return new Response(JSON.stringify({ error: 'internal' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return json({ error: 'internal' }, 500)
   }
 }

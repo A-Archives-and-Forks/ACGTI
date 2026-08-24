@@ -1,8 +1,40 @@
+<script lang="ts">
+import archetypesData from '../data/archetypes.json'
+import charactersData from '../data/characters.json'
+
+// --- 静态查找表 ---
+// 两份 JSON 是纯静态数据，与响应式无关，直接建模块级 Map，
+// 避免每个组件实例化时重复构建。
+
+interface ArchetypeDef {
+  id: string
+  name: string
+  subtitle: string
+  accent: string
+}
+
+const archetypeMap = new Map<string, ArchetypeDef>()
+for (const a of archetypesData as ArchetypeDef[]) {
+  archetypeMap.set(a.id, a)
+}
+
+interface CharacterDef {
+  id: string
+  code: string
+  name: string
+  series: string
+  hidden?: boolean
+}
+
+const characterCodeMap = new Map<string, CharacterDef>()
+for (const item of charactersData as CharacterDef[]) {
+  characterCodeMap.set(item.code.toUpperCase(), item)
+}
+</script>
+
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import archetypesData from '../data/archetypes.json'
-import charactersData from '../data/characters.json'
 import characterVisualsData from '../data/characterVisuals.json'
 import { useI18n } from '../i18n'
 import { getLocalizedCharacterName, getLocalizedCharacterSeries } from '../i18n/characters'
@@ -18,40 +50,9 @@ useSeo({
 
 const { t, locale } = useI18n()
 
-// --- Archetype lookup ---
-interface ArchetypeDef {
-  id: string
-  name: string
-  subtitle: string
-  accent: string
-}
-const archetypeMap = computed(() => {
-  const map = new Map<string, ArchetypeDef>()
-  for (const a of archetypesData as ArchetypeDef[]) {
-    map.set(a.id, a)
-  }
-  return map
-})
-
 // --- Character visual lookup ---
 type CharacterVisual = { thumb?: string; accent: string }
 const visualMap = characterVisualsData as Record<string, CharacterVisual>
-
-interface CharacterDef {
-  id: string
-  code: string
-  name: string
-  series: string
-  hidden?: boolean
-}
-
-const characterCodeMap = computed(() => {
-  const map = new Map<string, CharacterDef>()
-  for (const item of charactersData as CharacterDef[]) {
-    map.set(item.code.toUpperCase(), item)
-  }
-  return map
-})
 
 // --- Stats data ---
 interface OverviewData {
@@ -73,20 +74,11 @@ const updatedAt = ref<string | null>(null)
 const loadError = ref<string | null>(null)
 
 function getLocaleLoadErrorMessage(): string {
-  // 生产环境只给用户一句可理解的提示 + 重试；开发提示仅本地可见
+  // 主文案与通用提示走 i18n 键；开发环境再追加点对点的本地提示，仅本地可见
   const devHint = import.meta.env.DEV
     ? '（本地开发请使用 wrangler pages dev 启动，才能访问 /api/stats/*。）'
     : ''
-  if (locale.value === 'zh-TW') {
-    return `統計資料目前無法載入，請稍後重試。${devHint}`
-  }
-  if (locale.value === 'en') {
-    return `Stats are temporarily unavailable. Please try again later. ${devHint}`
-  }
-  if (locale.value === 'ja') {
-    return `統計データを読み込めません。しばらくしてからもう一度お試しください。${devHint}`
-  }
-  return `统计数据暂时无法加载，请稍后重试。${devHint}`
+  return `${t('stats.loadError')}${t('stats.loadErrorHint')}${devHint}`
 }
 
 async function retryLoad() {
@@ -129,7 +121,7 @@ async function fetchStatsJson(url: string) {
 }
 
 function getCharacterFromCode(code: string): CharacterDef | null {
-  return characterCodeMap.value.get(code.toUpperCase()) ?? null
+  return characterCodeMap.get(code.toUpperCase()) ?? null
 }
 
 function getCharacterName(code: string): string {
@@ -158,8 +150,8 @@ function getCharacterAccent(code: string): string {
 }
 
 function formatNumber(n: number): string {
-  if (n >= 10000) return (n / 10000).toFixed(1) + 'W'
-  return n.toLocaleString()
+  // 紧凑计数随语言本地化：zh/ja 系显示「1.2万」，en 显示「1.2K/M」
+  return new Intl.NumberFormat(locale.value, { notation: 'compact', maximumFractionDigits: 1 }).format(n)
 }
 
 function formatTime(iso: string | null): string {

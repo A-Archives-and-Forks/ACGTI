@@ -97,12 +97,3 @@ describe('quizProgress 持久化', () => {
     expect(store.has('acgti:quiz-progress')).toBe(false)
   })
 })
-
-describe('SSR 防御', () => {
-  it('无 window 环境静默降级', () => {
-    expect(loadLastRecord()).toBeNull()
-    expect(loadQuizProgress()).toBeNull()
-    expect(() => saveQuizProgress({ answers: [], startedAt: null })).not.toThrow()
-    expect(() => clearQuizProgress()).not.toThrow()
-  })
-})

@@ -41,6 +41,27 @@ const questions = ref<Question[]>([])
 const archetypes = ref<Archetype[]>([])
 const characters = ref<CharacterMatch[]>([])
 
+// 题库是否已完成首次注入：QuizPage 与 ResultPage 会各调一次 ensureData，
+// 用该标志做幂等保护，跳过重复赋值与重复的进度恢复
+let quizDataReady = false
+
+// crypto.randomUUID 在旧浏览器或非安全上下文（如非 HTTPS 环境）会抛 TypeError，
+// 这里做兜底：优先原生 randomUUID，异常时用 getRandomValues 手拼 v4 格式
+function createUuid(): string {
+  try {
+    return crypto.randomUUID()
+  } catch {
+    // 原生实现不可用，落到下方手拼逻辑
+  }
+
+  const bytes = crypto.getRandomValues(new Uint8Array(16))
+  // 按 RFC 4122 v4 设置 version 与 variant 位
+  bytes[6] = (bytes[6] & 0x0f) | 0x40
+  bytes[8] = (bytes[8] & 0x3f) | 0x80
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
+}
+
 const emptyAnswers = () => Array.from({ length: questions.value.length }, () => UNANSWERED)
 
 const state = reactive({
@@ -96,7 +117,7 @@ function finalizeQuiz(): QuizResult | null {
     answers: [...state.answers],
     createdAt: new Date().toISOString(),
     startedAt: state.startedAt || undefined,
-    submissionId: crypto.randomUUID(),
+    submissionId: createUuid(),
     result,
   }
 
@@ -121,7 +142,7 @@ function ensureSubmissionId(): string {
     return record.submissionId
   }
 
-  const newId = crypto.randomUUID()
+  const newId = createUuid()
   if (record) {
     const updated: QuizRecord = { ...record, submissionId: newId }
     state.latestRecord = hydrateQuizRecord(updated)
@@ -135,6 +156,12 @@ export function useQuiz() {
     // 异步初始化：调用方在需要数据时 await
     ensureData: async () => {
       const data = await loadQuizData()
+
+      // 幂等保护：数据已注入过则直接返回，避免重复赋值触发无谓的响应式更新，
+      // 进度恢复也只在首次真实加载时执行一次，行为与单次调用完全一致
+      if (quizDataReady) return
+      quizDataReady = true
+
       questions.value = data.questions
       archetypes.value = data.archetypes
       characters.value = data.characters

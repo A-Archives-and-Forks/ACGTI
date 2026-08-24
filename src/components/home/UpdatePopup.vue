@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import { useI18n } from '../../i18n'
 
 const { t } = useI18n()
-const isPopupReady = ref(false)
 const showUpdatePopup = ref(false)
-const closeBtnRef = ref<HTMLButtonElement | null>(null)
 
 const HOME_UPDATE_DISMISS_KEY = 'acgti:home-update-2026-04-18-popup-v4-dismissed'
 const UPDATE_POPUP_DELAY_MS = 3000
@@ -20,18 +18,15 @@ onMounted(() => {
     return
   }
 
-  isPopupReady.value = true
-
   if (window.localStorage.getItem(HOME_UPDATE_DISMISS_KEY) === '1') {
     return
   }
 
   popupShowTimer = window.setTimeout(() => {
     showUpdatePopup.value = true
-    // 弹出后把焦点移入弹窗，保证键盘与读屏用户能立即感知并 Escape 关闭
-    void nextTick(() => closeBtnRef.value?.focus())
+    // 非模态通知（role="status"）：不抢焦点，读屏用户通过区域播报感知
     popupHideTimer = window.setTimeout(() => {
-      dismissUpdatePopup(false)
+      dismissUpdatePopup()
     }, UPDATE_POPUP_AUTO_HIDE_MS)
   }, UPDATE_POPUP_DELAY_MS)
 
@@ -52,11 +47,12 @@ onBeforeUnmount(() => {
 
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && showUpdatePopup.value) {
-    dismissUpdatePopup(true)
+    dismissUpdatePopup()
   }
 }
 
-function dismissUpdatePopup(rememberDismissal = true) {
+// 关闭（手动或自动超时）一律视为「已看过」，下次访问不再弹出
+function dismissUpdatePopup() {
   showUpdatePopup.value = false
 
   if (popupShowTimer) {
@@ -69,7 +65,7 @@ function dismissUpdatePopup(rememberDismissal = true) {
     popupHideTimer = null
   }
 
-  if (rememberDismissal && typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') {
     window.localStorage.setItem(HOME_UPDATE_DISMISS_KEY, '1')
   }
 }
@@ -77,10 +73,10 @@ function dismissUpdatePopup(rememberDismissal = true) {
 
 <template>
   <Transition name="update-popup">
-    <div v-if="isPopupReady && showUpdatePopup" class="update-popup-shell" role="presentation">
-      <button class="update-popup-backdrop" type="button" tabindex="-1" aria-hidden="true" @click="dismissUpdatePopup(true)"></button>
-      <aside class="update-popup" role="dialog" aria-modal="true" :aria-label="t('home.updateBadge.tag')">
-        <button ref="closeBtnRef" class="update-popup-close" type="button" :aria-label="t('home.updateBadge.dismiss')" @click="dismissUpdatePopup(true)">
+    <div v-if="showUpdatePopup" class="update-popup-shell" role="presentation">
+      <button class="update-popup-backdrop" type="button" tabindex="-1" aria-hidden="true" @click="dismissUpdatePopup"></button>
+      <aside class="update-popup" role="status" :aria-label="t('home.updateBadge.tag')">
+        <button class="update-popup-close" type="button" :aria-label="t('home.updateBadge.dismiss')" @click="dismissUpdatePopup">
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
@@ -88,7 +84,7 @@ function dismissUpdatePopup(rememberDismissal = true) {
         <p class="update-popup-tag">{{ t('home.updateBadge.tag') }}</p>
         <p class="update-popup-title">{{ t('home.updateBadge.title') }}</p>
         <p class="update-popup-text">{{ t('home.updateBadge.text') }}</p>
-        <RouterLink to="/quiz" class="update-popup-link" @click="dismissUpdatePopup(true)">
+        <RouterLink to="/quiz" class="update-popup-link" @click="dismissUpdatePopup">
           {{ t('home.updateBadge.link') }}
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />

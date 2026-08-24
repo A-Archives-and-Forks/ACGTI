@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from '../i18n'
 import { useSeo } from '../composables/useSeo'
+import AppIcon from '../components/AppIcon.vue'
 
 const { t, tm } = useI18n()
 
@@ -61,7 +62,7 @@ useSeo({
           
           <div class="action-wrap">
             <a href="https://github.com/tianxingleo/ACGTI" target="_blank" rel="noopener noreferrer" class="btn btn-green github-btn">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              <AppIcon name="github" style="width: 20px; height: 20px;" />
               {{ t('about.star') }}
             </a>
             <p class="action-note">
@@ -71,8 +72,9 @@ useSeo({
           </div>
         </section>
 
+        <!-- id 用于页脚「项目边界」链接的锚点跳转 -->
         <section class="split-grid" v-reveal>
-          <article class="info-panel">
+          <article class="info-panel" id="boundaries">
             <div class="panel-icon-wrap" style="color: #3ba17c;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
@@ -85,7 +87,8 @@ useSeo({
             </div>
           </article>
 
-          <article class="info-panel">
+          <!-- id 用于页脚「更新方向」链接的锚点跳转：已上线内容与后续计划都在这个面板 -->
+          <article class="info-panel" id="roadmap">
             <div class="panel-icon-wrap" style="color: #4298b4;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             </div>
@@ -110,6 +113,32 @@ useSeo({
               <h3 class="faq-question">{{ item[0] }}</h3>
               <p class="faq-answer">{{ item[1] }}</p>
             </article>
+          </div>
+        </section>
+
+        <!-- 相关项目：收录基于 ACGTI 的二创等关联作品（外链迁自首页 Hero） -->
+        <section class="info-panel related-projects" v-reveal>
+          <h2 class="panel-title">{{ t('about.relatedProjects.title') }}</h2>
+          <p class="related-projects-desc">{{ t('about.relatedProjects.description') }}</p>
+          <a
+            class="related-projects-link"
+            href="https://arkti.ybwlawa0.com/quiz"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ t('about.relatedProjects.linkLabel') }}
+          </a>
+        </section>
+
+        <!-- 作者彩蛋：原结果页的“公益广告”卡片迁到这里，不再打扰测试结果 -->
+        <section class="info-panel college-greeting" v-reveal>
+          <h2 class="panel-title">{{ t('about.collegeGreeting.title') }}</h2>
+          <div class="college-greeting-body">
+            <img class="college-greeting-emblem" src="/dlut-emblem.png" :alt="t('about.collegeGreeting.alt')" loading="lazy" />
+            <div class="college-greeting-text">
+              <p class="college-greeting-copy">{{ t('about.collegeGreeting.copy') }}</p>
+              <p class="college-greeting-meta">{{ t('about.collegeGreeting.meta') }}</p>
+            </div>
           </div>
         </section>
       </div>
@@ -365,6 +394,68 @@ useSeo({
   font-size: 15px;
   line-height: 1.65;
   color: #4f5d67;
+}
+
+/* 相关项目小节 */
+.related-projects-desc {
+  margin: 0 0 20px;
+  color: #5f6b75;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.related-projects-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  background: #3ba17c;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.related-projects-link:hover {
+  background: #2d8a68;
+  transform: translateY(-2px);
+}
+
+/* 作者彩蛋卡片：校徽 + 祝福文案 */
+.college-greeting-body {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.college-greeting-emblem {
+  width: 72px;
+  height: 72px;
+  flex: none;
+  object-fit: contain;
+}
+
+.college-greeting-copy {
+  margin: 0 0 6px;
+  color: #333e49;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.college-greeting-meta {
+  margin: 0;
+  color: #8a95a0;
+  font-size: 13px;
+}
+
+@media (max-width: 520px) {
+  .college-greeting-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
 }
 
 @media (max-width: 768px) {
