@@ -153,7 +153,6 @@ const accentColor = computed(() => props.accent || '#33a474')
 .ai-insight-card {
   position: relative;
   border: 1px solid color-mix(in srgb, var(--ai-accent, #33a474) 28%, #e3e8ee);
-  border-left: 4px solid var(--ai-accent, #33a474);
   border-radius: 14px;
   padding: 22px 24px 18px;
   background:

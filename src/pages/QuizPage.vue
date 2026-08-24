@@ -398,7 +398,7 @@ async function submitQuiz() {
   padding: 36px 18px;
   border-bottom: 1px solid #f1f4f8;
   scroll-margin-top: 24px;
-  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease, background-color 0.22s ease;
 }
 
 .question-block.upcoming-dimmed {
@@ -418,7 +418,6 @@ async function submitQuiz() {
 
 .question-block.needs-answer {
   background: #f6fbf8;
-  box-shadow: inset 4px 0 0 #33a474;
 }
 
 .question-block h2 {
