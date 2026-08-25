@@ -19,8 +19,6 @@ npm run build:watch   # 终端 1：监听构建产物到 dist/
 npm run dev:pages     # 终端 2：启动 Pages + Functions + D1，访问 http://127.0.0.1:8788
 ```
 
-后端 API、数据库迁移与 cron-worker 的说明见 [`docs/backend.md`](docs/backend.md)。
-
 ## 分支策略
 
 | 分支 | 用途 | 说明 |
@@ -80,7 +78,7 @@ npm run test:e2e        # 可选：无头浏览器端到端冒烟（自动启动
 
 ## 贡献新角色 / 新题目
 
-- **新增角色**：在 `src/content/characters/` 下新增 `<id>.json`，完整流程（含 WebP 图片转换、缩略图生成、概率重算等）请参考 [新增角色流程文档](docs/新增角色流程.md)。也可以先提 Issue（有现成的"角色申请"模板）由维护者代做。
+- **新增角色**：在 `src/content/characters/` 下新增 `<id>.json`（角色源文件的结构与图片处理要求可参照目录内任一现有角色，如 `hatsune-miku.json`）。也可以先提 Issue（有现成的"角色申请"模板）由维护者代做。
 - **新增题目**：编辑 `src/data/questions.json`。注意题目翻译按顺序维护在 `src/i18n/messages.ts` 的三份 `quiz.questions` 数组中（zh-TW / en / ja），增删题目时需要同步。
 
 ## 行为准则

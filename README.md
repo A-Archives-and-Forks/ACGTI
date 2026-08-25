@@ -68,7 +68,7 @@
 - **MBTI 四维判定**：按 E/I、S/N、T/F、J/P 四个维度计分，再映射到二次元角色。
 - **8 种专属原型**：发光主角位 · 冰面观察者 · 誓约队长 · 灵巧回旋者 · 温柔修复者 · 影面策士 · 混沌火花 · 月下守护者。
 - **110+ 位角色库**：涵盖 BanG Dream!、孤独摇滚！、鸣潮、明日方舟、轻音少女、我推的孩子、Re:从零开始的异世界生活、原神、崩坏：星穹铁道、葬送的芙莉莲、Fate/stay night 等 60+ 部热门作品，持续扩充中。
-- **AI 结果解读**：基于 Cloudflare Workers AI（零密钥部署）为你的四维倾向生成个性化解读。解读请求只带倾向分桶、不带逐题答案；额度耗尽时自动隐藏，不影响其他功能（详见 [ADR-0006](docs/adr/0006-ai-insight-workers-ai.md)）。
+- **AI 结果解读**：基于 Cloudflare Workers AI（零密钥部署）为你的四维倾向生成个性化解读。解读请求只带倾向分桶、不带逐题答案；额度耗尽时自动隐藏，不影响其他功能。
 - **可视化交互**：16personalities 风格的交互式倾向滑块，把你的思维倾向画出来。
 - **一键分享**：一键生成结果分享图；移动端经 Web Share API 直接进系统分享面板，桌面端导出 PNG 海报。
 - **原生页面过渡**：支持 View Transitions API 的浏览器有原生页面切换动画，不支持的浏览器不受影响（渐进增强）。
@@ -110,8 +110,6 @@
 **数据校准与消融实验**：系统会收集用户自愿提交的"真实 MBTI"反馈，把它们当作标签在历史答题数据上离线重放（逐题 / 逐维度开关对比），验证不同权重配置下的匹配准确率与维度偏差，再把验证过的最优配置上线。每轮校准有独立的版本号，支持一键回退。
 
 </details>
-
-更完整的架构视图（数据流图、分层职责、扩展指南）见 [`docs/architecture.md`](docs/architecture.md)；后端接口契约见 [`docs/backend.md`](docs/backend.md) 与公开规范 [`/api/openapi.yaml`](public/api/openapi.yaml)；关键设计决策的取舍记录见 [`docs/adr/`](docs/adr/)。
 
 <details>
 <summary><b>点击展开查看项目目录结构</b></summary>
@@ -176,15 +174,7 @@ migrations/                # Cloudflare D1 数据库迁移（CI 会在全新库�
 scripts/                   # 数据校验 / 聚合构建 / E2E 冒烟等脚本
 tests/                     # Vitest 单元测试（评分引擎/颜色/存储/答题状态机/后端端点与中间件）
 analysis/                  # 反馈数据分析与权重校准流水线（本地）
-docs/
-├── adr/                   # 架构决策记录（MADR 格式，8 篇）
-├── architecture.md        # 系统架构总览（数据流图 + 扩展指南）
-├── backend.md             # 后端接口与数据库说明
-├── api.md                 # API 调用说明（规范文件见 public/api/openapi.yaml）
-└── 新增角色流程.md         # 新增角色的完整操作指引
 ```
-
-后端 API、数据库迁移与 cron-worker 的详细说明见 [`docs/backend.md`](docs/backend.md)。
 
 </details>
 
@@ -265,13 +255,11 @@ npm run dev:pages
 
 当前项目仍处于早期阶段，题目数量和角色库都还不够丰富。如果你有好的情境题目想法或想补充更多作品的角色，非常期待你的参与：
 
-- 补充新角色 → 在 `src/content/characters/` 下新增 `<id>.json`（详见 [新增角色流程](docs/新增角色流程.md)）
+- 补充新角色 → 在 `src/content/characters/` 下新增 `<id>.json`
 - 添加新题目 → 编辑 `src/data/questions.json`
 - 希望新增某个角色 / 某部作品 → 欢迎先提 Issue，附上角色名、作品名和推荐理由
 - 对题目表述、题目维度、现有角色设定或结果解析有改进意见 → 欢迎提 Issue 讨论
 - 修复 Bug / 改进 UI → 直接提 PR
-
-> 新增角色的完整流程（含 WebP 图片转换、缩略图生成、概率重算等）请参考 [**新增角色流程文档**](docs/新增角色流程.md)。
 
 ### 欢迎二次创作
 
