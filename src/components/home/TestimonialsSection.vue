@@ -54,26 +54,26 @@ const testimonialBase: Array<{
   {
     archetypeId: 'shadow-strategist',
     type: 'INTJ',
-    color: '#8a609d',
-    avatar: 'linear-gradient(135deg, #f7b2b2 0%, #f3d3d3 100%)',
+    color: '#6b5a7f',
+    avatar: '#ede8f0',
   },
   {
     archetypeId: 'oathbound-captain',
     type: 'ENTJ',
-    color: '#3ba17c',
-    avatar: 'linear-gradient(135deg, #b8d7ff 0%, #d6e6ff 100%)',
+    color: '#2f6e55',
+    avatar: '#e6efec',
   },
   {
     archetypeId: 'moonlit-guardian',
     type: 'INFJ',
-    color: '#4298b4',
-    avatar: 'linear-gradient(135deg, #bdebc9 0%, #dff5e6 100%)',
+    color: '#2f6a80',
+    avatar: '#e6eef2',
   },
   {
     archetypeId: 'chaos-spark',
     type: 'ENTP',
-    color: '#8a609d',
-    avatar: 'linear-gradient(135deg, #ffe6a8 0%, #fff1cb 100%)',
+    color: '#7a5f3a',
+    avatar: '#faf3e0',
   },
 ]
 
@@ -120,41 +120,34 @@ const testimonials = computed(() =>
 }
 
 .testimonials {
-  padding: 5.5rem 0;
+  padding: 4rem 0;
   position: relative;
+  background: #f8f9fa;
+  border-top: 1px solid #eef2f4;
+  border-bottom: 1px solid #eef2f4;
 }
 
 .quote-badge {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%) rotate(12deg);
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  background: #e5b540;
-  color: #fff;
-  font-size: 3rem;
-  font-family: Georgia, serif;
-  line-height: 1.3;
-  text-align: center;
-  box-shadow: 0 10px 24px rgba(131, 96, 17, 0.28);
+  display: none;
 }
 
 .testimonial-tag {
   text-align: center;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #e5b540;
-  font-weight: 800;
-  font-size: 0.75rem;
-  margin: 1.6rem 0 0;
+  color: #6b7a86;
+  font-weight: 700;
+  font-size: 0.74rem;
+  margin: 0;
 }
 
 .testimonial-title {
   text-align: center;
-  margin: 0.6rem 0 2.6rem;
-  font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+  margin: 0.5rem 0 2rem;
+  font-size: clamp(1.6rem, 3.8vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1f2a32;
 }
 
 .testimonial-track {
@@ -168,15 +161,15 @@ const testimonials = computed(() =>
 }
 
 .testimonial-card {
-  border-radius: 16px;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 10px 30px rgba(32, 38, 46, 0.1);
+  border: 1px solid #e3e8ee;
   overflow: hidden;
   scroll-snap-align: center;
 }
 
 .card-top {
-  height: 6px;
+  height: 3px;
 }
 
 .card-body {
@@ -190,9 +183,10 @@ const testimonials = computed(() =>
 }
 
 .avatar {
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
+  border: 1px solid #dde5ea;
 }
 
 .profile-row h3 {
@@ -207,10 +201,10 @@ const testimonials = computed(() =>
 }
 
 .quote {
-  margin: 1rem 0 0;
-  color: #555;
+  margin: 0.85rem 0 0;
+  color: #4a5560;
   line-height: 1.7;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 @media (max-width: 768px) {

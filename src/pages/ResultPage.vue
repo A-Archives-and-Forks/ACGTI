@@ -619,7 +619,7 @@ async function handleFeedbackSubmit() {
 
         <section class="live-stats-section" v-reveal>
           <div class="section-title-wrap">
-            <div class="section-index">★</div>
+            <div class="section-index">2</div>
             <h2 class="section-title">{{ t('result.liveStats.title') }}</h2>
           </div>
           <div v-if="liveStats && (liveStats.sameCharacterCount > 0 || liveStats.sameArchetypeCount > 0)" class="live-stats-card">
@@ -747,7 +747,7 @@ async function handleFeedbackSubmit() {
 
         <section v-if="secondaryCharacterMatches.length" class="similar-characters-section" id="similar-section" v-reveal>
           <div class="section-title-wrap">
-            <div class="section-index">+</div>
+            <div class="section-index">3</div>
             <h2 class="section-title">{{ t('result.otherMatchesTitle', undefined, '其他高匹配角色') }}</h2>
           </div>
 
@@ -786,7 +786,7 @@ async function handleFeedbackSubmit() {
         <!-- 用户反馈卡片 -->
         <section class="feedback-section" v-reveal>
           <div class="section-title-wrap">
-            <div class="section-index">?</div>
+            <div class="section-index">4</div>
             <h2 class="section-title">{{ t('result.feedbackTitle', undefined, '帮助我们校准') }}</h2>
           </div>
 
@@ -1002,11 +1002,11 @@ async function handleFeedbackSubmit() {
 
 .result-hero {
   --hero-pill-radius: 999px;
-  --hero-pill-border: 1px solid rgba(255, 255, 255, 0.28);
-  --hero-pill-bg: rgba(255, 255, 255, 0.16);
-  --hero-pill-shadow: 0 10px 24px rgba(17, 24, 39, 0.12);
-  --hero-pill-shadow-hover: 0 14px 30px rgba(17, 24, 39, 0.16);
-  --hero-pill-backdrop: blur(10px);
+  --hero-pill-border: 1px solid rgba(255, 255, 255, 0.32);
+  --hero-pill-bg: rgba(255, 255, 255, 0.18);
+  --hero-pill-shadow: none;
+  --hero-pill-shadow-hover: none;
+  --hero-pill-backdrop: none;
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -1093,13 +1093,11 @@ async function handleFeedbackSubmit() {
 .hero-hidden-badge {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
+  min-height: 34px;
   padding: 6px 12px;
   border-radius: var(--hero-pill-radius);
   background: var(--hero-pill-bg);
   border: var(--hero-pill-border);
-  box-shadow: var(--hero-pill-shadow);
-  backdrop-filter: var(--hero-pill-backdrop);
   color: #fff;
   font-size: 13px;
   font-weight: 800;
@@ -1111,13 +1109,11 @@ async function handleFeedbackSubmit() {
   margin: 16px 0 0;
   display: inline-flex;
   align-items: center;
-  min-height: 48px;
+  min-height: 44px;
   background: var(--hero-pill-bg);
   padding: 6px 16px;
   border-radius: var(--hero-pill-radius);
   border: var(--hero-pill-border);
-  box-shadow: var(--hero-pill-shadow);
-  backdrop-filter: var(--hero-pill-backdrop);
 }
 
 .hero-code {
@@ -1172,14 +1168,13 @@ async function handleFeedbackSubmit() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 34px;
   padding: 6px 12px;
   border-radius: var(--hero-pill-radius);
   border: 1px solid transparent;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  box-shadow: var(--hero-pill-shadow);
+  letter-spacing: 0.03em;
   white-space: nowrap;
   line-height: 1;
   box-sizing: border-box;
@@ -1222,8 +1217,6 @@ async function handleFeedbackSubmit() {
   gap: 8px;
   align-items: center;
   cursor: pointer;
-  box-shadow: var(--hero-pill-shadow);
-  backdrop-filter: var(--hero-pill-backdrop);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 
@@ -1238,8 +1231,7 @@ async function handleFeedbackSubmit() {
 }
 
 .action-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--hero-pill-shadow-hover);
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .action-btn.light {
@@ -1281,19 +1273,15 @@ async function handleFeedbackSubmit() {
 .poster-frame {
   position: relative;
   background: #fff;
-  padding: 16px 16px 40px;
+  padding: 12px 12px 28px;
   border-radius: 12px;
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.15),
-    0 1px 3px rgba(0,0,0,0.05);
-  transform: rotate(2deg) translateY(-10px);
+  border: 1px solid #e3e8ee;
   max-width: 380px;
   width: 100%;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .poster-frame:hover {
-  transform: rotate(0deg) translateY(-15px) scale(1.02);
+  border-color: #c8d2d9;
   box-shadow: 
     0 30px 60px rgba(0,0,0,0.2),
     0 2px 4px rgba(0,0,0,0.05);
@@ -1352,8 +1340,8 @@ async function handleFeedbackSubmit() {
   font-size: 19px;
   line-height: 1.75;
   color: #5f6b75;
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
   border-radius: 18px;
   padding: 24px;
   margin-bottom: 32px;
@@ -1431,8 +1419,8 @@ async function handleFeedbackSubmit() {
 }
 
 .traits-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
   border-radius: 18px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   overflow: hidden;
@@ -1559,8 +1547,8 @@ async function handleFeedbackSubmit() {
 }
 
 .analysis-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
   border-radius: 18px;
   padding: 24px;
 }
@@ -1598,8 +1586,8 @@ async function handleFeedbackSubmit() {
 }
 
 .similar-character-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
   border-radius: 18px;
   padding: 20px 22px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -1764,7 +1752,7 @@ async function handleFeedbackSubmit() {
 }
 
 .sidebar-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
+  background: #ffffff; border: 1px solid #e3e8ee;
   border: 1px solid #e7eaed;
   border-radius: 18px;
   padding: 20px;
@@ -1887,7 +1875,7 @@ async function handleFeedbackSubmit() {
 }
 
 .relay-card {
-  background: linear-gradient(180deg, #ffffff, #f7faf9);
+  background: #ffffff; border: 1px solid #e3e8ee;
   border-color: #e2e8e5;
   padding: 24px 20px;
   position: relative;
@@ -1926,7 +1914,7 @@ async function handleFeedbackSubmit() {
 }
 
 .creator-card {
-  background: linear-gradient(180deg, #ffffff, #f6fbf8);
+  background: #ffffff; border: 1px solid #e3e8ee;
   border-color: #dde8e2;
 }
 
@@ -2298,8 +2286,8 @@ async function handleFeedbackSubmit() {
 }
 
 .feedback-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
   border-radius: 18px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -2542,8 +2530,8 @@ async function handleFeedbackSubmit() {
 }
 
 .live-stats-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
   border-radius: 18px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -2564,7 +2552,7 @@ async function handleFeedbackSubmit() {
 }
 
 .live-stat-item--rank {
-  background: linear-gradient(135deg, #fffdf5 0%, #ffffff 100%);
+  background: #ffffff; border: 1px solid #e3e8ee;
   border-color: #f0e2b0;
 }
 
@@ -2665,7 +2653,7 @@ async function handleFeedbackSubmit() {
 }
 
 .discussion-card {
-  background: linear-gradient(135deg, #f3fbf7 0%, #ffffff 100%);
+  background: #ffffff; border: 1px solid #e3e8ee;
   border: 1px solid #d9ece4;
   border-radius: 18px;
   padding: 28px;

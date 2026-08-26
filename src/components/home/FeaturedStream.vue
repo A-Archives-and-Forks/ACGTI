@@ -62,23 +62,28 @@ const { t } = useI18n()
   grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
   gap: 2rem;
   align-items: center;
-  padding: 2rem;
-  border-radius: 28px;
-  background: linear-gradient(135deg, #fff8e7 0%, #fff 48%, #f4faf8 100%);
-  border: 1px solid #f0e3bb;
-  box-shadow: 0 18px 48px rgba(58, 72, 84, 0.08);
+  padding: 1.75rem;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
 }
 
 .feature-tag {
-  margin: 0 0 1rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.13em;
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.8rem;
+  padding: 4px 10px;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
   text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid #eadfbe;
+  background: #fdf8eb;
 }
 
 .featured-stream-tag {
-  color: #d39f1d;
+  color: #8a6d1f;
 }
 
 .feature-title {
@@ -88,10 +93,10 @@ const { t } = useI18n()
 }
 
 .feature-copy {
-  margin: 1.3rem 0 1.8rem;
-  color: #666;
-  font-size: 1.125rem;
-  line-height: 1.75;
+  margin: 1rem 0 1.4rem;
+  color: #5a6570;
+  font-size: 1.02rem;
+  line-height: 1.7;
 }
 
 .featured-stream-title {
@@ -112,13 +117,14 @@ const { t } = useI18n()
 .featured-stream-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
-  padding: 0 0.95rem;
+  min-height: 32px;
+  padding: 0 0.85rem;
   border-radius: 999px;
-  background: rgba(211, 159, 29, 0.12);
-  color: #946c12;
-  font-size: 0.9rem;
-  font-weight: 700;
+  background: #fdf8eb;
+  border: 1px solid #eadfbe;
+  color: #7a5f17;
+  font-size: 0.84rem;
+  font-weight: 600;
 }
 
 .btn {
@@ -133,9 +139,9 @@ const { t } = useI18n()
 }
 
 .featured-stream-button {
-  gap: 0.55rem;
-  background: #e1ab2f;
-  box-shadow: 0 12px 26px rgba(161, 117, 16, 0.2);
+  gap: 0.5rem;
+  background: #3ba17c;
+  border: 1px solid #2d9168;
 }
 
 .featured-stream-visual {
@@ -145,11 +151,10 @@ const { t } = useI18n()
 
 .featured-stream-card {
   width: min(100%, 380px);
-  border-radius: 24px;
+  border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(180deg, #fff7df 0%, #fff 100%);
-  border: 1px solid #f0e1b2;
-  box-shadow: 0 18px 44px rgba(90, 66, 16, 0.12);
+  background: #f8f9fa;
+  border: 1px solid #e3e8ee;
 }
 
 .featured-stream-card-top {
@@ -159,10 +164,11 @@ const { t } = useI18n()
 }
 
 .featured-stream-card-top span {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
-  background: #e6c76e;
+  background: #c8d2d9;
+  border: 1px solid #b8c4ce;
 }
 
 .featured-stream-image {

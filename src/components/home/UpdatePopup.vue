@@ -131,25 +131,24 @@ function dismissUpdatePopup() {
 
 .update-popup {
   position: absolute;
-  top: 104px;
-  right: 24px;
-  width: 360px;
+  top: 88px;
+  right: 20px;
+  width: 340px;
   max-width: calc(100% - 2rem);
-  padding: 1rem 1rem 1.1rem;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(219, 226, 231, 0.92);
-  box-shadow: 0 20px 48px rgba(23, 39, 49, 0.16);
-  backdrop-filter: blur(14px);
+  padding: 1rem 1rem 1rem;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #dbe2e7;
+  box-shadow: 0 8px 24px rgba(23, 39, 49, 0.08);
   box-sizing: border-box;
 }
 
 .update-popup-tag {
   margin: 0;
-  color: #d39f1d;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  color: #6b7a86;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -173,22 +172,20 @@ function dismissUpdatePopup() {
   align-items: center;
   gap: 6px;
   margin-top: 1rem;
-  min-height: 42px;
-  padding: 0 1rem;
+  min-height: 38px;
+  padding: 0 0.9rem;
   border-radius: 999px;
-  background: #4899a3;
+  background: #3ba17c;
   color: #fff;
-  font-size: 0.92rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 12px 24px rgba(72, 153, 163, 0.22);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  border: 1px solid #2d9168;
+  transition: background 0.2s ease;
 }
 
 .update-popup-link:hover {
-  background: #3f8891;
-  transform: translateY(-1px);
-  box-shadow: 0 16px 28px rgba(63, 136, 145, 0.24);
+  background: #2d9168;
 }
 
 .update-popup-link svg,
@@ -226,7 +223,6 @@ function dismissUpdatePopup() {
 .update-popup-close:hover {
   background: #e7edf1;
   color: #394854;
-  transform: rotate(90deg);
 }
 
 .update-popup-enter-active,

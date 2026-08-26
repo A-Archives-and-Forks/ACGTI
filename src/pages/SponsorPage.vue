@@ -139,19 +139,18 @@ useSeo({
 
 /* 主介绍区 */
 .intro-block {
-  background: linear-gradient(135deg, #ffffff 0%, #f0faf5 100%);
-  border: 1px solid #e0ece6;
-  border-radius: 18px;
-  padding: 48px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
+  border-radius: 14px;
+  padding: 40px;
 }
 
 .eyebrow {
-  margin: 0 0 12px;
-  color: #3ba17c;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 1px;
+  margin: 0 0 10px;
+  color: #6b7a86;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -181,13 +180,13 @@ useSeo({
 
 .cost-tag {
   display: inline-block;
-  padding: 6px 14px;
-  background: rgba(59, 161, 124, 0.08);
-  color: #3ba17c;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 20px;
-  border: 1px solid rgba(59, 161, 124, 0.15);
+  padding: 5px 12px;
+  background: #eef4f1;
+  color: #2f6e55;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #dbe7e1;
 }
 
 .action-wrap {
@@ -209,9 +208,7 @@ useSeo({
 }
 
 .github-btn:hover {
-  background: #2d8a68;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 161, 124, 0.25);
+  background: #2f7a5c;
 }
 
 .github-btn svg {
@@ -251,11 +248,10 @@ useSeo({
 
 /* 赞助方式 */
 .methods-section {
-  background: linear-gradient(180deg, #ffffff, #fafcfb);
-  border: 1px solid #e8ecef;
-  border-radius: 18px;
-  padding: 36px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
+  border-radius: 14px;
+  padding: 32px;
 }
 
 .section-title {
@@ -279,17 +275,15 @@ useSeo({
 }
 
 .method-card {
-  background: #f9fbfc;
+  background: #f8f9fa;
   border: 1px solid #e8ecef;
-  border-radius: 16px;
-  padding: 28px;
+  border-radius: 12px;
+  padding: 24px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .method-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  border-color: #d6e2de;
 }
 
 .method-icon {
@@ -349,11 +343,10 @@ useSeo({
 
 /* 其他支持方式 */
 .other-ways {
-  background: linear-gradient(180deg, #ffffff, #fafcfb);
-  border: 1px solid #e8ecef;
-  border-radius: 18px;
-  padding: 36px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
+  border-radius: 14px;
+  padding: 32px;
 }
 
 .ways-grid {
@@ -364,10 +357,10 @@ useSeo({
 }
 
 .way-card {
-  background: #f9fbfc;
+  background: #f8f9fa;
   border: 1px solid #e8ecef;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
 }
 
@@ -404,10 +397,10 @@ useSeo({
 /* 感谢 */
 .thanks-block {
   text-align: center;
-  padding: 24px;
-  background: linear-gradient(135deg, rgba(59, 161, 124, 0.06) 0%, rgba(66, 152, 180, 0.06) 100%);
-  border-radius: 16px;
-  border: 1px solid rgba(59, 161, 124, 0.1);
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e3e8ee;
 }
 
 .thanks-text {

@@ -192,20 +192,19 @@ const communityCards = computed(() => {
 
 .feature {
   position: relative;
-  padding: 5.5rem 0;
+  padding: 4.5rem 0;
   overflow: hidden;
+  background: #ffffff;
+  border-top: 1px solid #eef2f4;
 }
 
-.feature::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(170deg, #f7f8f9 0%, #fff 55%);
-  z-index: 0;
+.feature-alt {
+  background: #f8f9fa;
 }
 
+.feature::before,
 .feature-alt::before {
-  background: linear-gradient(192deg, #f7f8f9 0%, #fff 58%);
+  display: none;
 }
 
 .feature-layout {
@@ -222,20 +221,28 @@ const communityCards = computed(() => {
 }
 
 .feature-tag {
-  margin: 0 0 1rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.13em;
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.85rem;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
   text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid #dbe7e1;
+  background: #eef4f1;
 }
 
-.tag-green { color: #3ba17c; }
-.tag-blue { color: #4298b4; }
+.tag-green { color: #2f6e55; }
+.tag-blue { color: #2f6a80; }
 
 .feature-title {
   margin: 0;
-  font-size: clamp(2rem, 4.5vw, 2.7rem);
-  line-height: 1.2;
+  font-size: clamp(1.85rem, 4vw, 2.35rem);
+  line-height: 1.22;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .feature-copy {
@@ -274,29 +281,26 @@ const communityCards = computed(() => {
 }
 
 .feature-illustration {
-  height: 390px;
-  border-radius: 18px;
-  border: 1px solid #e7ebee;
-  background: #fff;
-  box-shadow: 0 20px 50px rgba(20, 33, 45, 0.08);
+  height: 340px;
+  border-radius: 16px;
+  border: 1px solid #e3e8ee;
+  background: #f8f9fa;
   position: relative;
   overflow: hidden;
 }
 
 .feature-illustration::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(246, 248, 249, 0.8);
-  clip-path: polygon(0 0, 100% 6%, 100% 96%, 0 100%);
+  display: none;
 }
 
-.office-1 .window {
+.office-1 .window,
+.office-2 .window {
   position: absolute;
-  top: 42px;
+  top: 32px;
   width: 36%;
-  height: 96px;
-  background: #d7e7ef;
+  height: 72px;
+  background: #eef2f4;
+  border: 1px solid #dde5ea;
   border-radius: 8px;
 }
 
@@ -305,55 +309,63 @@ const communityCards = computed(() => {
 
 .figure {
   position: absolute;
-  bottom: 52px;
-  width: 58px;
-  border-radius: 12px 12px 6px 6px;
+  bottom: 48px;
+  width: 52px;
+  border-radius: 10px 10px 6px 6px;
+  opacity: 0.9;
 }
 
 .office-1 .a {
   left: 24%;
-  height: 170px;
-  background: #5aa273;
+  height: 150px;
+  background: #6bb18a;
+  border: 1px solid #5a9a76;
 }
 
 .office-1 .b {
   left: 44%;
-  height: 136px;
-  background: #8a609d;
+  height: 120px;
+  background: #9b8ab0;
+  border: 1px solid #8a7aa0;
 }
 
 .office-1 .c {
   left: 63%;
-  height: 154px;
-  background: #68b6ce;
+  height: 138px;
+  background: #7fb9cc;
+  border: 1px solid #6fa8bb;
 }
 
 .office-2 .d {
   left: 26%;
-  height: 132px;
-  background: #8a609d;
+  height: 118px;
+  background: #9b8ab0;
+  border: 1px solid #8a7aa0;
 }
 
 .office-2 .e {
   left: 48%;
-  height: 176px;
-  background: #5aa273;
+  height: 158px;
+  background: #6bb18a;
+  border: 1px solid #5a9a76;
 }
 
 .office-2 .f {
   left: 68%;
-  height: 156px;
-  background: #e5b540;
+  height: 140px;
+  background: #d4b85c;
+  border: 1px solid #c0a84e;
 }
 
 .desk {
   position: absolute;
-  bottom: 26px;
+  bottom: 22px;
   left: 10%;
   width: 80%;
-  height: 16px;
-  border-radius: 8px;
-  background: #51575f;
+  height: 12px;
+  border-radius: 6px;
+  background: #d6dde2;
+  border: 1px solid #c8d2d9;
 }
 
 .hero-button {
@@ -361,52 +373,38 @@ const communityCards = computed(() => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 1.125rem;
-  min-height: 56px;
-  min-width: 196px;
-  padding: 0 2.15rem;
+  font-size: 1.06rem;
+  min-height: 52px;
+  min-width: 184px;
+  padding: 0 1.9rem;
   border-radius: 999px;
   background: #33a474;
   color: #fff;
   font-weight: 700;
   letter-spacing: 0.01em;
   text-decoration: none;
-  border: 1.5px solid #33a474;
-  box-shadow: 0 10px 24px rgba(38, 122, 87, 0.28);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  border: 1px solid #2d9168;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .hero-button:hover {
   background: #2d9168;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(38, 122, 87, 0.28);
+  border-color: #267a58;
 }
 
 .cta {
-  margin-top: 1rem;
+  margin-top: 0;
   position: relative;
-  background: #46a27e;
-  padding: 8rem 0;
+  background: #2f7a5c;
+  padding: 4.5rem 0;
+  border-top: 1px solid #285f4a;
+  border-bottom: 1px solid #285f4a;
   overflow: hidden;
 }
 
 .cta-top-wave,
 .cta-bottom-wave {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 84px;
-  background: #fff;
-}
-
-.cta-top-wave {
-  top: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 12%, 48% 100%, 0 42%);
-}
-
-.cta-bottom-wave {
-  bottom: 0;
-  clip-path: polygon(0 78%, 52% 22%, 100% 90%, 100% 100%, 0 100%);
+  display: none;
 }
 
 .cta-inner {
@@ -417,9 +415,11 @@ const communityCards = computed(() => {
 }
 
 .cta-inner h2 {
-  margin: 0 0 2rem;
-  font-size: clamp(2rem, 4.5vw, 3rem);
-  line-height: 1.2;
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.7rem, 4vw, 2.35rem);
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 @media (max-width: 1024px) {
@@ -459,20 +459,18 @@ const communityCards = computed(() => {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 28px 16px 22px;
-  border-radius: 18px;
-  border: 1px solid #e8ecef;
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 24px 16px 20px;
+  border-radius: 14px;
+  border: 1px solid #e3e8ee;
+  background: #ffffff;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .community-card:hover {
-  transform: translateY(-4px);
   border-color: #b8ddd0;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  background: #f8fdfb;
 }
 
 .community-card-icon {

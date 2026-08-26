@@ -175,11 +175,11 @@ useSeo({
 }
 
 .eyebrow {
-  margin: 0 0 12px;
-  color: #3ba17c;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 1px;
+  margin: 0 0 10px;
+  color: #6b7a86;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -239,9 +239,7 @@ useSeo({
 }
 
 .github-btn:hover {
-  background: #2d8a68;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 161, 124, 0.25);
+  background: #2f7a5c;
 }
 
 .github-btn svg {
@@ -263,11 +261,10 @@ useSeo({
 }
 
 .info-panel {
-  background: linear-gradient(180deg, #ffffff, #fbfdfb);
-  border: 1px solid #e8ecef;
-  border-radius: 18px;
-  padding: 36px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
+  border-radius: 14px;
+  padding: 32px;
 }
 
 .panel-icon-wrap {
@@ -295,11 +292,10 @@ useSeo({
 }
 
 .faq-panel {
-  background: linear-gradient(180deg, #ffffff, #fafcfb);
-  border: 1px solid #e8ecef;
-  border-radius: 18px;
-  padding: 36px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border: 1px solid #e3e8ee;
+  border-radius: 14px;
+  padding: 32px;
 }
 
 .faq-header {
@@ -322,10 +318,10 @@ useSeo({
 }
 
 .faq-card {
-  background: #f9fbfc;
+  background: #f8f9fa;
   border: 1px solid #e8ecef;
-  border-radius: 16px;
-  padding: 22px;
+  border-radius: 12px;
+  padding: 20px;
 }
 
 .faq-question {

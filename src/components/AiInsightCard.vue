@@ -156,7 +156,7 @@ const accentColor = computed(() => props.accent || DEFAULT_AI_ACCENT)
 <template>
   <section v-if="phase !== 'hidden'" class="ai-insight-section" v-reveal :style="{ '--ai-accent': accentColor }">
     <div class="section-title-wrap">
-      <div class="section-index">✦</div>
+      <div class="section-index">—</div>
       <h2 class="section-title">{{ t('result.aiInsight.title') }}</h2>
     </div>
 
@@ -200,12 +200,11 @@ const accentColor = computed(() => props.accent || DEFAULT_AI_ACCENT)
 
 .ai-insight-card {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--ai-accent, #33a474) 28%, #e3e8ee);
-  border-radius: 14px;
-  padding: 22px 24px 18px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--ai-accent, #33a474) 7%, #ffffff), #ffffff);
-  box-shadow: 0 2px 10px rgb(30 41 59 / 5%);
+  border: 1px solid #e3e8ee;
+  border-left: 3px solid var(--ai-accent, #33a474);
+  border-radius: 10px;
+  padding: 18px 20px 16px;
+  background: #ffffff;
 }
 
 .ai-insight-skeleton {
@@ -214,20 +213,13 @@ const accentColor = computed(() => props.accent || DEFAULT_AI_ACCENT)
 }
 
 .skeleton-line {
-  height: 14px;
-  border-radius: 7px;
-  background: linear-gradient(90deg, #edf1f5 25%, #f7fafc 50%, #edf1f5 75%);
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.4s ease infinite;
+  height: 12px;
+  border-radius: 6px;
+  background: #edf1f5;
 }
 
 .skeleton-line.short {
   width: 62%;
-}
-
-@keyframes skeleton-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
 }
 
 .ai-insight-loading-hint {
@@ -238,10 +230,10 @@ const accentColor = computed(() => props.accent || DEFAULT_AI_ACCENT)
 
 .ai-insight-text {
   margin: 0;
-  font-size: 15.5px;
-  line-height: 1.9;
-  color: #2c3a49;
-  min-height: 3.8em;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #2f3a45;
+  min-height: 3.2em;
 }
 
 .ai-caret {

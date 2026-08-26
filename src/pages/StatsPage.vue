@@ -356,18 +356,18 @@ onMounted(async () => {
 
 /* Hero */
 .stats-hero {
-  padding: 6rem 0 4rem;
+  padding: 4rem 0 3rem;
   text-align: center;
-  background: linear-gradient(135deg, #e8f5ee 0%, #f0f4ff 100%); /* Revert to soft pastel gradient */
+  background: #ffffff;
   color: #1a1a2e;
-  border-bottom: none;
+  border-bottom: 1px solid #eef2f4;
 }
 .stats-page-title {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.8rem, 4.5vw, 2.5rem);
   font-weight: 800;
-  color: #1a1a2e;
-  letter-spacing: -0.5px;
+  color: #1f2a32;
+  letter-spacing: -0.03em;
 }
 .stats-page-subtitle {
   margin: 1.2rem auto 0;
@@ -408,16 +408,13 @@ onMounted(async () => {
 }
 .overview-card {
   background: #fff;
-  border-radius: 16px;
-  padding: 2.5rem 1.5rem;
+  border-radius: 12px;
+  padding: 2rem 1.25rem;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border: 1px solid #edf1f4;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e3e8ee;
 }
 .overview-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-color: #c8d2d9;
 }
 .overview-value {
   display: block;
@@ -428,12 +425,11 @@ onMounted(async () => {
 }
 .overview-label {
   display: block;
-  margin-top: 0.8rem;
-  font-size: 1rem;
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: #88939e;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #6b7680;
+  letter-spacing: 0.04em;
 }
 
 /* Ranking list */
@@ -447,17 +443,14 @@ onMounted(async () => {
 .ranking-row {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.1rem;
   background: #fff;
-  border-radius: 16px; /* softer border radius */
-  padding: 1.25rem 1.5rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04); /* slightly softer/wider shadow */
-  border: 1px solid #edf1f4; /* clearer border */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid #e3e8ee;
 }
 .ranking-row:hover {
-  transform: translateY(-2px); /* classic SaaS hover */
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  border-color: #c8d2d9;
 }
 
 .ranking-index {
@@ -483,8 +476,8 @@ onMounted(async () => {
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .ranking-avatar.placeholder {
-  background: linear-gradient(135deg, #e8edf2, #f5f8fb);
-  border: none;
+  background: #f0f4f8;
+  border: 1px solid #e3e8ee;
 }
 
 .ranking-info {
@@ -647,9 +640,7 @@ onMounted(async () => {
 }
 .skeleton-line {
   border-radius: 4px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  background: #edf1f5;
 }
 .skeleton-line.wide { height: 2.5rem; width: 60%; margin: 0 auto 1rem; border-radius: 8px; }
 .skeleton-line.narrow { height: 1rem; width: 40%; margin: 0 auto; border-radius: 4px; }

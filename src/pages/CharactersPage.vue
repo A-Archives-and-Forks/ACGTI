@@ -499,20 +499,17 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
 .character-card {
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: 16px;
+  background: #ffffff;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e3e8ee;
+  transition: border-color 0.2s ease;
   text-decoration: none;
   color: inherit;
-  border: 2px solid transparent;
 }
 
 .character-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-  border-color: var(--accent-color, #42b883);
+  border-color: #c8d2d9;
 }
 
 .character-card--hidden {
@@ -520,21 +517,19 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
 }
 
 .character-card--hidden:hover {
-  transform: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-color: transparent;
+  border-color: #e3e8ee;
 }
 
 .card-image-wrap {
   width: 100%;
   aspect-ratio: 1;
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(to bottom, #f8f9fa, color-mix(in srgb, var(--accent-color, #e9ecef) 20%, transparent));
+  border-bottom: 1px solid #eef2f4;
 }
 
 .card-image {
@@ -565,7 +560,7 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
 }
 
 .character-card:hover .card-image {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .character-card--hidden:hover .card-image {
@@ -591,14 +586,15 @@ function compareByLocalizedName(left: CharacterMatch, right: CharacterMatch) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2rem;
-  font-weight: 800;
-  font-size: 0.85rem;
+  min-height: 1.9rem;
+  font-weight: 700;
+  font-size: 0.82rem;
   line-height: 1.2;
-  color: var(--accent-color, #42b883);
-  background: color-mix(in srgb, var(--accent-color, #42b883) 15%, transparent);
-  padding: 0.2rem 0.6rem;
-  border-radius: 100px;
+  color: #3a4a56;
+  background: #eef2f4;
+  border: 1px solid #dde5ea;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
   white-space: nowrap;
 }
 

@@ -57,20 +57,7 @@ async function copyQuizLink() {
       </div>
     </div>
 
-    <div class="hero-wave"></div>
-
-    <div class="hero-scene" aria-hidden="true">
-      <div class="tree tree-1"></div>
-      <div class="tree tree-2"></div>
-      <div class="tree tree-3"></div>
-      <div class="stone stone-1"></div>
-      <div class="stone stone-2"></div>
-      <div class="person person-1"></div>
-      <div class="person person-2"></div>
-      <div class="campfire"></div>
-      <div class="person person-3"></div>
-      <div class="person person-4"></div>
-    </div>
+    <div class="hero-wave" aria-hidden="true"></div>
   </section>
 </template>
 
@@ -82,8 +69,8 @@ async function copyQuizLink() {
 
 .hero {
   position: relative;
-  padding: 5.5rem 0 14rem;
-  background: #4899a3;
+  padding: 5.5rem 0 5.5rem;
+  background: #3f8e99;
   overflow: hidden;
 }
 
@@ -102,13 +89,12 @@ async function copyQuizLink() {
 }
 
 .hero-subtitle {
-  max-width: 760px;
-  margin: 1.5rem auto 2.5rem;
-  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  max-width: 680px;
+  margin: 1.25rem auto 2rem;
+  font-size: clamp(1rem, 2.1vw, 1.18rem);
   line-height: 1.7;
-  color: #e3f2f3;
+  color: #e6f0f1;
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .hero-actions {
@@ -147,8 +133,7 @@ async function copyQuizLink() {
 
 .hero-button:hover {
   background: var(--hero-btn-bg-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px var(--hero-btn-shadow);
+  box-shadow: 0 8px 20px var(--hero-btn-shadow);
 }
 
 .hero-button:focus-visible {
@@ -169,13 +154,13 @@ async function copyQuizLink() {
 }
 
 .hero-relay {
-  width: min(720px, 100%);
-  margin: 1.5rem auto 0;
-  padding: 1.1rem 1.25rem;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  backdrop-filter: blur(6px);
+  width: min(640px, 100%);
+  margin: 1.75rem auto 0;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #dbe7e1;
+  color: #2f3a45;
 }
 
 .hero-relay-title {
@@ -186,9 +171,9 @@ async function copyQuizLink() {
 
 .hero-relay-copy {
   margin: 0.45rem 0 0;
-  font-size: 0.96rem;
-  line-height: 1.7;
-  opacity: 0.92;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #5a6872;
 }
 
 .hero-relay-visitor {
@@ -196,13 +181,14 @@ async function copyQuizLink() {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 1rem;
-  font-size: 0.95rem;
+  margin-top: 0.9rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.15);
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
+  color: #3f4b54;
+  background: #f2f6f7;
+  border: 1px solid #e3ecef;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
@@ -215,8 +201,9 @@ async function copyQuizLink() {
 }
 
 .hero-relay-visitor strong {
-  color: #ffd700;
-  font-size: 1.1rem;
+  color: #2f3a45;
+  font-size: 1rem;
+  font-weight: 800;
   margin: 0 2px;
 }
 
@@ -258,133 +245,14 @@ async function copyQuizLink() {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 160px;
+  height: 36px;
   background: #fff;
-  clip-path: polygon(0 35%, 12% 25%, 50% 58%, 82% 18%, 100% 32%, 100% 100%, 0 100%);
+  border-top: 1px solid #e8ecef;
   z-index: 2;
 }
 
 .hero-scene {
-  position: absolute;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-  width: min(1180px, 92vw);
-  height: 240px;
-  z-index: 1;
-}
-
-.tree {
-  position: absolute;
-  bottom: 40px;
-  width: 0;
-  height: 0;
-  border-left: 24px solid transparent;
-  border-right: 24px solid transparent;
-  border-bottom: 72px solid #4f9e6c;
-}
-
-.tree-1 { left: 12%; }
-.tree-2 {
-  left: 22%;
-  border-left-width: 34px;
-  border-right-width: 34px;
-  border-bottom-width: 96px;
-  border-bottom-color: #3b7a52;
-}
-.tree-3 {
-  right: 14%;
-  border-left-width: 36px;
-  border-right-width: 36px;
-  border-bottom-width: 104px;
-}
-
-.stone {
-  position: absolute;
-  bottom: 24px;
-  background: #9fa6ad;
-  border-radius: 16px 16px 8px 8px;
-}
-
-.stone-1 {
-  left: 29%;
-  width: 54px;
-  height: 38px;
-  transform: skewX(-12deg);
-}
-
-.stone-2 {
-  right: 24%;
-  width: 64px;
-  height: 44px;
-  transform: skewX(12deg);
-}
-
-.person {
-  position: absolute;
-  bottom: 34px;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-}
-
-.person::after {
-  content: "";
-  position: absolute;
-  top: 31px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 38px;
-  height: 64px;
-  border-radius: 16px 16px 10px 10px;
-  background: currentColor;
-}
-
-.person-1 {
-  left: 33%;
-  color: #68b6ce;
-  background: #4298b4;
-}
-
-.person-2 {
-  left: 42%;
-  color: #5aa273;
-  background: #d5dbe3;
-}
-
-.person-3 {
-  left: 59%;
-  color: #e1c152;
-  background: #57616f;
-}
-
-.person-4 {
-  left: 70%;
-  color: #a683b5;
-  background: #8a609d;
-}
-
-.campfire {
-  position: absolute;
-  left: 50%;
-  bottom: 48px;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 56px;
-  background: #f2c244;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-
-.campfire::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -10px;
-  transform: translateX(-50%);
-  width: 58px;
-  height: 10px;
-  border-radius: 999px;
-  background: #7e3c28;
+  display: none;
 }
 
 @media (max-width: 768px) {

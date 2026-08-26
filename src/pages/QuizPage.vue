@@ -339,10 +339,11 @@ async function submitQuiz() {
 }
 
 .hero p {
-  margin: 10px 0 0;
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  color: #8191a3;
+  margin: 8px 0 0;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: #6b7a8a;
+  font-weight: 600;
 }
 
 .step-cards {
@@ -354,10 +355,9 @@ async function submitQuiz() {
 
 .step-card {
   background: #ffffff;
-  border: 1px solid #edf1f5;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.05);
+  border: 1px solid #e3e8ee;
+  border-radius: 12px;
+  padding: 18px 20px;
 }
 
 .step-card h3 {
@@ -384,27 +384,27 @@ async function submitQuiz() {
 }
 
 .step-teal {
-  border-top: 4px solid #33a474;
+  border-top: 3px solid #3a7a60;
 }
 
 .step-teal .step-pill {
-  background: #33a474;
+  background: #3a7a60;
 }
 
 .step-green {
-  border-top: 4px solid #55c391;
+  border-top: 3px solid #4a9a76;
 }
 
 .step-green .step-pill {
-  background: #55c391;
+  background: #4a9a76;
 }
 
 .step-purple {
-  border-top: 4px solid #88619a;
+  border-top: 3px solid #7a6a8a;
 }
 
 .step-purple .step-pill {
-  background: #88619a;
+  background: #7a6a8a;
 }
 
 .question-list {
@@ -417,10 +417,10 @@ async function submitQuiz() {
 }
 
 .question-block {
-  padding: 36px 18px;
-  border-bottom: 1px solid #f1f4f8;
+  padding: 32px 18px;
+  border-bottom: 1px solid #eef2f4;
   scroll-margin-top: 24px;
-  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease, background-color 0.22s ease;
+  transition: background-color 0.2s ease;
 }
 
 .question-block.upcoming-dimmed {
@@ -614,10 +614,10 @@ async function submitQuiz() {
 .result-form-card {
   max-width: 880px;
   margin: 28px auto 0;
-  padding: 28px 20px;
-  border: 1px solid #edf1f5;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.05);
+  padding: 22px 18px;
+  border: 1px solid #e3e8ee;
+  border-radius: 12px;
+  background: #ffffff;
 }
 
 .quiz-notice {
@@ -653,9 +653,9 @@ async function submitQuiz() {
 }
 
 .submit-btn {
-  border: none;
+  border: 1px solid #2d9168;
   border-radius: 999px;
-  padding: 12px 28px;
+  padding: 11px 26px;
   color: #ffffff;
   background: #33a474;
   font-weight: 700;
@@ -663,7 +663,8 @@ async function submitQuiz() {
 }
 
 .submit-btn:hover {
-  background: #2d9168;
+  background: #2f7a5c;
+  border-color: #285f4a;
 }
 
 .quiz-footer {

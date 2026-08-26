@@ -25,7 +25,10 @@ const stats = computed(() => tm<Array<{ value: string; label: string; color: str
 }
 
 .stats {
-  padding: 4.5rem 0;
+  padding: 3rem 0;
+  border-top: 1px solid #eef2f4;
+  border-bottom: 1px solid #eef2f4;
+  background: #ffffff;
 }
 
 .stat-grid {
@@ -37,16 +40,18 @@ const stats = computed(() => tm<Array<{ value: string; label: string; color: str
 
 .stat-value {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
   line-height: 1;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .stat-label {
-  margin: 0.7rem 0 0;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #666;
+  margin: 0.5rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b7680;
+  letter-spacing: 0.01em;
 }
 
 @media (max-width: 1024px) {

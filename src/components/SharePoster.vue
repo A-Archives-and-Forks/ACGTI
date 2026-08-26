@@ -211,30 +211,20 @@ watch(rootEl, (el) => {
   position: relative;
   width: 980px;
   min-height: 560px;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.4), transparent 34%),
-    linear-gradient(135deg, color-mix(in srgb, var(--poster-accent) 18%, #f5fbfd) 0%, #ffffff 42%, #f7fbfc 100%);
-  border-radius: 28px;
-  box-shadow: 0 24px 80px rgba(31, 57, 76, 0.16);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #dbe2e7;
   overflow: hidden;
   text-align: left;
-  border: 1px solid rgba(95, 137, 159, 0.14);
 }
 
 .share-poster__accent-bar {
-  height: 16px;
+  height: 8px;
   background: var(--poster-accent);
 }
 
 .share-poster__surface {
-  position: absolute;
-  inset: 60px -120px auto auto;
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--poster-accent) 16%, #ffffff);
-  opacity: 0.65;
-  filter: blur(8px);
+  display: none;
 }
 
 .share-poster__inner {
@@ -314,12 +304,11 @@ watch(rootEl, (el) => {
 .share-poster__metrics {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(95, 137, 159, 0.12);
-  border-radius: 18px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e3e8ee;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
 }
 
 .share-poster__metric {
@@ -400,11 +389,11 @@ watch(rootEl, (el) => {
 }
 
 .share-poster__block {
-  background: linear-gradient(180deg, #ffffff, #fafdff);
-  border: 1px solid rgba(95, 137, 159, 0.15);
-  padding: 16px 18px 18px;
-  border-radius: 16px;
-  min-height: 126px;
+  background: #f8f9fa;
+  border: 1px solid #e3e8ee;
+  padding: 14px 16px 16px;
+  border-radius: 10px;
+  min-height: 114px;
 }
 
 .block-label {
@@ -474,21 +463,15 @@ watch(rootEl, (el) => {
   flex-direction: column;
   width: 100%;
   min-height: 100%;
-  padding: 18px 18px 0;
-  border-radius: 26px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--poster-accent) 14%, #ffffff) 0%, rgba(255, 255, 255, 0.96) 34%, rgba(255, 255, 255, 0.98) 100%);
-  border: 1px solid rgba(95, 137, 159, 0.16);
+  padding: 16px 16px 0;
+  border-radius: 14px;
+  background: #f8f9fa;
+  border: 1px solid #e3e8ee;
   overflow: hidden;
 }
 
 .share-poster__visual-card::before {
-  content: '';
-  position: absolute;
-  inset: auto -34px -40px auto;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--poster-accent) 16%, #ffffff);
+  display: none;
 }
 
 .visual-chip {
@@ -543,7 +526,6 @@ watch(rootEl, (el) => {
   max-height: 390px;
   object-fit: contain;
   object-position: center center;
-  filter: drop-shadow(0 26px 32px rgba(58, 79, 96, 0.22));
 }
 
 .visual-fallback {
