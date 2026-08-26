@@ -617,50 +617,6 @@ async function handleFeedbackSubmit() {
           </div>
         </section>
 
-        <section class="live-stats-section" v-reveal>
-          <div class="section-title-wrap">
-            <div class="section-index">2</div>
-            <h2 class="section-title">{{ t('result.liveStats.title') }}</h2>
-          </div>
-          <div v-if="liveStats && (liveStats.sameCharacterCount > 0 || liveStats.sameArchetypeCount > 0)" class="live-stats-card">
-            <div class="live-stats-grid">
-              <div v-if="liveStats.sameCharacterCount > 0" class="live-stat-item">
-                <span class="live-stat-value">{{ formatCount(liveStats.sameCharacterCount) }}</span>
-                <span class="live-stat-label">{{ t('result.liveStats.sameCharacter', { count: formatCount(liveStats.sameCharacterCount) }) }}</span>
-              </div>
-              <div v-if="liveStats.sameArchetypeCount > 0" class="live-stat-item">
-                <span class="live-stat-value">{{ formatCount(liveStats.sameArchetypeCount) }}</span>
-                <span class="live-stat-label">{{ t('result.liveStats.sameArchetype', { count: formatCount(liveStats.sameArchetypeCount) }) }}</span>
-              </div>
-              <div v-if="liveStats.sameCharacterPercent > 0" class="live-stat-item">
-                <span class="live-stat-value">{{ liveStats.sameCharacterPercent }}%</span>
-                <span class="live-stat-label">{{ t('result.liveStats.sitePercent', { percent: liveStats.sameCharacterPercent }) }}</span>
-              </div>
-              <div v-if="liveStats.characterRank" class="live-stat-item live-stat-item--rank">
-                <span class="live-stat-value">#{{ liveStats.characterRank }}</span>
-                <span class="live-stat-label">{{ t('result.liveStats.characterRank', { rank: liveStats.characterRank }) }}</span>
-              </div>
-            </div>
-            <p class="live-stats-hint">{{ t('result.liveStats.updateHint') }}</p>
-          </div>
-          <div v-else class="live-stats-card live-stats-card--loading">
-            <div class="live-stats-grid">
-              <div class="live-stat-item live-stat-item--skeleton">
-                <span class="live-stat-value">--</span>
-                <span class="live-stat-label">{{ t('result.liveStats.sameCharacter', { count: '--' }) }}</span>
-              </div>
-              <div class="live-stat-item live-stat-item--skeleton">
-                <span class="live-stat-value">--</span>
-                <span class="live-stat-label">{{ t('result.liveStats.sameArchetype', { count: '--' }) }}</span>
-              </div>
-              <div class="live-stat-item live-stat-item--skeleton">
-                <span class="live-stat-value">--%</span>
-                <span class="live-stat-label">{{ t('result.liveStats.sitePercent', { percent: '--' }) }}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section class="traits-section" id="traits-section" v-reveal>
           <div class="section-title-wrap">
             <div class="section-index">1</div>
@@ -713,6 +669,50 @@ async function handleFeedbackSubmit() {
                 {{ t('result.strongestCopy', { label: getDominantTraitLabel(strongestTrait.trait.id, strongestTrait.trait.leftCode, strongestTrait.trait.leftLabel, strongestTrait.trait.rightLabel) }) }}
               </p>
             </aside>
+          </div>
+        </section>
+
+        <section class="live-stats-section" v-reveal>
+          <div class="section-title-wrap">
+            <div class="section-index">2</div>
+            <h2 class="section-title">{{ t('result.liveStats.title') }}</h2>
+          </div>
+          <div v-if="liveStats && (liveStats.sameCharacterCount > 0 || liveStats.sameArchetypeCount > 0)" class="live-stats-card">
+            <div class="live-stats-grid">
+              <div v-if="liveStats.sameCharacterCount > 0" class="live-stat-item">
+                <span class="live-stat-value">{{ formatCount(liveStats.sameCharacterCount) }}</span>
+                <span class="live-stat-label">{{ t('result.liveStats.sameCharacter', { count: formatCount(liveStats.sameCharacterCount) }) }}</span>
+              </div>
+              <div v-if="liveStats.sameArchetypeCount > 0" class="live-stat-item">
+                <span class="live-stat-value">{{ formatCount(liveStats.sameArchetypeCount) }}</span>
+                <span class="live-stat-label">{{ t('result.liveStats.sameArchetype', { count: formatCount(liveStats.sameArchetypeCount) }) }}</span>
+              </div>
+              <div v-if="liveStats.sameCharacterPercent > 0" class="live-stat-item">
+                <span class="live-stat-value">{{ liveStats.sameCharacterPercent }}%</span>
+                <span class="live-stat-label">{{ t('result.liveStats.sitePercent', { percent: liveStats.sameCharacterPercent }) }}</span>
+              </div>
+              <div v-if="liveStats.characterRank" class="live-stat-item live-stat-item--rank">
+                <span class="live-stat-value">#{{ liveStats.characterRank }}</span>
+                <span class="live-stat-label">{{ t('result.liveStats.characterRank', { rank: liveStats.characterRank }) }}</span>
+              </div>
+            </div>
+            <p class="live-stats-hint">{{ t('result.liveStats.updateHint') }}</p>
+          </div>
+          <div v-else class="live-stats-card live-stats-card--loading">
+            <div class="live-stats-grid">
+              <div class="live-stat-item live-stat-item--skeleton">
+                <span class="live-stat-value">--</span>
+                <span class="live-stat-label">{{ t('result.liveStats.sameCharacter', { count: '--' }) }}</span>
+              </div>
+              <div class="live-stat-item live-stat-item--skeleton">
+                <span class="live-stat-value">--</span>
+                <span class="live-stat-label">{{ t('result.liveStats.sameArchetype', { count: '--' }) }}</span>
+              </div>
+              <div class="live-stat-item live-stat-item--skeleton">
+                <span class="live-stat-value">--%</span>
+                <span class="live-stat-label">{{ t('result.liveStats.sitePercent', { percent: '--' }) }}</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1412,7 +1412,11 @@ async function handleFeedbackSubmit() {
   font-weight: 800;
 }
 
-.traits-section,
+.traits-section {
+  margin-top: 40px;
+  scroll-margin-top: 88px;
+}
+
 .analysis-grid,
 .tags-block {
   scroll-margin-top: 88px;
