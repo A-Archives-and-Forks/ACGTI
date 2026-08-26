@@ -195,6 +195,7 @@ const accentColor = computed(() => props.accent || DEFAULT_AI_ACCENT)
 
 <style scoped>
 .ai-insight-section {
+  margin-top: 32px;
   margin-bottom: 32px;
 }
 
