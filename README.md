@@ -337,11 +337,20 @@ git push origin vX.Y.Z   # 推送 tag 触发 Release 工作流
 ## Star History
 
 <a href="https://www.star-history.com/?repos=tianxingleo%2FACGTI&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=tianxingleo/ACGTI&type=date&theme=dark&legend=top-left&sealed_token=PQkQp-Tq3hpkONqb2-mR1w9JkqU8097O6bNLsCFzF3l2iBnFQIMV1hTPVC4c1uh654IKV5Lky-MZUK_grOoDroNMyDDTE9icwTnkdbHaByHdaYHXLDSoabLvwwxFGy5SxdEu" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=tianxingleo/ACGTI&type=date&legend=top-left&sealed_token=PQkQp-Tq3hpkONqb2-mR1w9JkqU8097O6bNLsCFzF3l2iBnFQIMV1hTPVC4c1uh654IKV5Lky-MZUK_grOoDroNMyDDTE9icwTnkdbHaByHdaYHXLDSoabLvwwxFGy5SxdEu" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=tianxingleo/ACGTI&type=date&legend=top-left&sealed_token=PQkQp-Tq3hpkONqb2-mR1w9JkqU8097O6bNLsCFzF3l2iBnFQIMV1hTPVC4c1uh654IKV5Lky-MZUK_grOoDroNMyDDTE9icwTnkdbHaByHdaYHXLDSoabLvwwxFGy5SxdEu" />
- </picture>
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://api.star-history.com/chart?repos=tianxingleo/ACGTI&type=date&theme=dark&legend=top-left&sealed_token=rxOdzlc8WZeiQs3qsZXSKnu3VDydBjCHosWiK7YQ9lt_x-_VJ_a1-ywS_pctHQD81arUfR_SUl9SC3GoMlasF05cz3Op9TySyaThoorIaqC3jNRkHxm4fUOpWQWsik8R7iZrtOhjZhiEe9Unoitwp0GA58mQ_7lwj2WmDOOe9PhhcgYs_8mxcECq0muB"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://api.star-history.com/chart?repos=tianxingleo/ACGTI&type=date&legend=top-left&sealed_token=rxOdzlc8WZeiQs3qsZXSKnu3VDydBjCHosWiK7YQ9lt_x-_VJ_a1-ywS_pctHQD81arUfR_SUl9SC3GoMlasF05cz3Op9TySyaThoorIaqC3jNRkHxm4fUOpWQWsik8R7iZrtOhjZhiEe9Unoitwp0GA58mQ_7lwj2WmDOOe9PhhcgYs_8mxcECq0muB"
+    />
+    <img
+      alt="Star History Chart"
+      src="https://api.star-history.com/chart?repos=tianxingleo/ACGTI&type=date&legend=top-left&sealed_token=rxOdzlc8WZeiQs3qsZXSKnu3VDydBjCHosWiK7YQ9lt_x-_VJ_a1-ywS_pctHQD81arUfR_SUl9SC3GoMlasF05cz3Op9TySyaThoorIaqC3jNRkHxm4fUOpWQWsik8R7iZrtOhjZhiEe9Unoitwp0GA58mQ_7lwj2WmDOOe9PhhcgYs_8mxcECq0muB"
+    />
+  </picture>
 </a>
 
 ## 致谢
