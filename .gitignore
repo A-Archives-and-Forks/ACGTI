@@ -98,3 +98,9 @@ analysis/calibration-*.md
 /generateQuestions.ts
 /questions_dump.json
 /fix.ps1
+
+# 校准用反馈数据导出（含真实用户作答衍生数据，体积大且不应再入库；本地保留）
+scripts/tf_feedback_data.json
+scripts/tf_feedback_data*.json
+# 本地备份脚本不入库
+scripts/backups/
