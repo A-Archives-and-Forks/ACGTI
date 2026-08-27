@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { onRequest as middlewareOnRequest } from '../functions/_middleware'
 import { onRequestPost as feedbackHandler } from '../functions/api/feedback'
 import { onRequestPost as insightHandler } from '../functions/api/insight'
+import { onRequestGet as statsResultHandler } from '../functions/api/stats/result'
 import { onRequestPost as submitHandler } from '../functions/api/submit'
 import {
   isValidCode,
@@ -30,6 +31,10 @@ interface FakeDbOptions {
   presetCounts?: Record<string, number>
   /** 预置 ai_insight_cache 缓存（键为完整 cache_key） */
   insightCache?: Record<string, string>
+  /** 预置 stats_snapshot 快照行（键为 snapshot key） */
+  snapshots?: Record<string, { value_json: string; updated_at?: string }>
+  /** 预置聚合表计数：键形如 "character:TIGA" / "archetype:luminous-lead" */
+  entityCounts?: Record<string, number>
 }
 
 /**
@@ -42,7 +47,10 @@ interface FakeDbOptions {
 function makeDb(opts: FakeDbOptions = {}) {
   const counts = new Map<string, number>(Object.entries(opts.presetCounts ?? {}))
   const insightCache = new Map<string, string>(Object.entries(opts.insightCache ?? {}))
-  const aggCounts = new Map<string, number>()
+  const snapshots = new Map<string, { value_json: string; updated_at?: string }>(
+    Object.entries(opts.snapshots ?? {})
+  )
+  const aggCounts = new Map<string, number>(Object.entries(opts.entityCounts ?? {}))
   const recorded: RecordedStmt[] = []
   const inserted: RecordedStmt[] = []
 
@@ -67,6 +75,20 @@ function makeDb(opts: FakeDbOptions = {}) {
     if (sql.includes('FROM ai_insight_cache')) {
       const text = insightCache.get(String(bound[0]))
       return text === undefined ? null : { text }
+    }
+    // stats/result：快照行（readSnapshot 的全列查询与排行 rank 查询共用）
+    if (sql.includes('FROM stats_snapshot')) {
+      const snap = snapshots.get(String(bound[0]))
+      return snap ?? null
+    }
+    // stats/result：聚合表单点计数
+    if (/FROM character_counts\b/.test(sql)) {
+      const cnt = aggCounts.get(`character:${String(bound[0])}`)
+      return cnt === undefined ? null : { cnt }
+    }
+    if (/FROM archetype_counts\b/.test(sql)) {
+      const cnt = aggCounts.get(`archetype:${String(bound[0])}`)
+      return cnt === undefined ? null : { cnt }
     }
     if (sql.includes('INTO ai_insight_cache')) {
       // 缓存 UPSERT：写入（ON CONFLICT 时覆盖），可断言绑定参数
@@ -826,5 +848,87 @@ describe('/api/insight onRequestPost', () => {
     const res = await insightHandler(context as any)
     expect(res.status).toBe(429)
     expect(((await res.json()) as { reason: string }).reason).toBe('rate-limited')
+  })
+})
+
+// ── /api/stats/result 端点 ───────────────────────────────────────────────────
+
+describe('/api/stats/result onRequestGet', () => {
+  const RESULT_URL = 'http://localhost:8788/api/stats/result'
+
+  function makeGetContext(url: string, dbOpts: FakeDbOptions = {}) {
+    const fake = makeDb(dbOpts)
+    return {
+      context: {
+        request: new Request(url, { method: 'GET' }),
+        env: { DB: fake.db },
+        waitUntil: () => {},
+        data: {},
+        params: {},
+        next: async () => new Response('next-ok'),
+      },
+      fake,
+    }
+  }
+
+  it('缺少 character 与 archetype 参数：400', async () => {
+    const { context } = makeGetContext(RESULT_URL)
+    const res = await statsResultHandler(context as any)
+    expect(res.status).toBe(400)
+  })
+
+  it('合法参数：返回聚合计数、百分比与快照排名', async () => {
+    const { context, fake } = makeGetContext(
+      `${RESULT_URL}?character=TIGA&archetype=luminous-lead`,
+      {
+        entityCounts: { 'character:TIGA': 25, 'archetype:luminous-lead': 0 },
+        snapshots: {
+          overview: { value_json: JSON.stringify({ totalSubmissions: 100 }) },
+          characters: {
+            value_json: JSON.stringify({ items: [{ code: 'TIGA' }, { code: 'HATSUNE' }] }),
+          },
+          archetypes: { value_json: JSON.stringify({ items: [{ code: 'shadow-strategist' }] }) },
+        },
+      },
+    )
+    const res = await statsResultHandler(context as any)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as {
+      data: {
+        totalSubmissions: number
+        sameCharacterCount: number
+        sameCharacterPercent: number
+        sameArchetypeCount: number
+        characterRank: number | null
+        archetypeRank: number | null
+      }
+    }
+    expect(body.data.totalSubmissions).toBe(100)
+    expect(body.data.sameCharacterCount).toBe(25)
+    expect(body.data.sameCharacterPercent).toBe(25)
+    expect(body.data.characterRank).toBe(1)
+    // luminous-lead 无计数：零值且不计排名（快照里也没有它）
+    expect(body.data.sameArchetypeCount).toBe(0)
+    expect(body.data.archetypeRank).toBeNull()
+    expect(fake.recorded.length).toBeGreaterThan(0)
+  })
+
+  it('非法格式的 code：按未指定维度处理返回零值，不进入查询', async () => {
+    const { context, fake } = makeGetContext(
+      // 超长且含非法字符的参数
+      `${RESULT_URL}?character=${encodeURIComponent('x'.repeat(64) + '<>')}&archetype=ok-code`,
+      { entityCounts: {} },
+    )
+    const res = await statsResultHandler(context as any)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as {
+      data: { sameCharacterCount: number; sameArchetypeCount: number }
+    }
+    expect(body.data.sameCharacterCount).toStrictEqual(0)
+    expect(body.data.sameArchetypeCount).toStrictEqual(0)
+    // 非法 character 未发起任何计数查询；ok-code 合法但无数据也不应查到行
+    expect(
+      fake.recorded.some((s) => s.bound.includes('x'.repeat(64) + '<>')),
+    ).toBe(false)
   })
 })

@@ -1,18 +1,24 @@
 // /api/stats/result — 结果页专用统计接口
 // 直接从聚合表和快照表读取，返回当前角色/原型的站内统计数据
 
-import { json, readSnapshot } from '../_shared'
+import { isValidCode, json, readSnapshot } from '../_shared'
 
 export async function onRequestGet(context: any) {
   const { DB } = context.env as { DB: D1Database }
   const { request } = context
   const url = new URL(request.url)
-  const characterCode = (url.searchParams.get('character') ?? '').trim()
-  const archetypeCode = (url.searchParams.get('archetype') ?? '').trim()
+  const characterParam = (url.searchParams.get('character') ?? '').trim()
+  const archetypeParam = (url.searchParams.get('archetype') ?? '').trim()
 
-  if (!characterCode && !archetypeCode) {
+  if (!characterParam && !archetypeParam) {
     return json({ error: 'missing character or archetype param' }, 400)
   }
+
+  // 白名单校验：与 submit/feedback 的 code 校验规则对齐。
+  // 非法格式（超长、特殊字符）的参数按"该维度未指定"处理返回零值，
+  // 不让任意形态的输入进入 D1 查询（查询本身已参数化，此处属防御纵深）
+  const characterCode = isValidCode(characterParam) ? characterParam : ''
+  const archetypeCode = isValidCode(archetypeParam) ? archetypeParam : ''
 
   try {
     // 1. 从 overview 快照拿 totalSubmissions 与快照更新时间
