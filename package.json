@@ -24,15 +24,15 @@
     "vue-router": "^4.6.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260702.1",
+    "@cloudflare/workers-types": "^5.20260825.1",
     "@types/node": "^24.12.2",
-    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
-    "puppeteer-core": "^25.8.0",
+    "puppeteer-core": "^25.9.0",
     "typescript": "~6.0.2",
-    "vite": "^8.0.4",
+    "vite": "^8.2.2",
     "vitest": "^4.1.11",
-    "vue-tsc": "^3.2.6",
-    "wrangler": "^4.83.0"
+    "vue-tsc": "^3.3.11",
+    "wrangler": "^4.126.0"
   }
 }
