@@ -285,7 +285,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ text: null, available: false, reason: 'invalid-payload' }, 400)
   }
 
-  const brief = (briefs as Record<string, { name: string; title: string; series: string; mbti: string; tags: string[] }>)[characterId]
+  // 角色档案查找必须用 Object.hasOwn 白名单语义："__proto__"/"constructor"
+  // 等原型链键能通过 isValidCode（字符类含下划线），直接索引会沿原型链命中
+  // Object.prototype（truthy），绕过 113 个真实角色的白名单走进生成路径
+  const briefsMap = briefs as Record<
+    string,
+    { name: string; title: string; series: string; mbti: string; tags: string[] }
+  >
+  const brief = Object.hasOwn(briefsMap, characterId) ? briefsMap[characterId] : undefined
   if (!brief) {
     return json({ text: null, available: false, reason: 'unknown-character' })
   }
