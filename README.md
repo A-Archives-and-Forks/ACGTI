@@ -182,7 +182,7 @@ analysis/                  # 反馈数据分析与权重校准流水线（本地
 <summary><b>点击展开查看内容数据一览</b></summary>
 
 | 文件 | 说明 |
-|:-----|:-----|
+| :----- | :----- |
 | `src/data/questions.json` | 39 道情境式题目 — 维度、原型权重、场景标签 |
 | `src/data/archetypes.json` | 8 个角色原型 — 名称、描述、亮点、短板 |
 | `src/data/characters.json` | 113 个角色条目（含隐藏角色） — 角色代码、MBTI 映射、标签、六维向量（构建时自动生成） |
