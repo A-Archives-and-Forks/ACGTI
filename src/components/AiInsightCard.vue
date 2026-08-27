@@ -32,6 +32,13 @@ if (retryCount.value >= REGENERATE_LIMIT) {
   limitReached.value = true
 }
 
+// 角色预览切换后重读新角色的重试计数：计数与配额按 characterCode 隔离，
+// 否则 ref 仅在组件创建时初始化一次，上一角色的已用次数会顺延给下一角色
+watch(retryKey, () => {
+  retryCount.value = Number(sessionStorage.getItem(retryKey.value) ?? '0') || 0
+  limitReached.value = retryCount.value >= REGENERATE_LIMIT
+})
+
 const prefersReducedMotion =
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
