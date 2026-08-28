@@ -83,10 +83,9 @@ scripts/e2e-*.png
 repomix-output.xml
 
 # Internal docs（技术文档与运维文档，仅本地留存，不进入版本控制；
-# 例外：docs/audit/ 为仓库审计交付物，需要入库）
+# docs/audit/ 审计交付物同属本地留存，不再随仓分发）
 DEBUG_SUBMIT_400.md
 docs/*
-!docs/audit/
 public/api/openapi.yaml
 
 # 本地垃圾桶（移入 .trash 的丢弃物不进版本控制；仓库根若建 .trash 同样忽略）
